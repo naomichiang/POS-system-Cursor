@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+@theme {
+    /* Ash 系列 */
+    --color-ash-100: #EEF5F6;
+    --color-ash-200: #DFE9ED;
+    --color-ash-300: #C6D4DF;
+    --color-ash-400: #B4C6D6;
+    --color-ash-600: #6C84A8;
+    --color-ash-700: #516F9C;
+    --color-ash-800: #2E446D;
+    --color-ash-900: #202F4F;
+  
+    /* Indianred 系列 */
+    --color-indianred-100: #FDECEC;
+    --color-indianred-600: #C64A4A;
+  
+    /* 其他顏色 */
+    --color-yellow-400: #F9C778;
+    --color-green-500: #1ABC9C;
+    --color-gray-500: #9297A1;
+    --color-gray-700: #3C3E42;
+  
+    /* 邊框顏色 */
+    --color-border-primary: #DBE0F0;
+  }
+
+body {
+  min-height: 100vh;
+  font-family: 'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+#app {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
