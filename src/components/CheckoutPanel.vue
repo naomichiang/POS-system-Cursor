@@ -50,7 +50,7 @@
         <div class="flex w-[440px] flex-col items-center flex-1 rounded-2xl shadow-lg overflow-hidden">
           <!-- Header -->
           <div class="flex w-[440px] h-[72px] items-start">
-            <div class="flex w-[160px] px-6 flex-col justify-center items-center flex-shrink-0 self-stretch bg-ash-900">
+            <div class="flex w-[160px] px-6 flex-col justify-center items-center shrink-0 self-stretch bg-ash-900">
               <div class="text-white text-center font-noto text-[22px] font-normal leading-[120%]">2Ａ桌</div>
             </div>
             <div class="flex justify-center items-center gap-6 flex-1 self-stretch bg-ash-700">

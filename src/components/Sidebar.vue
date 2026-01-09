@@ -19,10 +19,10 @@ const menuItems = [
       <div
         v-for="(item, index) in menuItems"
         :key="index"
-        class="flex flex-col justify-center items-center w-full h-28 cursor-pointer hover:bg-ash-700 transition-colors"
+        class="flex flex-col justify-center items-center w-full h-28 gap-1 cursor-pointer hover:bg-ash-700 transition-colors"
       >
         <UtensilsCrossed class="w-8 h-8 text-ash-200" />
-        <div class="text-white text-center font-noto text-xl font-medium mt-1">
+        <div class="text-white text-center font-noto text-lg font-medium mb-1">
           {{ item.label }}
         </div>
       </div>
@@ -33,7 +33,7 @@ const menuItems = [
       class="flex w-full h-28 pb-1 flex-col justify-center items-center gap-1 self-stretch bg-ash-700"
     >
       <UserCircle2 class="w-8 h-8 text-white" />
-      <div class="text-white text-center font-noto text-xl font-medium mt-1">
+      <div class="text-white text-center font-noto text-lg font-medium mt-1">
         王小明
       </div>
     </div>

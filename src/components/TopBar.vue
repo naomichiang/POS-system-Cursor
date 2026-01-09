@@ -64,9 +64,9 @@
           <button
             v-for="(item, index) in quickActions"
             :key="index"
-            class="flex flex-col justify-center items-center w-28 h-full hover:bg-ash-800 active:bg-ash-700 transition-colors shrink-0">
-            <component :is="item.icon" :size="20" class="text-ash-200" />
-            <div class="text-ash-200 text-center font-noto text-xl font-medium mt-2 leading-none">
+            class="flex flex-col justify-center items-center w-28 h-full gap-2 hover:bg-ash-800 active:bg-ash-700 transition-colors shrink-0">
+            <component :is="item.icon" class="w-8 h-8 text-ash-200" />
+            <div class="text-ash-200 text-center font-noto text-xl font-medium leading-none">
               {{ item.label }}
             </div>
           </button>
@@ -75,7 +75,7 @@
 
       <div class="flex items-center h-full">
         <button class="flex justify-center items-center w-20 h-full hover:bg-ash-800 transition-colors">
-          <Bell :size="28" class="text-ash-200" />
+          <Bell :size="24" class="text-ash-200" />
         </button>
 
         <div class="flex pl-6 pr-12 items-center h-full">
@@ -84,8 +84,8 @@
           </div>
         </div>
         <div class="w-8 h-full"></div>
-        <button class="flex justify-center items-center w-24 h-full bg-ash-800 hover:bg-ash-700 active:bg-ash-600 transition-colors">
-          <Menu :size="36" class="text-white" />
+        <button class="flex justify-center items-center w-20 h-full bg-ash-800 hover:bg-ash-700 active:bg-ash-600 transition-colors">
+          <Menu :size="32" class="text-white" />
         </button>
       </div>
     </div>
