@@ -13,7 +13,7 @@ const menuItems = [
 
 <template>
   <div
-    class="flex flex-col justify-between items-center w-24 flex-shrink-0 bg-ash-800 h-full min-w-[96px]"
+    class="flex flex-col justify-between items-center w-24 shrink-0 bg-ash-800 h-full min-w-[64px]"
   >
     <div class="flex flex-col items-center w-full">
       <div
@@ -22,7 +22,7 @@ const menuItems = [
         class="flex flex-col justify-center items-center w-full h-28 cursor-pointer hover:bg-ash-700 transition-colors"
       >
         <UtensilsCrossed class="w-8 h-8 text-ash-200" />
-        <div class="text-white text-center font-noto text-2xl font-medium mt-1">
+        <div class="text-white text-center font-noto text-xl font-medium mt-1">
           {{ item.label }}
         </div>
       </div>
@@ -33,7 +33,7 @@ const menuItems = [
       class="flex w-full h-28 pb-1 flex-col justify-center items-center gap-1 self-stretch bg-ash-700"
     >
       <UserCircle2 class="w-8 h-8 text-white" />
-      <div class="text-white text-center font-noto text-2xl font-medium mt-1">
+      <div class="text-white text-center font-noto text-xl font-medium mt-1">
         王小明
       </div>
     </div>
