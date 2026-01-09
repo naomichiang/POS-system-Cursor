@@ -123,7 +123,7 @@
                 class="flex w-[60px] justify-center items-center self-stretch"
                 :class="payment.type === 'cash' ? 'bg-yellow-400' : payment.type === 'credit' ? 'bg-green-500' : payment.type === 'mobile' ? 'bg-blue-500' : 'bg-purple-500'"
               >
-                <div class="flex w-8 h-8 justify-center items-center flex-shrink-0">
+                <div class="flex w-8 h-8 justify-center items-center shrink-0">
                   <Banknote
                     v-if="payment.type === 'cash'"
                     class="w-8 h-8 text-white"

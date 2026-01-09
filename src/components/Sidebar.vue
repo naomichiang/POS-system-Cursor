@@ -13,7 +13,7 @@ const menuItems = [
 
 <template>
   <div
-    class="flex flex-col justify-between items-center w-24 shrink-0 bg-ash-800 h-full min-w-[64px]"
+    class="flex flex-col justify-between items-center w-20 shrink-0 bg-ash-800 h-full min-w-[64px]"
   >
     <div class="flex flex-col items-center w-full">
       <div

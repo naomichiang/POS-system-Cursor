@@ -48,7 +48,7 @@
   </script>
 
 <template>
-    <div class="flex justify-between items-center bg-ash-900 shadow-lg h-24 overflow-hidden border-b border-ash-800">
+    <div class="flex justify-between items-center bg-ash-900 shadow-lg h-20 overflow-hidden border-b border-ash-800">
 
       <div class="flex items-center h-full">
         <div class="flex justify-center items-center w-[180px] h-full bg-black/50 shrink-0">
