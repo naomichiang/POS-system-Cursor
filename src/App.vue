@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue'
   import TopBar from './components/TopBar.vue'
-  import Sidebar from './components/Sidebar.vue'
+  import AppSidebar from './components/AppSidebar.vue'
   import CheckoutPanel from './components/CheckoutPanel.vue'
   import CheckoutArea from './components/CheckoutArea.vue'
 
@@ -29,7 +29,7 @@
 
       <div class="flex flex-1 overflow-hidden">
 
-        <Sidebar class="w-20 shrink-0" />
+        <AppSidebar class="w-20 shrink-0" />
 
         <CheckoutPanel
           class="w-[440px] shrink-0"

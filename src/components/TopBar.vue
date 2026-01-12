@@ -1,54 +1,47 @@
-<script setup lang="ts">
-    import { ref, onMounted, onUnmounted } from 'vue'
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { Coffee, Utensils, Star, Gem, Bell, Menu } from 'lucide-vue-next'
 
-    const currentDateTime = ref('')
+const currentDateTime = ref('')
 
-    import {
-      Coffee,
-      Utensils,
-      Star,
-      Gem,
-      Bell,
-      Menu,
-     } from 'lucide-vue-next'
-    // 1. 在這裡幫 interval 領身分證！
-    // 我們先定義它，但不給它值。 window.setInterval 的回傳值在 TS 裡常用 any 或 ReturnType<typeof setInterval>
-    let interval: any = null;
+// 在這裡宣告 interval（使用純 JS，避免 TS 解析問題）
+let interval = null
 
-    const dateTime = ref('');
+const updateDateTime = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+  const weekday = weekdays[now.getDay()]
 
-    const updateDateTime = () => {
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const day = String(now.getDate()).padStart(2, '0')
-      const hours = String(now.getHours()).padStart(2, '0')
-      const minutes = String(now.getMinutes()).padStart(2, '0')
-      const weekdays = ['日', '一', '二', '三', '四', '五', '六']
-      const weekday = weekdays[now.getDay()]
+  currentDateTime.value = `${year}-${month}-${day} ${hours}:${minutes} (${weekday})`
+}
 
-      currentDateTime.value = `${year}-${month}-${day} ${hours}:${minutes} (${weekday})`
-    }
+onMounted(() => {
+  updateDateTime()
+  interval = setInterval(updateDateTime, 1000)
+})
 
-    onMounted(() => {
-      updateDateTime()
-      interval = setInterval(updateDateTime, 1000)
-    })
+onUnmounted(() => {
+  if (interval) {
+    clearInterval(interval)
+  }
+})
 
-    onUnmounted(() => {
-      clearInterval(interval)
-    })
-        // 快捷鍵清單配置
-    const quickActions = [
-      { icon: Coffee, label: '快捷 1' },
-      { icon: Utensils, label: '快捷 2' },
-      { icon: Star, label: '快捷 3' },
-      { icon: Gem, label: '快捷 4' }
-    ]
-  </script>
+// 快捷鍵清單配置
+const quickActions = [
+  { icon: Coffee, label: '快捷 1' },
+  { icon: Utensils, label: '快捷 2' },
+  { icon: Star, label: '快捷 3' },
+  { icon: Gem, label: '快捷 4' },
+]
+</script>
 
 <template>
-    <div class="flex justify-between items-center bg-ash-900 shadow-lg h-20 overflow-hidden border-b border-ash-800">
+    <div class="flex justify-between items-center bg-ash-900 shadow-lg h-18 overflow-hidden border-b border-ash-800">
 
       <div class="flex items-center h-full">
         <div class="flex justify-center items-center w-[180px] h-full bg-black/50 shrink-0">
@@ -59,14 +52,14 @@
             class="w-auto h-full max-h-[80%] object-contain"
           />
         </div>
-        <div class="w-4 h-full"></div>
+        <div class="w-2 h-full"></div>
         <div class="flex items-center h-full">
           <button
             v-for="(item, index) in quickActions"
             :key="index"
-            class="flex flex-col justify-center items-center w-28 h-full gap-2 hover:bg-ash-800 active:bg-ash-700 transition-colors shrink-0">
-            <component :is="item.icon" class="w-8 h-8 text-ash-200" />
-            <div class="text-ash-200 text-center font-noto text-xl font-medium leading-none">
+            class="flex flex-col justify-center items-center w-24 h-full gap-1 hover:bg-ash-800 active:bg-black/50 transition-colors shrink-0">
+            <component :is="item.icon" class="w-6 h-6 text-ash-200" />
+            <div class="text-ash-200 text-center font-noto text-lg font-medium leading-none">
               {{ item.label }}
             </div>
           </button>
@@ -74,8 +67,8 @@
       </div>
 
       <div class="flex items-center h-full">
-        <button class="flex justify-center items-center w-20 h-full hover:bg-ash-800 transition-colors">
-          <Bell :size="24" class="text-ash-200" />
+        <button class="flex justify-center items-center w-18 h-full hover:bg-ash-800 transition-colors">
+          <Bell :size="20" class="text-ash-200" />
         </button>
 
         <div class="flex pl-6 pr-12 items-center h-full">
@@ -83,9 +76,9 @@
             {{ currentDateTime }}
           </div>
         </div>
-        <div class="w-8 h-full"></div>
+        <div class="w-6 h-full"></div>
         <button class="flex justify-center items-center w-20 h-full bg-ash-800 hover:bg-ash-700 active:bg-ash-600 transition-colors">
-          <Menu :size="32" class="text-white" />
+          <Menu :size="28" class="text-white" />
         </button>
       </div>
     </div>

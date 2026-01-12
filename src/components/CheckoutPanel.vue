@@ -1,49 +1,50 @@
-<script setup lang="ts">
-    import { computed } from 'vue'
-    import { Banknote, CreditCard, Smartphone, Ticket, X } from 'lucide-vue-next'
+<script setup>
+import { computed } from 'vue'
+import { Banknote, CreditCard, Smartphone, Ticket, X } from 'lucide-vue-next'
 
-    // 定義 props 和 emits
-    const props = defineProps<{
-      payments: Array<{ type: 'cash' | 'credit' | 'mobile' | 'gift', amount: number }>
-    }>()
+// 定義 props 和 emits（使用純 JavaScript，避免 TS 解析問題）
+const props = defineProps({
+  payments: {
+    type: Array,
+    default: () => [],
+  },
+})
 
-    const emit = defineEmits<{
-      'remove-payment': [index: number]
-    }>()
+const emit = defineEmits(['remove-payment'])
 
-    // 計算總計金額 (假設總計為 17500)
-    const totalAmount = 17500
+// 計算總計金額 (假設總計為 17500)
+const totalAmount = 17500
 
-    // 計算已付金額
-    const paidAmount = computed(() => {
-      return props.payments.reduce((sum, payment) => sum + payment.amount, 0)
-    })
+// 計算已付金額
+const paidAmount = computed(() => {
+  return props.payments.reduce((sum, payment) => sum + payment.amount, 0)
+})
 
-    // 計算未結金額
-    const unpaidAmount = computed(() => {
-      return totalAmount - paidAmount.value
-    })
+// 計算未結金額
+const unpaidAmount = computed(() => {
+  return totalAmount - paidAmount.value
+})
 
-    // 計算找零金額
-    const changeAmount = computed(() => {
-      return paidAmount.value > totalAmount ? paidAmount.value - totalAmount : 0
-    })
+// 計算找零金額
+const changeAmount = computed(() => {
+  return paidAmount.value > totalAmount ? paidAmount.value - totalAmount : 0
+})
 
-    const removePayment = (index: number) => {
-      emit('remove-payment', index)
-    }
+const removePayment = (index) => {
+  emit('remove-payment', index)
+}
 
-    // 根據付款類型獲取顯示名稱
-    const getPaymentLabel = (type: string) => {
-      const labels = {
-        cash: '現金',
-        credit: '信用卡',
-        mobile: '電子支付',
-        gift: 'SOGO 現金券'
-      }
-      return labels[type as keyof typeof labels] || type
-    }
-    </script>
+// 根據付款類型獲取顯示名稱
+const getPaymentLabel = (type) => {
+  const labels = {
+    cash: '現金',
+    credit: '信用卡',
+    mobile: '電子支付',
+    gift: 'SOGO 現金券',
+  }
+  return labels[type] || type
+}
+</script>
 
     <template>
       <div class="flex h-[938px] flex-col justify-center items-center">
