@@ -223,10 +223,18 @@
 
 body {
   min-height: 100vh;
+  /* 字體設定 */
   font-family: 'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+
+  /* 1. 禁用雙擊縮放，並讓點擊反應更靈敏 */
+  touch-action: manipulation;
+  /* 2. 禁止長按選取文字（防止出現拷貝/貼上的選取框） */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #app {
