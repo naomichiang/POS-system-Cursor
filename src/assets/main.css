@@ -108,7 +108,7 @@
 
      --color-cobalt-400: #184FEB;
      --color-cobalt-600: #020888;
-     --color-purple-400: #3B199C;
+     --color-purple-500: #7562AC;
 
     /* Indianred 系列 */
     --color-indianred-100: #FDECEC;
@@ -213,6 +213,8 @@
      --spacing-btn-sm: 80px; /* 輔助功能鍵：發票 */
      --spacing-btn-md: 120px; /* 主要功能鍵：確認、結帳 */
      --spacing-btn-lg: 200px;
+     --spacing-btn-xl: 240px;
+     --spacing-btn-h-md: 80px;
 
      /* ============================================================
         4. 圓角 (Radius)

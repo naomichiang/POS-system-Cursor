@@ -1,49 +1,41 @@
 <script setup>
 import { ref, computed } from 'vue'
 import {
-  CircleDollarSign,
-  CreditCard,
-  Smartphone,
-  Ticket,
   Delete,
-  DollarSign
+  DollarSign,
+  X,
 } from 'lucide-vue-next'
 import { paymentMethodsConfig } from '../config/paymentMethods'
 
-// 圖標組件映射，確保 Vue 能正確識別組件
-const iconMap = {
-  CircleDollarSign,
-  CreditCard,
-  Smartphone,
-  Ticket
-}
+// Props：來自父層的訂單與付款資訊
+const props = defineProps({
+  order: {
+    type: Object,
+    default: () => ({
+      tableNumber: '2A桌',
+      diners: 5,
+      status: '已開桌',
+      diningTime: '01:13',
+      totalAmount: 10520,
+    }),
+  },
+  payments: {
+    type: Array,
+    default: () => [],
+  },
+})
 
-// 獲取圖標組件的輔助函數
-
-const getIconComponent = (icon) => {
-  if (!icon) return null
-  // 如果 icon 是組件，直接返回
-  if (typeof icon === 'object' && (icon.render || icon.setup || icon.__name)) {
-    return icon
-  }
-  // 如果 icon 是字符串，從映射中獲取
-  if (typeof icon === 'string') {
-    return iconMap[icon] || null
-  }
-  return icon
-}
+const emit = defineEmits(['add-payment'])
 
 // 定義鍵盤佈局
 const numpadRows = [
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
-  ['C', '0', 'backspace']
+  ['C', '0', 'backspace'],
 ]
 
-const emit = defineEmits(['add-payment'])
-
-const inputValue = ref('500')
+const inputValue = ref('0')
 
 // 使用配置化的付款方式列表，並確保圖標組件正確映射
 // 直接使用配置中的 icon，因為它們是從 lucide-vue-next 導入的組件
@@ -58,6 +50,61 @@ const formattedAmount = computed(() => {
   const n = Number(numeric || '0')
   return n.toLocaleString('en-US')
 })
+
+// 依據訂單與付款計算金額
+const totalAmount = computed(() => props.order?.totalAmount || 0)
+
+const paidAmount = computed(() => {
+  return props.payments.reduce((sum, payment) => sum + payment.amount, 0)
+})
+
+const unpaidAmount = computed(() => {
+  const diff = totalAmount.value - paidAmount.value
+  return diff > 0 ? diff : 0
+})
+
+const changeAmount = computed(() => {
+  return paidAmount.value > totalAmount.value
+    ? paidAmount.value - totalAmount.value
+    : 0
+})
+
+// 彈窗狀態
+const showModal = ref(false)
+// 'unpaid' | 'change' | null
+const modalType = ref(null)
+
+const modalTitle = computed(() => {
+  if (modalType.value === 'unpaid') return '餘額未結清'
+  if (modalType.value === 'change') return '提醒找零'
+  return ''
+})
+
+const modalMessage = computed(() => {
+  if (modalType.value === 'unpaid') {
+    return '餘額未結清'
+  }
+  if (modalType.value === 'change') {
+    return `現金找零 ${changeAmount.value.toLocaleString()}元`
+  }
+  return ''
+})
+
+const closeModal = () => {
+  showModal.value = false
+  modalType.value = null
+}
+
+const handleCompleteChange = () => {
+  // 結束結帳確認流程（此處先以 log 代表，可依需求補上清單重置／跳畫面等）
+  console.log('結帳完成，找零已確認', {
+    totalAmount: totalAmount.value,
+    paidAmount: paidAmount.value,
+    changeAmount: changeAmount.value,
+  })
+  showModal.value = false
+  modalType.value = null
+}
 
 const handleNumberClick = (num) => {
   if (inputValue.value === '0') {
@@ -90,11 +137,24 @@ const handlePayment = (paymentId) => {
   inputValue.value = '0'
 }
 
-// 完成結帳
+// 完成結帳：依未結與找零判斷彈窗
 const handleCompleteCheckout = () => {
-  console.log({
-    amount: inputValue.value,
-    method: selectedPayment.value
+  if (unpaidAmount.value > 0) {
+    modalType.value = 'unpaid'
+    showModal.value = true
+    return
+  }
+
+  if (changeAmount.value > 0) {
+    modalType.value = 'change'
+    showModal.value = true
+    return
+  }
+
+  // 無未結且無找零，直接完成（暫以 log 表示）
+  console.log('結帳完成（無未結且無找零）', {
+    totalAmount: totalAmount.value,
+    paidAmount: paidAmount.value,
   })
 }
 </script>
@@ -138,7 +198,7 @@ const handleCompleteCheckout = () => {
               @click="key === 'C' ? handleClear() : key === 'backspace' ? handleBackspace() : handleNumberClick(key)"
               :class="[
                 'flex flex-col justify-center items-center flex-1 self-stretch transition-all',
-                'bg-layer-secondary hover:bg-layer-secondary-hover active:bg-layer-primary-disabled active:scale-[0.98]',
+                'bg-layer-secondary hover:bg-layer-secondary-hover active:bg-layer-secondary-hover active:scale-[0.98]',
                 'border-border-primary',
                 // 處理邊框，避免重複疊加：最後一行不加底邊框，每行最後一個按鍵不加右邊框
                 rowIndex !== 3 ? 'border-b-2' : '',
@@ -151,7 +211,7 @@ const handleCompleteCheckout = () => {
               <div
                 v-else
                 :class="[
-                  'self-stretch text-center font-inter text-3xl font-semibold leading-[120%]',
+                  'self-stretch text-center font-inter text-4xl font-semibold leading-[120%]',
                   key === 'C' ? 'text-text-disabled' : 'text-ash-700'
                 ]"
               >
@@ -172,7 +232,7 @@ const handleCompleteCheckout = () => {
             :key="method.id"
             @click="handlePayment(method.id)"
             :class="[
-              'flex w-btn-lg h-[80px] min-w-[100px] max-w-[240px] px-4 justify-center items-center transition-colors',
+              'flex w-btn-lg h-[80px] min-w-[100px] max-w-btn-xl px-4 justify-center items-center transition-colors',
               method.paddingClass,
               'bg-button-primary hover:bg-button-primary-hover',
               'active:bg-button-primary-disabled active:scale-[0.98]'
@@ -180,11 +240,11 @@ const handleCompleteCheckout = () => {
           >
             <!-- Icon (動態渲染，根據配置決定是否顯示) -->
             <div
-              v-if="method.hasIcon && getIconComponent(method.icon)"
+              v-if="method.hasIcon && method.icon"
               class="flex w-icon-md h-icon-md justify-center items-center shrink-0"
             >
               <component
-                :is="getIconComponent(method.icon)"
+                :is="method.icon"
                 class="w-icon-md h-icon-md text-text-on-color"
               />
             </div>
@@ -202,29 +262,88 @@ const handleCompleteCheckout = () => {
 
     <!-- Bottom Actions -->
     <div
-      class="flex h-8-14 p-4 items-start gap-4 self-stretch border-t border-border-primary"
+      class="flex p-4 items-start gap-4 self-stretch border-t border-border-primary"
     >
       <button
-        class="flex w-btn-md h-full px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary hover:bg-button-primary-hover transition-colors">
+        class="shrink-0 flex w-btn-md h-btn-h-md min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary hover:bg-button-primary-hover transition-colors">
         <div
           class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
           發票
         </div>
       </button>
-      <div class="flex h-full justify-end items-center gap-4 flex-1">
+      <div class="flex h-btn-h-md justify-end items-center gap-4 flex-1">
         <button
-          class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary hover:bg-button-prmary-hover transition-colors">
+          class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary hover:bg-button-primary-hover transition-colors">
           <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
             暫存
           </div>
         </button>
         <button
-          class="flex w-btn-lg h-full min-w-btn-md max-w-[220px] px-4 justify-center items-center rounded-2xl bg-button-danger hover:bg-button-danger-hover transition-colors"
+          class="flex w-btn-lg h-full min-w-btn-md px-4 justify-center items-center rounded-2xl bg-button-danger hover:bg-button-danger-hover transition-colors"
           @click="handleCompleteCheckout">
           <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
             完成結帳
           </div>
         </button>
+      </div>
+    </div>
+
+    <!-- 統一彈窗樣式：白底圓角 + 燈箱；點彈窗外無作用 -->
+    <div
+      v-if="showModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="relative w-[420px] max-w-[90vw] rounded-2xl bg-white shadow-2xl px-6 py-5"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-text-primary font-noto text-xl font-semibold leading-tight">
+            {{ modalTitle }}
+          </h2>
+          <button
+            type="button"
+            class="flex w-icon-lg h-icon-lg items-center justify-center rounded-full hover:bg-ash-100 transition-colors"
+            @click="closeModal"
+          >
+            <X class="w-icon-md h-icon-md text-text-disabled" />
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="mb-6">
+          <p class="text-text-secondary font-noto text-lg leading-relaxed">
+            {{ modalMessage }}
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3">
+          <button
+            v-if="modalType === 'change'"
+            type="button"
+            class="min-w-btn-sm px-4 h-10 rounded-2xl bg-button-secondary hover:bg-button-secondary-hover text-text-on-color font-noto text-base font-medium"
+            @click="closeModal"
+          >
+            返回
+          </button>
+          <button
+            v-if="modalType === 'change'"
+            type="button"
+            class="min-w-btn-md px-4 h-10 rounded-2xl bg-button-primary hover:bg-button-primary-hover text-text-on-color font-noto text-base font-medium"
+            @click="handleCompleteChange"
+          >
+            完成找零
+          </button>
+          <button
+            v-if="modalType === 'unpaid'"
+            type="button"
+            class="min-w-btn-md px-4 h-10 rounded-2xl bg-button-primary hover:bg-button-primary-hover text-text-on-color font-noto text-base font-medium"
+            @click="closeModal"
+          >
+            知道了
+          </button>
+        </div>
       </div>
     </div>
   </div>

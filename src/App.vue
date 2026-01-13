@@ -5,12 +5,17 @@
   import CheckoutPanel from './components/CheckoutPanel.vue'
   import CheckoutArea from './components/CheckoutArea.vue'
 
+  // 訂單資料（單一來源）
+  const order = ref({
+    tableNumber: '2A桌',
+    diners: 5,
+    status: '已開桌',
+    diningTime: '01:13',
+    totalAmount: 10520,
+  })
+
   // 付款列表狀態
-  const payments = ref([
-    { type: 'cash', amount: 5500 },
-    { type: 'credit', amount: 17500 },
-    { type: 'cash', amount: 8000 },
-  ])
+  const payments = ref([])
 
   // 處理新增付款
   const handleAddPayment = (payment) => {
@@ -34,13 +39,16 @@
         <main class="flex flex-1 p-4 gap-4 min-h-0 min-w-0">
           <!-- Checkout Panel -->
           <CheckoutPanel
-          class="w-[330px] h-full shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden"
-          :payments="payments"
-          @remove-payment="handleRemovePayment"
+            class="w-[330px] h-full shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden"
+            :order="order"
+            :payments="payments"
+            @remove-payment="handleRemovePayment"
           />
           <!-- Checkout Area -->
           <CheckoutArea
             class="flex-1 bg-white rounded-2xl shadow-sm  overflow-y-auto"
+            :order="order"
+            :payments="payments"
             @add-payment="handleAddPayment"
           />
         </main>

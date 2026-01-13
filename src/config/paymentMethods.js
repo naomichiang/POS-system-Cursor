@@ -4,7 +4,7 @@
 import {
   CircleDollarSign,
   CreditCard,
-  Smartphone,
+  ScanBarcode,
   Ticket
 } from 'lucide-vue-next'
 
@@ -30,7 +30,7 @@ export const paymentMethodsConfig = [
   {
     id: 'mobile',
     label: '電子支付',
-    icon: Smartphone,
+    icon: ScanBarcode,
     hasIcon: true,
     paddingClass: 'pr-6 gap-4',
     color: 'bg-blue-500',

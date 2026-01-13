@@ -12,7 +12,7 @@ const props = defineProps({
       diners: 5,
       status: '已開桌',
       diningTime: '01:13',
-      totalAmount: 17500
+      totalAmount: 10520
     }),
   },
   payments: {
@@ -49,6 +49,28 @@ const removePayment = (index) => {
 const getPaymentConfig = (type) => {
   return getPaymentMethodById(type) || { displayLabel: type, icon: null, color: 'bg-gray-500' }
 }
+
+// 根據訂單狀態回傳對應的底色 class
+const statusBgClass = computed(() => {
+  const status = props.order?.status
+
+  const map = {
+    0: 'bg-gray-400',      // 未開桌（初始）
+    1: 'bg-ash-700',       // 已開桌
+    2: 'bg-yellow-700',    // 提醒桌
+    3: 'bg-indianred-400', // 超時桌
+    4: 'bg-green-500',     // 已結帳
+    5: 'bg-blue-500',      // 預訂桌
+    '未開桌': 'bg-gray-400',
+    '已開桌': 'bg-ash-700',
+    '提醒桌': 'bg-yellow-700',
+    '超時桌': 'bg-indianred-400',
+    '已結帳': 'bg-green-500',
+    '預訂桌': 'bg-blue-500',
+  }
+
+  return map[status] || 'bg-layer-dark-tertiary'
+})
 </script>
 
     <template>
@@ -59,7 +81,7 @@ const getPaymentConfig = (type) => {
             <div class="flex w-24 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
               <div class="text-center font-noto text-xl tracking-[0.2em] leading-tight text-text-on-color" >{{ order.tableNumber }}</div>
             </div>
-            <div class="flex justify-center items-center gap-6 flex-1 self-stretch bg-layer-dark-tertiary">
+            <div class="flex justify-center items-center gap-6 flex-1 self-stretch" :class="statusBgClass">
               <div class="flex items-center gap-2">
                 <div class="flex w-icon-md h-icon-md justify-center items-center">
                   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -103,17 +125,25 @@ const getPaymentConfig = (type) => {
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">未結</div>
               </div>
               <div class="flex justify-end">
-                <div class="text-text-amount-negative text-right font-inter text-4xl font-bold leading-tight">{{ unpaidAmount.toLocaleString() }}</div>
+                <div class="text-text-amount-negative text-right font-inter text-4xl font-bold leading-tight">{{ Math.max(0, unpaidAmount).toLocaleString() }}</div>
               </div>
             </div>
 
             <!-- Change -->
-            <div class="flex h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
+            <div
+              class="flex h-18 items-center self-stretch px-4 border-b border-border-primary"
+              :class="changeAmount > 0 ? 'bg-layer-highlight-red' : 'bg-layer-primary'"
+            >
               <div class="flex items-start flex-1">
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">找零</div>
               </div>
               <div class="flex justify-end">
-                <div class="text-text-amount-positive text-right font-inter text-4xl font-bold leading-tight">{{ changeAmount.toLocaleString() }}</div>
+                <div
+                  class="text-right font-inter text-4xl font-bold leading-tight"
+                  :class="changeAmount > 0 ? 'text-text-amount-negative' : 'text-text-amount-positive'"
+                >
+                  {{ changeAmount.toLocaleString() }}
+                </div>
               </div>
             </div>
           </div>
