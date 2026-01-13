@@ -56,7 +56,7 @@ const getPaymentConfig = (type) => {
         <div class="flex w-full flex-col items-center flex-1 rounded-2xl shadow-xl overflow-hidden bg-layer-primary">
           <!-- Header 訂單資訊列(桌號、訂單狀態)-->
           <div class="flex w-full h-14 items-start">
-            <div class="flex w-32 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
+            <div class="flex w-30 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
               <div class="text-center font-noto text-xl tracking-[0.2em] leading-tight text-text-on-color" >{{ order.tableNumber }}</div>
             </div>
             <div class="flex justify-center items-center gap-6 flex-1 self-stretch bg-layer-dark-tertiary">
@@ -78,55 +78,55 @@ const getPaymentConfig = (type) => {
           <!-- Summary -->
           <div class="flex flex-col items-start self-stretch overflow-hidden">
             <!-- Total -->
-            <div class="flex min-h-16 items-center self-stretch px-6 border-b border-border-primary bg-layer-primary">
+            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
                 <div class="w-full text-text-primary font-noto text-xl font-normal leading-tight">總計</div>
               </div>
               <div class="flex justify-end">
-                <div class="text-text-secondary text-right font-inter text-3xl font-semibold leading-tight">{{ totalAmount.toLocaleString() }}</div>
+                <div class="text-text-amount-positive text-right font-inter text-4xl font-bold leading-tight">{{ totalAmount.toLocaleString() }}</div>
               </div>
             </div>
 
             <!-- Paid -->
-            <div class="flex min-h-16 items-center self-stretch px-6 border-b border-border-primary bg-layer-primary">
+            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">已付</div>
               </div>
               <div class="flex justify-end">
-                <div class="text-text-secondary text-right font-inter text-3xl font-semibold leading-tight">{{ paidAmount.toLocaleString() }}</div>
+                <div class="text-text-amount-positive text-right font-inter text-4xl font-bold leading-tight">{{ paidAmount.toLocaleString() }}</div>
               </div>
             </div>
 
             <!-- Unpaid -->
-            <div class="flex min-h-16 items-center self-stretch px-6 border-b border-border-primary bg-layer-tertiary">
+            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-tertiary">
               <div class="flex items-start flex-1">
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">未結</div>
               </div>
               <div class="flex justify-end">
-                <div class="text-text-error text-right font-inter text-3xl font-semibold leading-tight">{{ unpaidAmount.toLocaleString() }}</div>
+                <div class="text-text-amount-negative text-right font-inter text-4xl font-bold leading-tight">{{ unpaidAmount.toLocaleString() }}</div>
               </div>
             </div>
 
             <!-- Change -->
-            <div class="flex min-h-20 items-center self-stretch px-6 border-b border-border-primary bg-layer-primary">
+            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">找零</div>
               </div>
               <div class="flex justify-end">
-                <div class="text-text-secondary text-right font-inter text-3xl font-semibold leading-tight">{{ changeAmount.toLocaleString() }}</div>
+                <div class="text-text-amount-positive text-right font-inter text-4xl font-bold leading-tight">{{ changeAmount.toLocaleString() }}</div>
               </div>
             </div>
           </div>
 
           <!-- Payment List -->
-          <div class="flex p-6 flex-col items-start gap-3 flex-1 self-stretch bg-layer-secondary overflow-auto">
+          <div class="flex p-4 flex-col items-start gap-2 flex-1 self-stretch bg-layer-secondary overflow-auto">
             <div
               v-for="(payment, index) in payments"
               :key="index"
-              class="flex min-h-16 items-center gap-4 self-stretch rounded-xl bg-layer-primary shadow-sm px-4 py-3"
+              class="flex min-h-16 items-center gap-4 self-stretch rounded-sm bg-layer-primary shadow-sm "
             >
               <div
-                class="flex w-16 justify-center items-center self-stretch rounded-lg"
+                class="flex w-12 justify-center items-center self-stretch rounded-l-sm"
                 :class="getPaymentConfig(payment.type).color"
               >
                 <component
@@ -141,16 +141,16 @@ const getPaymentConfig = (type) => {
                 </div>
               </div>
               <div class="flex justify-end items-center gap-1">
-                <div class="text-text-primary text-right font-inter text-2xl font-medium leading-tight">
+                <div class="text-text-amount-positive text-right font-inter text-2xl font-semibold leading-tight">
                   {{ payment.amount.toLocaleString() }}
                 </div>
               </div>
-              <div class="flex items-center">
+              <div class="flex items-center self-stretch">
                 <button
                   @click="removePayment(index)"
-                  class="flex w-12 h-12 justify-center items-center rounded-lg bg-button-danger hover:bg-button-danger-hover transition-colors group"
+                  class="flex w-16 h-full justify-center items-center bg-button-highlight-red hover:bg-button-highlight-red-hover transition-colors group rounded-r-sm"
                 >
-                  <X class="w-icon-xs h-icon-xs text-text-disabled group-hover:text-text-on-color" />
+                  <X class="w-icon-md h-icon-md text-text-disabled group-hover:text-text-on-color" />
                 </button>
               </div>
             </div>

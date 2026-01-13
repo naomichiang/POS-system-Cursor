@@ -6,7 +6,10 @@ export default {
   ],
   theme: {
     extend: {
-
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+        noto: ['Noto Sans TC', 'sans-serif'],
+      },
     },
   },
   plugins: [],
