@@ -113,8 +113,13 @@
     /* Indianred 系列 */
     --color-indianred-100: #FDECEC;
     --color-indianred-200: #F6C9C9;
+    --color-indianred-300: #F5B4B4;
+    --color-indianred-400: #E07C7C;
     --color-indianred-500: #D35F5F;
     --color-indianred-600: #C64A4A;
+    --color-indianred-700: #AF2C2C;
+    --color-indianred-800: #821E1E;
+    --color-indianred-900: #661616;
 
      /* ============================================================
         2. 語意化 Token (Semantic Tokens)
@@ -146,7 +151,7 @@
      --color-layer-primary-disabled: var(--color-gray-200);
      --color-layer-secondary: var(--color-ash-100);
      --color-layer-secondary-hover: var(--color-ash-200);
-     --color-layer-tertiary: var(--color-ash-100);
+     --color-layer-tertiary: var(--color-ash-200);
      --color-layer-highlight-yellow: var(--color-yellow-100);
      --color-layer-highlight-yellow-hover: var(--color-yellow-200);
      --color-layer-highlight-red: var(--color-indianred-200);
@@ -204,6 +209,11 @@
      --spacing-icon-lg: 28px;
      --spacing-icon-xl: 40px;
 
+     /* Button Widths (以 8pt 為基準) */
+     --spacing-btn-sm: 80px; /* 輔助功能鍵：發票 */
+     --spacing-btn-md: 120px; /* 主要功能鍵：確認、結帳 */
+     --spacing-btn-lg: 200px;
+
      /* ============================================================
         4. 圓角 (Radius)
         ============================================================ */
@@ -212,6 +222,7 @@
      --radius-md: 16px;
      --radius-lg: 40px;
      --radius-xl: 64px;
+
 
      /* ============================================================
         5. 字體族 (Font Family)

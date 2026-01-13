@@ -1,11 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { Delete, Calculator } from 'lucide-vue-next'
 import {
   CircleDollarSign,
   CreditCard,
   Smartphone,
-  Ticket
+  Ticket,
+  Delete,
+  DollarSign
 } from 'lucide-vue-next'
 import { paymentMethodsConfig } from '../config/paymentMethods'
 
@@ -18,7 +19,7 @@ const iconMap = {
 }
 
 // 獲取圖標組件的輔助函數
- 
+
 const getIconComponent = (icon) => {
   if (!icon) return null
   // 如果 icon 是組件，直接返回
@@ -100,20 +101,20 @@ const handleCompleteCheckout = () => {
 
 <template>
   <div
-    class="flex flex-col justify-center items-start flex-1 self-stretch rounded-2xl bg-layer-primary overflow-hidden"
+    class="flex flex-col justify-center items-start flex-1 self-stretch rounded-2xl bg-layer-secondary overflow-hidden"
   >
-    <div class="flex items-start flex-1 self-stretch bg-layer-secondary">
+    <div class="flex items-start flex-1 self-stretch">
       <!-- Input & Numpad -->
       <div
         class="flex flex-col items-center flex-1 self-stretch border-r border-border-primary overflow-hidden"
       >
         <!-- Input Display -->
         <div
-          class="flex h-[170px] px-10 justify-end items-center gap-2 self-stretch border-b-2 border-border-primary bg-layer-primary"
+          class="flex h-[128px] px-10 justify-end items-center gap-2 self-stretch border-b-2 border-border-primary bg-layer-primary"
         >
-          <div class="flex pt-0.5 items-center gap-2.5 self-stretch">
+          <div class="flex pt-0.5 items-center  self-stretch">
             <div class="flex w-icon-lg h-icon-lg justify-center items-center">
-              <Calculator class="w-icon-lg h-icon-lg text-text-tertiary" />
+              <DollarSign class="w-icon-lg h-icon-lg text-yellow-500" />
             </div>
           </div>
           <div
@@ -137,7 +138,7 @@ const handleCompleteCheckout = () => {
               @click="key === 'C' ? handleClear() : key === 'backspace' ? handleBackspace() : handleNumberClick(key)"
               :class="[
                 'flex flex-col justify-center items-center flex-1 self-stretch transition-all',
-                'bg-layer-primary hover:bg-layer-primary-hover active:bg-layer-primary-disabled active:scale-[0.98]',
+                'bg-layer-secondary hover:bg-layer-secondary-hover active:bg-layer-primary-disabled active:scale-[0.98]',
                 'border-border-primary',
                 // 處理邊框，避免重複疊加：最後一行不加底邊框，每行最後一個按鍵不加右邊框
                 rowIndex !== 3 ? 'border-b-2' : '',
@@ -145,13 +146,13 @@ const handleCompleteCheckout = () => {
               ]"
             >
               <template v-if="key === 'backspace'">
-                <Delete class="w-icon-xl h-icon-xl text-text-secondary" />
+                <Delete class="w-icon-lg h-icon-lg text-text-disabled" />
               </template>
               <div
                 v-else
                 :class="[
-                  'self-stretch text-center font-inter text-[40px] font-semibold leading-[120%]',
-                  key === 'C' ? 'text-text-disabled' : 'text-text-secondary'
+                  'self-stretch text-center font-inter text-3xl font-semibold leading-[120%]',
+                  key === 'C' ? 'text-text-disabled' : 'text-ash-700'
                 ]"
               >
                 {{ key }}
@@ -171,10 +172,10 @@ const handleCompleteCheckout = () => {
             :key="method.id"
             @click="handlePayment(method.id)"
             :class="[
-              'flex w-[280px] h-[90px] min-w-[100px] max-w-[280px] px-4 justify-center items-center transition-colors',
+              'flex w-[240px] h-[80px] min-w-[100px] max-w-[240px] px-4 justify-center items-center transition-colors',
               method.paddingClass,
-              'bg-layer-dark-secondary hover:bg-layer-dark-tertiary',
-              'active:bg-layer-dark-tertiary active:scale-95'
+              'bg-button-primary hover:bg-button-primary-hover',
+              'active:bg-button-primary-disabled active:scale-[0.98]'
             ]"
           >
             <!-- Icon (動態渲染，根據配置決定是否顯示) -->
@@ -190,7 +191,7 @@ const handleCompleteCheckout = () => {
 
             <!-- Label -->
             <div
-              class="text-text-on-color text-center font-noto text-[22px] font-medium leading-[120%]"
+              class="text-text-on-color text-center font-noto text-2xl font-medium leading-[120%]"
             >
               {{ method.label }}
             </div>
@@ -201,34 +202,26 @@ const handleCompleteCheckout = () => {
 
     <!-- Bottom Actions -->
     <div
-      class="flex h-[122px] p-4 items-start gap-4 self-stretch border-t border-border-primary"
+      class="flex h-[112px] p-4 items-start gap-4 self-stretch border-t border-border-primary"
     >
       <button
-        class="flex w-[140px] h-[90px] px-4 justify-center items-center gap-2 rounded-2xl bg-layer-dark-secondary hover:bg-layer-dark-tertiary transition-colors"
-      >
+        class="flex w-btn-md h-full px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary hover:bg-button-primary-hover transition-colors">
         <div
-          class="w-[87px] shrink-0 text-text-on-color text-center font-noto text-[28px] font-medium leading-[128%] tracking-[1.12px]"
-        >
+          class="shrink-0 text-text-on-color text-center font-noto text-3xl font-medium leading-[128%] tracking-[1.12px]">
           發票
         </div>
       </button>
-      <div class="flex justify-end items-center gap-4 flex-1">
+      <div class="flex h-full justify-end items-center gap-4 flex-1">
         <button
-          class="flex w-[180px] h-[90px] px-4 justify-center items-center gap-2 rounded-2xl bg-layer-dark-secondary hover:bg-layer-dark-tertiary transition-colors"
-        >
-          <div
-            class="w-[87px] shrink-0 text-text-on-color text-center font-noto text-[28px] font-medium leading-[128%] tracking-[1.12px]"
-          >
+          class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary hover:bg-button-prmary-hover transition-colors">
+          <div class="shrink-0 text-text-on-color text-center font-noto text-3xl font-medium leading-[128%] tracking-[1.12px]">
             暫存
           </div>
         </button>
         <button
-          class="flex w-[220px] h-[90px] min-w-[180px] max-w-[220px] px-4 justify-center items-center gap-2 rounded-2xl bg-button-danger hover:bg-button-danger-hover transition-colors"
-          @click="handleCompleteCheckout"
-        >
-          <div
-            class="text-text-on-color text-center font-noto text-[28px] font-medium leading-[128%] tracking-[1.12px]"
-          >
+          class="flex w-btn-lg h-full min-w-[120px] max-w-[220px] px-4 justify-center items-center rounded-2xl bg-button-danger hover:bg-button-danger-hover transition-colors"
+          @click="handleCompleteCheckout">
+          <div class="shrink-0 text-text-on-color text-center font-noto text-3xl font-medium leading-[128%] tracking-[1.12px]">
             完成結帳
           </div>
         </button>

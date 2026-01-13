@@ -150,7 +150,7 @@ const getPaymentConfig = (type) => {
                   @click="removePayment(index)"
                   class="flex w-16 h-full justify-center items-center bg-button-highlight-red hover:bg-button-highlight-red-hover transition-colors group rounded-r-sm"
                   >
-                  <X class="w-icon-lg h-icon-lg text-text-disabled group-hover:text-text-on-color" />
+                  <X class="w-icon-lg h-icon-lg text-text-disabled" />
                 </button>
               </div>
             </div>
