@@ -1,15 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 @theme {
+
+ /* ============================================================
+     1. 基礎色盤 (Primitives)
+     ============================================================ */
+
     /* Ash 系列 */
     --color-ash-100: #EEF5F6;
     --color-ash-200: #DFE9ED;
@@ -19,19 +26,165 @@
     --color-ash-700: #516F9C;
     --color-ash-800: #2E446D;
     --color-ash-900: #202F4F;
-  
+
+     /* Gray Scale */
+     --color-gray-100: #F3F7FE;
+     --color-gray-200: #E9EEF8;
+     --color-gray-300: #DBE0F0;
+     --color-gray-400: #BCC1CE;
+     --color-gray-500: #9297A1;
+     --color-gray-600: #65686F;
+     --color-gray-700: #3C3E42;
+     --color-gray-800: #1D1E1F;
+     --color-gray-900: #090A0A;
+
+     /* Blue Scale */
+     --color-blue-100: #E7F0FC;
+     --color-blue-200: #CDE0F7;
+     --color-blue-300: #8EBAED;
+     --color-blue-400: #73A1DD;
+     --color-blue-500: #5784C8;
+     --color-blue-600: #3C64B3;
+     --color-blue-700: #2242A3;
+     --color-blue-800: #1B2C72;
+     --color-blue-900: #152559;
+
+     /* Red Scale */
+     --color-red-100: #FFF5F5;
+     --color-red-200: #FFD3D6;
+     --color-red-300: #FFA9B0;
+     --color-red-400: #F8737E;
+     --color-red-500: #ED3A4B;
+     --color-red-600: #DD0C22;
+     --color-red-700: #BC0210;
+     --color-red-800: #970209;
+     --color-red-900: #700608;
+
+     /* Yellow Scale */
+     --color-yellow-100: #FFF5E2;
+     --color-yellow-200: #FCE5C6;
+     --color-yellow-300: #FBD7A3;
+     --color-yellow-400: #F9C778;
+     --color-yellow-500: #F7B84B;
+     --color-yellow-600: #F6A542;
+     --color-yellow-700: #F49642;
+     --color-yellow-800: #F07E32;
+     --color-yellow-900: #ED6A12;
+
+     /* Green Scale */
+     --color-green-100: #CFF9DE;
+     --color-green-200: #9BEFC4;
+     --color-green-300: #6DE1B2;
+     --color-green-400: #42D0A5;
+     --color-green-500: #1ABC9C;
+     --color-green-600: #199C85;
+     --color-green-700: #177E6D;
+     --color-green-800: #146055;
+     --color-green-900: #10443D;
+
+     /* Special Scales */
+     --color-cadetblue-600: #33A2CE;
+     --color-raspberry-600: #DC193C;
+
+     --color-cobalt-400: #184FEB;
+     --color-cobalt-600: #020888;
+     --color-purple-400: #3B199C;
+
     /* Indianred 系列 */
     --color-indianred-100: #FDECEC;
+    --color-indianred-200: #F6C9C9;
+    --color-indianred-500: #D35F5F;
     --color-indianred-600: #C64A4A;
-  
-    /* 其他顏色 */
-    --color-yellow-400: #F9C778;
-    --color-green-500: #1ABC9C;
-    --color-gray-500: #9297A1;
-    --color-gray-700: #3C3E42;
-  
-    /* 邊框顏色 */
-    --color-border-primary: #DBE0F0;
+
+     /* ============================================================
+        2. 語意化 Token (Semantic Tokens)
+        ============================================================ */
+
+     /* Toast */
+     --color-toast-primary: var(--color-blue-700);
+     --color-toast-success: var(--color-green-500);
+     --color-toast-error: var(--color-red-600);
+     --color-toast-warning: var(--color-yellow-600);
+
+     /* Text */
+     --color-text-primary: var(--color-gray-900);
+     --color-text-secondary: var(--color-blue-900);
+     --color-text-tertiary: var(--color-blue-500);
+     --color-text-helper: var(--color-gray-600);
+     --color-text-disabled: var(--color-gray-500);
+     --color-text-placeholder: var(--color-gray-400);
+     --color-text-on-color: var(--color-white);
+     --color-text-error: var(--color-red-600);
+     --color-text-success: var(--color-green-500);
+     --color-text-warning: var(--color-yellow-500);
+
+     /* Layer Backgrounds */
+     --color-layer-primary: var(--color-white);
+     --color-layer-primary-hover: var(--color-blue-100);
+     --color-layer-primary-disabled: var(--color-gray-200);
+     --color-layer-secondary: var(--color-blue-100);
+     --color-layer-secondary-hover: var(--color-blue-200);
+     --color-layer-tertiary: var(--color-yellow-100);
+     --color-layer-tertiary-hover: var(--color-yellow-200);
+     --color-layer-zebra: var(--color-gray-100);
+     --color-layer-total: var(--color-red-100);
+     --color-layer-highlight-red: var(--color-indianred-200);
+
+     /* Buttons */
+     --color-button-primary: var(--color-blue-700);
+     --color-button-primary-hover: var(--color-blue-900);
+     --color-button-primary-disabled: var(--color-blue-200);
+     --color-button-secondary: var(--color-blue-400);
+     --color-button-secondary-hover: var(--color-blue-600);
+     --color-button-danger: var(--color-red-600);
+     --color-button-danger-hover: var(--color-red-800);
+
+     /* Borders */
+     --color-border-primary: var(--color-gray-300);
+     --color-border-primary-focus: var(--color-blue-700);
+     --color-border-error: var(--color-red-600);
+
+     /* Dark Theme Semantic Tokens (for TopBar and Sidebar) */
+     --color-layer-dark-primary: var(--color-ash-900);
+     --color-layer-dark-secondary: var(--color-ash-800);
+     --color-layer-dark-tertiary: var(--color-ash-700);
+     --color-text-dark-primary: var(--color-white);
+     --color-text-dark-secondary: var(--color-ash-200);
+     --color-border-dark-primary: var(--color-ash-800);
+
+     /* ============================================================
+        3. 間距 (Spacing) - 以 8 點網格為基準
+        ============================================================ */
+     --spacing-8-0-5: 4px; /* 對應 class: p-8-0.5, gap-8-0.5 */
+     --spacing-8-1: 8px;
+     --spacing-8-2: 16px;
+     --spacing-8-3: 24px;
+     --spacing-8-4: 32px;
+     --spacing-8-5: 40px;
+     --spacing-8-6: 48px;
+     --spacing-8-7: 56px;
+     --spacing-8-8: 64px;
+     --spacing-8-10: 80px;
+     --spacing-8-12: 96px;
+     --spacing-8-14: 112px;
+     --spacing-8-16: 128px;
+
+     /* 圖示專用間距 (方便使用 w-icon-md 等指令) */
+     --spacing-icon-xs: 14px;
+     --spacing-icon-sm: 16px;
+     --spacing-icon-md: 20px;
+     --spacing-icon-lg: 28px;
+     --spacing-icon-xl: 40px;
+
+     /* ============================================================
+        4. 圓角 (Radius)
+        ============================================================ */
+     --radius-xs: 4px;
+     --radius-sm: 8px;
+     --radius-md: 16px;
+     --radius-lg: 40px;
+     --radius-xl: 64px;
+
   }
 
 body {

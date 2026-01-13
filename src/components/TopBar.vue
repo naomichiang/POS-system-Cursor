@@ -41,7 +41,7 @@ const quickActions = [
 </script>
 
 <template>
-    <div class="flex justify-between items-center bg-ash-900 shadow-lg h-18 overflow-hidden border-b border-ash-800">
+    <div class="flex justify-between items-center bg-layer-dark-primary shadow-lg h-18 overflow-hidden border-b border-border-dark-primary">
 
       <div class="flex items-center h-full">
         <div class="flex justify-center items-center w-[180px] h-full bg-black/50 shrink-0">
@@ -57,9 +57,9 @@ const quickActions = [
           <button
             v-for="(item, index) in quickActions"
             :key="index"
-            class="flex flex-col justify-center items-center w-24 h-full gap-1 hover:bg-ash-800 active:bg-black/50 transition-colors shrink-0">
-            <component :is="item.icon" class="w-6 h-6 text-ash-200" />
-            <div class="text-ash-200 text-center font-noto text-lg font-medium leading-none">
+            class="flex flex-col justify-center items-center w-24 h-full gap-1 hover:bg-layer-dark-secondary active:bg-black/50 transition-colors shrink-0">
+            <component :is="item.icon" class="w-icon-sm h-icon-sm text-text-dark-secondary" />
+            <div class="text-text-dark-secondary text-center font-noto text-lg font-medium leading-none">
               {{ item.label }}
             </div>
           </button>
@@ -67,18 +67,18 @@ const quickActions = [
       </div>
 
       <div class="flex items-center h-full">
-        <button class="flex justify-center items-center w-18 h-full hover:bg-ash-800 transition-colors">
-          <Bell :size="20" class="text-ash-200" />
+        <button class="flex justify-center items-center w-18 h-full hover:bg-layer-dark-secondary transition-colors">
+          <Bell class="w-icon-md h-icon-md text-text-dark-secondary" />
         </button>
 
-        <div class="flex pl-6 pr-12 items-center h-full">
-          <div class="text-white font-inter text-xl font-medium tracking-wider ">
+        <div class="flex items-center h-full">
+          <div class="text-text-dark-primary font-inter text-xl font-medium tracking-wider ">
             {{ currentDateTime }}
           </div>
         </div>
         <div class="w-6 h-full"></div>
-        <button class="flex justify-center items-center w-20 h-full bg-ash-800 hover:bg-ash-700 active:bg-ash-600 transition-colors">
-          <Menu :size="28" class="text-white" />
+        <button class="flex justify-center items-center w-20 h-full bg-layer-dark-secondary hover:bg-layer-dark-tertiary active:bg-layer-dark-primary transition-colors">
+          <Menu class="w-icon-lg h-icon-lg text-text-dark-primary" />
         </button>
       </div>
     </div>

@@ -1,9 +1,20 @@
 <script setup>
 import { computed } from 'vue'
-import { Banknote, CreditCard, Smartphone, Ticket, X } from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
+import { getPaymentMethodById } from '../config/paymentMethods'
 
 // 定義 props 和 emits（使用純 JavaScript，避免 TS 解析問題）
 const props = defineProps({
+  order: {
+    type: Object,
+    default: () => ({
+      tableNumber: '2A桌',
+      diners: 5,
+      status: '已開桌',
+      diningTime: '01:13',
+      totalAmount: 17500
+    }),
+  },
   payments: {
     type: Array,
     default: () => [],
@@ -12,8 +23,8 @@ const props = defineProps({
 
 const emit = defineEmits(['remove-payment'])
 
-// 計算總計金額 (假設總計為 17500)
-const totalAmount = 17500
+// 計算總計金額
+const totalAmount = computed(() => props.order.totalAmount || 0)
 
 // 計算已付金額
 const paidAmount = computed(() => {
@@ -22,50 +33,44 @@ const paidAmount = computed(() => {
 
 // 計算未結金額
 const unpaidAmount = computed(() => {
-  return totalAmount - paidAmount.value
+  return totalAmount.value - paidAmount.value
 })
 
 // 計算找零金額
 const changeAmount = computed(() => {
-  return paidAmount.value > totalAmount ? paidAmount.value - totalAmount : 0
+  return paidAmount.value > totalAmount.value ? paidAmount.value - totalAmount.value : 0
 })
 
 const removePayment = (index) => {
   emit('remove-payment', index)
 }
 
-// 根據付款類型獲取顯示名稱
-const getPaymentLabel = (type) => {
-  const labels = {
-    cash: '現金',
-    credit: '信用卡',
-    mobile: '電子支付',
-    gift: 'SOGO 現金券',
-  }
-  return labels[type] || type
+// 根據付款類型獲取配置（使用共享配置）
+const getPaymentConfig = (type) => {
+  return getPaymentMethodById(type) || { displayLabel: type, icon: null, color: 'bg-gray-500' }
 }
 </script>
 
     <template>
-      <div class="flex h-[938px] flex-col justify-center items-center">
-        <div class="flex w-[440px] flex-col items-center flex-1 rounded-2xl shadow-lg overflow-hidden">
-          <!-- Header -->
-          <div class="flex w-[440px] h-[72px] items-start">
-            <div class="flex w-[160px] px-6 flex-col justify-center items-center shrink-0 self-stretch bg-ash-900">
-              <div class="text-white text-center font-noto text-[22px] font-normal leading-[120%]">2Ａ桌</div>
+      <div class="flex h-screen flex-col justify-center items-center">
+        <div class="flex w-full flex-col items-center flex-1 rounded-2xl shadow-xl overflow-hidden bg-layer-primary">
+          <!-- Header 訂單資訊列(桌號、訂單狀態)-->
+          <div class="flex w-full h-14 items-start">
+            <div class="flex w-32 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
+              <div class="text-center font-noto text-xl tracking-[0.2em] leading-tight text-text-on-color" >{{ order.tableNumber }}</div>
             </div>
-            <div class="flex justify-center items-center gap-6 flex-1 self-stretch bg-ash-700">
-              <div class="flex items-center gap-1">
-                <div class="flex w-8 h-8 justify-center items-center">
+            <div class="flex justify-center items-center gap-6 flex-1 self-stretch bg-layer-dark-tertiary">
+              <div class="flex items-center gap-2">
+                <div class="flex w-icon-md h-icon-md justify-center items-center">
                   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15.9997 16C14.533 16 13.2775 15.4778 12.233 14.4333C11.1886 13.3889 10.6663 12.1333 10.6663 10.6666C10.6663 9.19998 11.1886 7.94442 12.233 6.89998C13.2775 5.85554 14.533 5.33331 15.9997 5.33331C17.4663 5.33331 18.7219 5.85554 19.7663 6.89998C20.8108 7.94442 21.333 9.19998 21.333 10.6666C21.333 12.1333 20.8108 13.3889 19.7663 14.4333C18.7219 15.4778 17.4663 16 15.9997 16ZM5.33301 24V22.9333C5.33301 22.1778 5.52767 21.4835 5.91701 20.8506C6.30634 20.2178 6.82279 19.7342 7.46634 19.4C8.84412 18.7111 10.2441 18.1946 11.6663 17.8506C13.0886 17.5066 14.533 17.3342 15.9997 17.3333C17.4663 17.3324 18.9108 17.5049 20.333 17.8506C21.7552 18.1964 23.1552 18.7129 24.533 19.4C25.1775 19.7333 25.6943 20.2169 26.0837 20.8506C26.473 21.4844 26.6672 22.1786 26.6663 22.9333V24C26.6663 24.7333 26.4055 25.3613 25.8837 25.884C25.3619 26.4066 24.7339 26.6675 23.9997 26.6666H7.99967C7.26634 26.6666 6.63879 26.4058 6.11701 25.884C5.59523 25.3622 5.3339 24.7342 5.33301 24Z" fill="white"/>
                   </svg>
                 </div>
-                <div class="text-white font-inter text-[22px] font-medium leading-[120%]">5</div>
+                <div class="text-text-on-color font-inter text-xl font-medium leading-tight">{{ order.diners }}</div>
               </div>
               <div class="flex items-center gap-6">
-                <div class="text-white font-noto text-[22px] font-normal leading-[120%]">已開桌</div>
-                <div class="w-[72px] text-white text-center font-inter text-[22px] font-medium leading-[120%]">01:13</div>
+                <div class="text-text-on-color font-noto text-xl font-normal leading-tight">{{ order.status }}</div>
+                <div class="w-18 text-text-on-color text-center font-inter text-xl font-medium leading-tight">{{ order.diningTime }}</div>
               </div>
             </div>
           </div>
@@ -73,92 +78,79 @@ const getPaymentLabel = (type) => {
           <!-- Summary -->
           <div class="flex flex-col items-start self-stretch overflow-hidden">
             <!-- Total -->
-            <div class="flex min-h-[90px] px-6 items-center self-stretch border-b border-ash-200 bg-white">
+            <div class="flex min-h-16 items-center self-stretch px-6 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
-                <div class="max-w-[192px] text-gray-700 font-noto text-[22px] font-normal leading-[120%]">總計</div>
+                <div class="w-full text-text-primary font-noto text-xl font-normal leading-tight">總計</div>
               </div>
-              <div class="flex pl-6 justify-end items-start gap-1">
-                <div class="text-ash-800 text-right font-inter text-[40px] font-semibold leading-[120%]">17,500</div>
+              <div class="flex justify-end">
+                <div class="text-text-secondary text-right font-inter text-3xl font-semibold leading-tight">{{ totalAmount.toLocaleString() }}</div>
               </div>
             </div>
 
             <!-- Paid -->
-            <div class="flex min-h-[90px] px-6 items-center self-stretch border-b border-ash-200 bg-white">
+            <div class="flex min-h-16 items-center self-stretch px-6 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
-                <div class="max-w-[192px] text-gray-700 font-noto text-[22px] font-normal leading-[120%]">已付</div>
+                <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">已付</div>
               </div>
-              <div class="flex pl-6 justify-end items-start gap-1">
-                <div class="text-ash-800 text-right font-inter text-[40px] font-semibold leading-[120%]">{{ paidAmount.toLocaleString() }}</div>
+              <div class="flex justify-end">
+                <div class="text-text-secondary text-right font-inter text-3xl font-semibold leading-tight">{{ paidAmount.toLocaleString() }}</div>
               </div>
             </div>
 
             <!-- Unpaid -->
-            <div class="flex min-h-[90px] px-6 items-center self-stretch border-b border-ash-200 bg-[#FFF5E2]">
+            <div class="flex min-h-16 items-center self-stretch px-6 border-b border-border-primary bg-layer-tertiary">
               <div class="flex items-start flex-1">
-                <div class="max-w-[192px] text-gray-700 font-noto text-[22px] font-normal leading-[120%]">未結</div>
+                <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">未結</div>
               </div>
-              <div class="flex pl-6 justify-end items-start gap-1">
-                <div class="text-indianred-600 text-right font-inter text-[40px] font-semibold leading-[120%]">{{ unpaidAmount.toLocaleString() }}</div>
+              <div class="flex justify-end">
+                <div class="text-text-error text-right font-inter text-3xl font-semibold leading-tight">{{ unpaidAmount.toLocaleString() }}</div>
               </div>
             </div>
 
             <!-- Change -->
-            <div class="flex min-h-[90px] px-6 items-center self-stretch border-b border-ash-200 bg-white">
+            <div class="flex min-h-20 items-center self-stretch px-6 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
-                <div class="max-w-[192px] text-gray-700 font-noto text-[22px] font-normal leading-[120%]">找零</div>
+                <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">找零</div>
               </div>
-              <div class="flex pl-6 justify-end items-start gap-1">
-                <div class="text-ash-800 text-right font-inter text-[40px] font-semibold leading-[120%]">{{ changeAmount.toLocaleString() }}</div>
+              <div class="flex justify-end">
+                <div class="text-text-secondary text-right font-inter text-3xl font-semibold leading-tight">{{ changeAmount.toLocaleString() }}</div>
               </div>
             </div>
           </div>
 
           <!-- Payment List -->
-          <div class="flex p-4 flex-col items-start gap-2 flex-1 self-stretch bg-ash-200 overflow-auto">
+          <div class="flex p-6 flex-col items-start gap-3 flex-1 self-stretch bg-layer-secondary overflow-auto">
             <div
               v-for="(payment, index) in payments"
               :key="index"
-              class="flex h-[90px] min-h-[72px] items-center gap-6 self-stretch rounded-2xl bg-white"
+              class="flex min-h-16 items-center gap-4 self-stretch rounded-xl bg-layer-primary shadow-sm px-4 py-3"
             >
               <div
-                class="flex w-[60px] justify-center items-center self-stretch"
-                :class="payment.type === 'cash' ? 'bg-yellow-400' : payment.type === 'credit' ? 'bg-green-500' : payment.type === 'mobile' ? 'bg-blue-500' : 'bg-purple-500'"
+                class="flex w-16 justify-center items-center self-stretch rounded-lg"
+                :class="getPaymentConfig(payment.type).color"
               >
-                <div class="flex w-8 h-8 justify-center items-center shrink-0">
-                  <Banknote
-                    v-if="payment.type === 'cash'"
-                    class="w-8 h-8 text-white"
-                  />
-                  <CreditCard
-                    v-else-if="payment.type === 'credit'"
-                    class="w-8 h-8 text-white"
-                  />
-                  <Smartphone
-                    v-else-if="payment.type === 'mobile'"
-                    class="w-8 h-8 text-white"
-                  />
-                  <Ticket
-                    v-else
-                    class="w-8 h-8 text-white"
-                  />
+                <component
+                  v-if="getPaymentConfig(payment.type).icon"
+                  :is="getPaymentConfig(payment.type).icon"
+                  class="w-icon-sm h-icon-sm text-text-on-color"
+                />
+              </div>
+              <div class="flex items-center flex-1">
+                <div class="max-w-32 text-text-primary font-noto text-lg font-normal leading-tight">
+                  {{ getPaymentConfig(payment.type).displayLabel }}
                 </div>
               </div>
-              <div class="flex items-start flex-1">
-                <div class="max-w-[128px] text-gray-700 font-noto text-[22px] font-normal leading-[120%]">
-                  {{ getPaymentLabel(payment.type) }}
-                </div>
-              </div>
-              <div class="flex justify-end items-start gap-1">
-                <div class="text-gray-700 text-right font-inter text-[28px] font-medium leading-[120%]">
+              <div class="flex justify-end items-center gap-1">
+                <div class="text-text-primary text-right font-inter text-2xl font-medium leading-tight">
                   {{ payment.amount.toLocaleString() }}
                 </div>
               </div>
-              <div class="flex items-center self-stretch">
+              <div class="flex items-center">
                 <button
                   @click="removePayment(index)"
-                  class="flex w-[90px] flex-col justify-center items-center self-stretch aspect-square bg-indianred-100 hover:bg-indianred-600 transition-colors group"
+                  class="flex w-12 h-12 justify-center items-center rounded-lg bg-button-danger hover:bg-button-danger-hover transition-colors group"
                 >
-                  <X class="w-8 h-8 text-[#92A7C0] group-hover:text-white" />
+                  <X class="w-icon-xs h-icon-xs text-text-disabled group-hover:text-text-on-color" />
                 </button>
               </div>
             </div>

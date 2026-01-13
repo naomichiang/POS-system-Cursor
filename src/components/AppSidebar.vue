@@ -22,16 +22,15 @@ const menuItems = [
 
 <template>
   <div
-    class="flex flex-col justify-between items-center w-20 shrink-0 bg-ash-800 h-full min-w-[64px]"
-  >
+    class="flex flex-col justify-between items-center w-20 shrink-0 bg-layer-dark-secondary h-full min-w-[64px]">
     <div class="flex flex-col items-center w-full">
       <div
         v-for="(item, index) in menuItems"
         :key="index"
-        class="flex flex-col justify-center items-center w-full h-24 gap-1 cursor-pointer hover:bg-ash-700 transition-colors"
+        class="flex flex-col justify-center items-center w-full h-24 gap-1 cursor-pointer hover:bg-layer-dark-tertiary transition-colors"
       >
-        <component :is="item.icon" class="w-6 h-6 text-ash-200" />
-        <div class="text-white text-center font-noto text-lg font-medium mb-1">
+        <component :is="item.icon" class="w-icon-sm h-icon-sm text-text-dark-secondary" />
+        <div class="text-text-dark-primary text-center font-noto text-lg font-medium mb-1">
           {{ item.label }}
         </div>
       </div>
@@ -39,10 +38,10 @@ const menuItems = [
 
     <!-- User Profile -->
     <div
-      class="flex w-full h-20 pb-1 flex-col justify-center items-center gap-1 self-stretch bg-ash-700"
+      class="flex w-full h-20 pb-1 flex-col justify-center items-center gap-1 self-stretch bg-layer-dark-tertiary"
     >
-      <UserCircle2 class="w-6 h-6 text-white" />
-      <div class="text-white text-center font-noto text-md font-medium mt-1">
+      <UserCircle2 class="w-icon-sm h-icon-sm text-text-dark-primary" />
+      <div class="text-text-dark-primary text-center font-noto text-md font-medium">
         王小明
       </div>
     </div>
