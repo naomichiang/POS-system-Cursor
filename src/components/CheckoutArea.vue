@@ -3,9 +3,9 @@ import { ref, computed } from 'vue'
 import {
   Delete,
   DollarSign,
-  X,
 } from 'lucide-vue-next'
 import { paymentMethodsConfig } from '../config/paymentMethods'
+import BaseModal from './BaseModal.vue'
 
 // Props：來自父層的訂單與付款資訊
 const props = defineProps({
@@ -288,63 +288,16 @@ const handleCompleteCheckout = () => {
       </div>
     </div>
 
-    <!-- 統一彈窗樣式：白底圓角 + 燈箱；點彈窗外無作用 -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-    >
-      <div
-        class="relative w-[420px] max-w-[90vw] rounded-2xl bg-white shadow-2xl px-6 py-5"
-      >
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-text-primary font-noto text-xl font-semibold leading-tight">
-            {{ modalTitle }}
-          </h2>
-          <button
-            type="button"
-            class="flex w-icon-lg h-icon-lg items-center justify-center rounded-full hover:bg-ash-100 transition-colors"
-            @click="closeModal"
-          >
-            <X class="w-icon-md h-icon-md text-text-disabled" />
-          </button>
-        </div>
-
-        <!-- Content -->
-        <div class="mb-6">
-          <p class="text-text-secondary font-noto text-lg leading-relaxed">
-            {{ modalMessage }}
-          </p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex justify-end gap-3">
-          <button
-            v-if="modalType === 'change'"
-            type="button"
-            class="min-w-btn-sm px-4 h-10 rounded-2xl bg-button-secondary hover:bg-button-secondary-hover text-text-on-color font-noto text-base font-medium"
-            @click="closeModal"
-          >
-            返回
-          </button>
-          <button
-            v-if="modalType === 'change'"
-            type="button"
-            class="min-w-btn-md px-4 h-10 rounded-2xl bg-button-primary hover:bg-button-primary-hover text-text-on-color font-noto text-base font-medium"
-            @click="handleCompleteChange"
-          >
-            完成找零
-          </button>
-          <button
-            v-if="modalType === 'unpaid'"
-            type="button"
-            class="min-w-btn-md px-4 h-10 rounded-2xl bg-button-primary hover:bg-button-primary-hover text-text-on-color font-noto text-base font-medium"
-            @click="closeModal"
-          >
-            知道了
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- 共用燈箱 BaseModal：白底圓角 + 燈箱；點彈窗外無作用 -->
+    <BaseModal
+      :open="showModal"
+      :title="modalTitle"
+      :content="modalMessage"
+      :primary-button-text="modalType === 'change' ? '完成找零' : '知道了'"
+      :secondary-button-text="modalType === 'change' ? '返回' : ''"
+      @close="closeModal"
+      @secondary="closeModal"
+      @primary="modalType === 'change' ? handleCompleteChange() : closeModal()"
+    />
   </div>
 </template>
