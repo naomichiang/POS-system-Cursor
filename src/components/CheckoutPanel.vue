@@ -56,7 +56,7 @@ const getPaymentConfig = (type) => {
         <div class="flex w-full flex-col items-center flex-1 rounded-2xl shadow-xl overflow-hidden bg-layer-primary">
           <!-- Header 訂單資訊列(桌號、訂單狀態)-->
           <div class="flex w-full h-14 items-start">
-            <div class="flex w-30 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
+            <div class="flex w-24 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
               <div class="text-center font-noto text-xl tracking-[0.2em] leading-tight text-text-on-color" >{{ order.tableNumber }}</div>
             </div>
             <div class="flex justify-center items-center gap-6 flex-1 self-stretch bg-layer-dark-tertiary">
@@ -119,11 +119,11 @@ const getPaymentConfig = (type) => {
           </div>
 
           <!-- Payment List -->
-          <div class="flex p-4 flex-col items-start gap-2 flex-1 self-stretch bg-layer-secondary overflow-auto">
+          <div class="flex p-3 flex-col items-start gap-2 flex-1 self-stretch bg-layer-secondary overflow-auto">
             <div
               v-for="(payment, index) in payments"
               :key="index"
-              class="flex min-h-16 items-center gap-4 self-stretch rounded-sm bg-layer-primary shadow-sm "
+              class="flex min-h-16 items-center gap-3 self-stretch rounded-sm bg-layer-primary shadow-sm "
             >
               <div
                 class="flex w-12 justify-center items-center self-stretch rounded-l-sm"
@@ -132,7 +132,7 @@ const getPaymentConfig = (type) => {
                 <component
                   v-if="getPaymentConfig(payment.type).icon"
                   :is="getPaymentConfig(payment.type).icon"
-                  class="w-icon-sm h-icon-sm text-text-on-color"
+                  class="w-icon-md h-icon-md text-text-on-color"
                 />
               </div>
               <div class="flex items-center flex-1">
@@ -149,8 +149,8 @@ const getPaymentConfig = (type) => {
                 <button
                   @click="removePayment(index)"
                   class="flex w-16 h-full justify-center items-center bg-button-highlight-red hover:bg-button-highlight-red-hover transition-colors group rounded-r-sm"
-                >
-                  <X class="w-icon-md h-icon-md text-text-disabled group-hover:text-text-on-color" />
+                  >
+                  <X class="w-icon-lg h-icon-lg text-text-disabled group-hover:text-text-on-color" />
                 </button>
               </div>
             </div>

@@ -34,7 +34,7 @@
         <main class="flex flex-1 p-4 gap-4 min-h-0 min-w-0">
           <!-- Checkout Panel -->
           <CheckoutPanel
-          class="w-[320px] h-full shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden"
+          class="w-[330px] h-full shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden"
           :payments="payments"
           @remove-payment="handleRemovePayment"
           />
