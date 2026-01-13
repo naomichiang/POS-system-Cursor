@@ -209,7 +209,7 @@
      --spacing-icon-lg: 28px;
      --spacing-icon-xl: 40px;
 
-     /* Button Widths (以 8pt 為基準) */
+     /* LabelButton Widths (以 8pt 為基準) */
      --spacing-btn-sm: 80px; /* 輔助功能鍵：發票 */
      --spacing-btn-md: 120px; /* 主要功能鍵：確認、結帳 */
      --spacing-btn-lg: 200px;

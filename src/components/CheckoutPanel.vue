@@ -141,7 +141,7 @@ const getPaymentConfig = (type) => {
                 </div>
               </div>
               <div class="flex justify-end items-center gap-1">
-                <div class="text-text-amount-positive text-right font-inter text-2xl font-semibold leading-tight">
+                <div class="text-text-amount-positive text-right font-inter text-2xl font-bold tracking-[-0.02em] leading-tight">
                   {{ payment.amount.toLocaleString() }}
                 </div>
               </div>

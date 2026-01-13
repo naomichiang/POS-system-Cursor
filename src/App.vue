@@ -40,7 +40,7 @@
           />
           <!-- Checkout Area -->
           <CheckoutArea
-            class="flex-1 bg-white rounded-2xl shadow-sm border border-ash-200 overflow-y-auto"
+            class="flex-1 bg-white rounded-2xl shadow-sm  overflow-y-auto"
             @add-payment="handleAddPayment"
           />
         </main>

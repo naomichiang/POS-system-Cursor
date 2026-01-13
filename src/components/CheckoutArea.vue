@@ -110,7 +110,7 @@ const handleCompleteCheckout = () => {
       >
         <!-- Input Display -->
         <div
-          class="flex h-[128px] px-10 justify-end items-center gap-2 self-stretch border-b-2 border-border-primary bg-layer-primary"
+          class="flex h-8-16 px-10 justify-end items-center gap-2 self-stretch border-b-2 border-border-primary bg-layer-primary"
         >
           <div class="flex pt-0.5 items-center  self-stretch">
             <div class="flex w-icon-lg h-icon-lg justify-center items-center">
@@ -163,7 +163,7 @@ const handleCompleteCheckout = () => {
       </div>
 
       <!-- Payment Methods -->
-      <div class="flex flex-col items-start self-stretch border-r border-border-primary">
+      <div class="flex flex-col items-start self-stretch">
         <div
           class="flex flex-col items-start gap-px flex-1 self-stretch overflow-hidden"
         >
@@ -172,7 +172,7 @@ const handleCompleteCheckout = () => {
             :key="method.id"
             @click="handlePayment(method.id)"
             :class="[
-              'flex w-[240px] h-[80px] min-w-[100px] max-w-[240px] px-4 justify-center items-center transition-colors',
+              'flex w-btn-lg h-[80px] min-w-[100px] max-w-[240px] px-4 justify-center items-center transition-colors',
               method.paddingClass,
               'bg-button-primary hover:bg-button-primary-hover',
               'active:bg-button-primary-disabled active:scale-[0.98]'
@@ -191,7 +191,7 @@ const handleCompleteCheckout = () => {
 
             <!-- Label -->
             <div
-              class="text-text-on-color text-center font-noto text-2xl font-medium leading-[120%]"
+              class="text-text-on-color text-center font-noto text-xl font-medium leading-[120%]"
             >
               {{ method.label }}
             </div>
@@ -202,26 +202,26 @@ const handleCompleteCheckout = () => {
 
     <!-- Bottom Actions -->
     <div
-      class="flex h-[112px] p-4 items-start gap-4 self-stretch border-t border-border-primary"
+      class="flex h-8-14 p-4 items-start gap-4 self-stretch border-t border-border-primary"
     >
       <button
         class="flex w-btn-md h-full px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary hover:bg-button-primary-hover transition-colors">
         <div
-          class="shrink-0 text-text-on-color text-center font-noto text-3xl font-medium leading-[128%] tracking-[1.12px]">
+          class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
           發票
         </div>
       </button>
       <div class="flex h-full justify-end items-center gap-4 flex-1">
         <button
           class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary hover:bg-button-prmary-hover transition-colors">
-          <div class="shrink-0 text-text-on-color text-center font-noto text-3xl font-medium leading-[128%] tracking-[1.12px]">
+          <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
             暫存
           </div>
         </button>
         <button
-          class="flex w-btn-lg h-full min-w-[120px] max-w-[220px] px-4 justify-center items-center rounded-2xl bg-button-danger hover:bg-button-danger-hover transition-colors"
+          class="flex w-btn-lg h-full min-w-btn-md max-w-[220px] px-4 justify-center items-center rounded-2xl bg-button-danger hover:bg-button-danger-hover transition-colors"
           @click="handleCompleteCheckout">
-          <div class="shrink-0 text-text-on-color text-center font-noto text-3xl font-medium leading-[128%] tracking-[1.12px]">
+          <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
             完成結帳
           </div>
         </button>
