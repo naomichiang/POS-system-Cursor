@@ -52,10 +52,10 @@ const getPaymentConfig = (type) => {
 </script>
 
     <template>
-      <div class="flex h-screen flex-col justify-center items-center">
-        <div class="flex w-full flex-col items-center flex-1 rounded-2xl shadow-xl overflow-hidden bg-layer-primary">
+      <div class="flex h-full flex-col items-center">
+        <div class="flex w-full h-full flex-col items-center rounded-2xl shadow-xl overflow-hidden bg-layer-primary">
           <!-- Header 訂單資訊列(桌號、訂單狀態)-->
-          <div class="flex w-full h-14 items-start">
+          <div class="flex w-full h-14 shrink-0 items-start">
             <div class="flex w-24 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
               <div class="text-center font-noto text-xl tracking-[0.2em] leading-tight text-text-on-color" >{{ order.tableNumber }}</div>
             </div>
@@ -76,9 +76,9 @@ const getPaymentConfig = (type) => {
           </div>
 
           <!-- Summary -->
-          <div class="flex flex-col items-start self-stretch overflow-hidden">
+          <div class="flex flex-col items-start self-stretch shrink-0 overflow-hidden">
             <!-- Total -->
-            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
+            <div class="flex h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
                 <div class="w-full text-text-primary font-noto text-xl font-normal leading-tight">總計</div>
               </div>
@@ -88,7 +88,7 @@ const getPaymentConfig = (type) => {
             </div>
 
             <!-- Paid -->
-            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
+            <div class="flex h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">已付</div>
               </div>
@@ -98,7 +98,7 @@ const getPaymentConfig = (type) => {
             </div>
 
             <!-- Unpaid -->
-            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-tertiary">
+            <div class="flex h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-highlight-yellow">
               <div class="flex items-start flex-1">
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">未結</div>
               </div>
@@ -108,7 +108,7 @@ const getPaymentConfig = (type) => {
             </div>
 
             <!-- Change -->
-            <div class="flex min-h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
+            <div class="flex h-18 items-center self-stretch px-4 border-b border-border-primary bg-layer-primary">
               <div class="flex items-start flex-1">
                 <div class="max-w-48 text-text-primary font-noto text-xl font-normal leading-tight">找零</div>
               </div>
@@ -119,7 +119,7 @@ const getPaymentConfig = (type) => {
           </div>
 
           <!-- Payment List -->
-          <div class="flex p-3 flex-col items-start gap-2 flex-1 self-stretch bg-layer-secondary overflow-auto">
+          <div class="flex p-3 flex-col items-start gap-2 flex-1 min-h-0 self-stretch bg-layer-tertiary overflow-auto scrollbar-hide">
             <div
               v-for="(payment, index) in payments"
               :key="index"

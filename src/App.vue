@@ -24,7 +24,7 @@
   </script>
 
 <template>
-    <div class="flex flex-col w-full h-screen overflow-hidden bg-ash-100 font-noto">
+    <div class="flex flex-col w-full h-screen overflow-hidden bg-app-bg font-noto">
       <TopBar class="shrink-0 z-20" />
 
       <div class="flex flex-1 min-h-0">

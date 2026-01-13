@@ -20,6 +20,15 @@
   .font-noto {
     font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
 }
 
 @theme {
@@ -137,11 +146,15 @@
      --color-layer-primary-disabled: var(--color-gray-200);
      --color-layer-secondary: var(--color-ash-100);
      --color-layer-secondary-hover: var(--color-ash-200);
-     --color-layer-tertiary: var(--color-yellow-100);
-     --color-layer-tertiary-hover: var(--color-yellow-200);
+     --color-layer-tertiary: var(--color-ash-100);
+     --color-layer-highlight-yellow: var(--color-yellow-100);
+     --color-layer-highlight-yellow-hover: var(--color-yellow-200);
+     --color-layer-highlight-red: var(--color-indianred-200);
+     --color-layer-highlight-red-hover: var(--color-indianred-300);
      --color-layer-zebra: var(--color-gray-100);
      --color-layer-total: var(--color-red-100);
-     --color-layer-highlight-red: var(--color-indianred-200);
+
+     --color-app-bg: var(--color-ash-400);
 
      /* Buttons */
      --color-button-primary: var(--color-ash-700);
