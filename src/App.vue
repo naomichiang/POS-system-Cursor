@@ -34,7 +34,7 @@
 
       <div class="flex flex-1 min-h-0">
 
-        <AppSidebar class="w-20 shrink-0" h-full z-10/>
+        <AppSidebar class="w-18 shrink-0" h-full z-10/>
         <!-- Main Content -->
         <main class="flex flex-1 p-4 gap-4 min-h-0 min-w-0">
           <!-- Checkout Panel -->

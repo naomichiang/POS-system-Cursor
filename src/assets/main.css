@@ -42,6 +42,7 @@
     --color-ash-200: #DFE9ED;
     --color-ash-300: #C6D4DF;
     --color-ash-400: #B4C6D6;
+    --color-ash-500: #92A7C0;
     --color-ash-600: #6C84A8;
     --color-ash-700: #516F9C;
     --color-ash-800: #2E446D;
@@ -113,7 +114,7 @@
     /* Indianred 系列 */
     --color-indianred-100: #FDECEC;
     --color-indianred-200: #F6C9C9;
-    --color-indianred-300: #F5B4B4;
+    --color-indianred-300: #F996A8;
     --color-indianred-400: #E07C7C;
     --color-indianred-500: #D35F5F;
     --color-indianred-600: #C64A4A;
@@ -150,7 +151,7 @@
      --color-layer-primary-hover: var(--color-ash-100);
      --color-layer-primary-disabled: var(--color-gray-200);
      --color-layer-secondary: var(--color-ash-100);
-     --color-layer-secondary-hover: var(--color-ash-200);
+     --color-layer-secondary-hover: var(--color-ash-300);
      --color-layer-tertiary: var(--color-ash-200);
      --color-layer-highlight-yellow: var(--color-yellow-100);
      --color-layer-highlight-yellow-hover: var(--color-yellow-200);
@@ -214,7 +215,10 @@
      --spacing-btn-md: 120px; /* 主要功能鍵：確認、結帳 */
      --spacing-btn-lg: 200px;
      --spacing-btn-xl: 240px;
-     --spacing-btn-h-md: 80px;
+
+     --spacing-btn-h-sm: 64px;
+     --spacing-btn-h-md: 80px; /* 主要 Footer-CTA 按鈕高度 */
+     --spacing-btn-h-lg: 88px;
 
      /* ============================================================
         4. 圓角 (Radius)
@@ -234,8 +238,26 @@
 
   }
 
+/* 針對平板尺寸（通常是 768px 以上）強制放大基礎字級 */
+@media (min-width: 768px) {
+  html {
+    font-size: 18px; /* 增加基礎權重 */
+  }
+}
+
+/* 針對大螢幕筆電，保持原本大小或微調 */
+@media (min-width: 1280px) {
+  html {
+    font-size: 16px;
+  }
+}
+
 body {
-  min-height: 100vh;
+  /* 使用 dvh 確保在平板上不會被網址列推擠 */
+  min-height: 100dvh;
+  height: 100dvh;
+  margin: 0;
+  overflow: hidden;
   /* 字體設定 */
   font-family: 'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 
@@ -252,6 +274,6 @@ body {
 
 #app {
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }

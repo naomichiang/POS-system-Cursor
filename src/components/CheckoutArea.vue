@@ -174,11 +174,11 @@ const handleCompleteCheckout = () => {
         >
           <div class="flex pt-0.5 items-center  self-stretch">
             <div class="flex w-icon-lg h-icon-lg justify-center items-center">
-              <DollarSign class="w-icon-lg h-icon-lg text-yellow-500" />
+              <DollarSign class="w-icon-xl h-icon-xl text-yellow-500" />
             </div>
           </div>
           <div
-            class="text-text-secondary text-right font-inter text-[56px] font-semibold leading-[120%]"
+            class="text-text-amount-positive text-right font-inter text-[56px] font-semibold leading-[120%]"
           >
             {{ formattedAmount }}
           </div>
@@ -198,7 +198,7 @@ const handleCompleteCheckout = () => {
               @click="key === 'C' ? handleClear() : key === 'backspace' ? handleBackspace() : handleNumberClick(key)"
               :class="[
                 'flex flex-col justify-center items-center flex-1 self-stretch transition-all',
-                'bg-layer-secondary hover:bg-layer-secondary-hover active:bg-layer-secondary-hover active:scale-[0.98]',
+                'bg-layer-secondary hover:bg-layer-secondary-hover active:bg-layer-secondary-hover active:scale-98 ',
                 'border-border-primary',
                 // 處理邊框，避免重複疊加：最後一行不加底邊框，每行最後一個按鍵不加右邊框
                 rowIndex !== 3 ? 'border-b-2' : '',
@@ -211,7 +211,7 @@ const handleCompleteCheckout = () => {
               <div
                 v-else
                 :class="[
-                  'self-stretch text-center font-inter text-4xl font-semibold leading-[120%]',
+                  'self-stretch text-center font-inter text-3xl font-semibold leading-[120%]',
                   key === 'C' ? 'text-text-disabled' : 'text-ash-700'
                 ]"
               >
@@ -232,10 +232,10 @@ const handleCompleteCheckout = () => {
             :key="method.id"
             @click="handlePayment(method.id)"
             :class="[
-              'flex w-btn-lg h-[80px] min-w-[100px] max-w-btn-xl px-4 justify-center items-center transition-colors',
+              'flex w-btn-lg h-btn-h-lg min-w-[100px] max-w-btn-xl px-4 justify-center items-center transition-colors',
               method.paddingClass,
               'bg-button-primary hover:bg-button-primary-hover',
-              'active:bg-button-primary-disabled active:scale-[0.98]'
+              'active:bg-button-primary-hover active:scale-[0.98]'
             ]"
           >
             <!-- Icon (動態渲染，根據配置決定是否顯示) -->
@@ -251,7 +251,7 @@ const handleCompleteCheckout = () => {
 
             <!-- Label -->
             <div
-              class="text-text-on-color text-center font-noto text-xl font-medium leading-[120%]"
+              class="text-text-on-color text-center font-noto text-lg font-medium leading-[120%]"
             >
               {{ method.label }}
             </div>
