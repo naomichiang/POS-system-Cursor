@@ -11,7 +11,7 @@
     diners: 5,
     status: '已開桌',
     diningTime: '01:13',
-    totalAmount: 10520,
+    totalAmount: 5250,
   })
 
   // 付款列表狀態
@@ -25,6 +25,12 @@
   // 刪除付款項目
   const handleRemovePayment = (index) => {
     payments.value.splice(index, 1)
+  }
+
+  // 處理結帳成功：切換到桌次頁
+  const handleCheckoutSuccess = () => {
+    console.log('結帳成功，切換到桌次頁')
+    // TODO: 實作頁面切換邏輯（例如使用 router.push('/tables')）
   }
   </script>
 
@@ -50,6 +56,7 @@
             :order="order"
             :payments="payments"
             @add-payment="handleAddPayment"
+            @checkout-success="handleCheckoutSuccess"
           />
         </main>
       </div>

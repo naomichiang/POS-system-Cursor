@@ -134,7 +134,7 @@
 
      /* Text */
      --color-text-primary: var(--color-gray-900);
-     --color-text-secondary: var(--color-ash-900);
+     --color-text-secondary: var(--color-ash-800);
      --color-text-tertiary: var(--color-ash-500);
      --color-text-helper: var(--color-gray-600);
      --color-text-disabled: var(--color-gray-500);
@@ -161,6 +161,7 @@
      --color-layer-total: var(--color-red-100);
 
      --color-app-bg: var(--color-ash-400);
+     --color-modal-bg: var(--color-ash-700);
 
      /* Buttons */
      --color-button-primary: var(--color-ash-700);

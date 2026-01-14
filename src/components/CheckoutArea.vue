@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onUnmounted } from 'vue'
 import {
   Delete,
   DollarSign,
+  BadgeCheck,
 } from 'lucide-vue-next'
 import { paymentMethodsConfig } from '../config/paymentMethods'
 import BaseModal from './BaseModal.vue'
@@ -16,7 +17,7 @@ const props = defineProps({
       diners: 5,
       status: '已開桌',
       diningTime: '01:13',
-      totalAmount: 10520,
+      totalAmount: 5250,
     }),
   },
   payments: {
@@ -25,7 +26,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['add-payment'])
+const emit = defineEmits(['add-payment', 'checkout-success'])
 
 // 定義鍵盤佈局
 const numpadRows = [
@@ -71,12 +72,14 @@ const changeAmount = computed(() => {
 
 // 彈窗狀態
 const showModal = ref(false)
-// 'unpaid' | 'change' | null
+// 'unpaid' | 'change' | 'success' | null
 const modalType = ref(null)
+let autoCloseTimer = null
 
 const modalTitle = computed(() => {
   if (modalType.value === 'unpaid') return '餘額未結清'
   if (modalType.value === 'change') return '提醒找零'
+  if (modalType.value === 'success') return '成功完成結帳'
   return ''
 })
 
@@ -85,12 +88,16 @@ const modalMessage = computed(() => {
     return '餘額未結清'
   }
   if (modalType.value === 'change') {
-    return `現金找零 ${changeAmount.value.toLocaleString()}元`
+    return `現金找零 ${changeAmount.value.toLocaleString()} 元`
   }
   return ''
 })
 
 const closeModal = () => {
+  if (autoCloseTimer) {
+    clearTimeout(autoCloseTimer)
+    autoCloseTimer = null
+  }
   showModal.value = false
   modalType.value = null
 }
@@ -151,12 +158,24 @@ const handleCompleteCheckout = () => {
     return
   }
 
-  // 無未結且無找零，直接完成（暫以 log 表示）
-  console.log('結帳完成（無未結且無找零）', {
-    totalAmount: totalAmount.value,
-    paidAmount: paidAmount.value,
-  })
+  // 無未結且無找零，顯示成功燈箱
+  modalType.value = 'success'
+  showModal.value = true
+
+  // 3 秒後自動關閉並觸發成功事件
+  autoCloseTimer = setTimeout(() => {
+    closeModal()
+    emit('checkout-success')
+  }, 3000)
 }
+
+// 組件卸載時清除計時器
+onUnmounted(() => {
+  if (autoCloseTimer) {
+    clearTimeout(autoCloseTimer)
+    autoCloseTimer = null
+  }
+})
 </script>
 
 <template>
@@ -265,23 +284,23 @@ const handleCompleteCheckout = () => {
       class="flex p-4 items-start gap-4 self-stretch border-t border-border-primary"
     >
       <button
-        class="shrink-0 flex w-btn-md h-btn-h-md min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary hover:bg-button-primary-hover transition-colors">
+        class="shrink-0 flex w-btn-md h-btn-h-md min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
         <div
-          class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
+          class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
           發票
         </div>
       </button>
       <div class="flex h-btn-h-md justify-end items-center gap-4 flex-1">
         <button
-          class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary hover:bg-button-primary-hover transition-colors">
-          <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
+          class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
+          <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
             暫存
           </div>
         </button>
         <button
-          class="flex w-btn-lg h-full min-w-btn-md px-4 justify-center items-center rounded-2xl bg-button-danger hover:bg-button-danger-hover transition-colors"
+          class="flex w-btn-lg h-full min-w-btn-md px-4 justify-center items-center rounded-2xl bg-button-danger active:bg-button-danger-hover transition-colors"
           @click="handleCompleteCheckout">
-          <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[1.12px]">
+          <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
             完成結帳
           </div>
         </button>
@@ -292,12 +311,29 @@ const handleCompleteCheckout = () => {
     <BaseModal
       :open="showModal"
       :title="modalTitle"
-      :content="modalMessage"
-      :primary-button-text="modalType === 'change' ? '完成找零' : '知道了'"
-      :secondary-button-text="modalType === 'change' ? '返回' : ''"
+      :content="''"
+      :show-close="false"
+      :header-icon="modalType === 'success' ? BadgeCheck : null"
+      :header-icon-color-class="modalType === 'success' ? 'text-text-success' : 'text-text-secondary'"
+      :primary-button-text="modalType === 'change' ? '返回' : ''"
+      :secondary-button-text="modalType === 'success' ? '關閉' : ''"
+      :danger-button-text="modalType === 'change' ? '完成找零' : modalType === 'unpaid' ? '返回結帳' : ''"
       @close="closeModal"
       @secondary="closeModal"
-      @primary="modalType === 'change' ? handleCompleteChange() : closeModal()"
-    />
+      @primary="closeModal"
+      @danger="modalType === 'change' ? handleCompleteChange() : closeModal()"
+    >
+      <!-- 僅在「提醒找零」時，客製內文樣式 -->
+      <template v-if="modalType === 'change'">
+        <p class="text-text-primary font-noto text-md font-medium leading-relaxed text-center">
+          現金找零
+          <span
+            class="ml-1 font-inter font-semibold text-3xl text-text-amount-negative"
+          >
+          $ {{ changeAmount.toLocaleString() }}
+          </span>
+        </p>
+      </template>
+    </BaseModal>
   </div>
 </template>
