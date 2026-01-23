@@ -153,6 +153,7 @@
      --color-layer-secondary: var(--color-ash-100);
      --color-layer-secondary-hover: var(--color-ash-300);
      --color-layer-tertiary: var(--color-ash-200);
+     --color-layer-light: var(--color-ash-100);
      --color-layer-highlight-yellow: var(--color-yellow-100);
      --color-layer-highlight-yellow-hover: var(--color-yellow-200);
      --color-layer-highlight-red: var(--color-indianred-200);
@@ -186,6 +187,22 @@
      --color-text-dark-primary: var(--color-white);
      --color-text-dark-secondary: var(--color-ash-200);
      --color-border-dark-primary: var(--color-ash-800);
+
+     /* Order Status */
+     --color-ordstatus-0-primary: var(--color-gray-400);
+     --color-ordstatus-0-secondary: var(--color-gray-200);
+     --color-ordstatus-1-primary: var(--color-ash-700);
+     --color-ordstatus-1-secondary: var(--color-ash-800);
+     --color-ordstatus-2-primary: var(--color-yellow-700);
+     --color-ordstatus-2-secondary: var(--color-yellow-900);
+     --color-ordstatus-3-primary: var(--color-indianred-600);
+     --color-ordstatus-3-secondary: var(--color-indianred-800);
+     --color-ordstatus-4-primary: var(--color-green-500);
+     --color-ordstatus-4-secondary: var(--color-green-700);
+     --color-ordstatus-5-primary: var(--color-indianred-300);
+     --color-ordstatus-5-secondary: var(--color-gray-200);
+     --color-ordstatus-9-primary: var(--color-blue-500);
+     --color-ordstatus-9-secondary: var(--color-blue-700);
 
      /* ============================================================
         3. 間距 (Spacing) - 以 8 點網格為基準

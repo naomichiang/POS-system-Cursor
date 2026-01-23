@@ -95,11 +95,11 @@ const handleDanger = () => {
         <div class="flex flex-col items-center justify-center gap-3 mb-1">
           <div
             v-if="headerIcon"
-            class="flex w-18 h-18 items-center justify-center rounded-full bg-white"
+            class="flex w-16 h-16 items-center justify-center rounded-full bg-white"
           >
             <component
               :is="headerIcon"
-              :class="['w-16 h-16', headerIconColorClass]"
+              :class="['w-14 h-14', headerIconColorClass]"
             />
           </div>
           <div class="flex flex-col gap-1 items-center text-center">
@@ -109,10 +109,7 @@ const handleDanger = () => {
             >
               {{ title }}
             </h2>
-            <p
-              v-if="subTitle"
-              class="text-text-helper font-noto text-md leading-snug text-center"
-            >
+            <p v-if="subTitle" class="text-text-helper font-noto text-md leading-snug text-center">
               {{ subTitle }}
             </p>
           </div>

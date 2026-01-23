@@ -1,5 +1,6 @@
 /* eslint-disable vue/multi-word-component-names */
 <script setup>
+import { useRouter } from 'vue-router'
 import {
   Grid3x3,
   UtensilsCrossed,
@@ -10,14 +11,20 @@ import {
   UserCircle2
 } from 'lucide-vue-next'
 
+const router = useRouter()
+
 const menuItems = [
-  { icon: Grid3x3, label: '桌次' },
-  { icon: UtensilsCrossed, label: '點餐' },
-  { icon: ShoppingBag, label: '外帶' },
-  { icon: ClipboardList, label: '訂單' },
-  { icon: Wrench, label: '功能' },
-  { icon: Settings, label: '設定' },
+  { icon: Grid3x3, label: '桌次', path: '/table-selection' },
+  { icon: UtensilsCrossed, label: '點餐', path: '/' },
+  { icon: ShoppingBag, label: '外帶', path: '/' },
+  { icon: ClipboardList, label: '訂單', path: '/' },
+  { icon: Wrench, label: '功能', path: '/' },
+  { icon: Settings, label: '設定', path: '/' },
 ]
+
+const handleMenuClick = (path) => {
+  router.push(path)
+}
 </script>
 
 <template>
@@ -27,6 +34,7 @@ const menuItems = [
       <div
         v-for="(item, index) in menuItems"
         :key="index"
+        @click="handleMenuClick(item.path)"
         class="flex flex-col justify-center items-center w-full h-20 gap-1 cursor-pointer hover:bg-layer-dark-tertiary transition-colors"
       >
         <component :is="item.icon" class="w-icon-md h-icon-md text-text-dark-secondary" />

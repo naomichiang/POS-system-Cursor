@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { X } from 'lucide-vue-next'
 import { getPaymentMethodById } from '../config/paymentMethods'
+import { TABLE_STATUS, getStatusLabel } from '../config/tableStatus'
 
 // 定義 props 和 emits（使用純 JavaScript，避免 TS 解析問題）
 const props = defineProps({
@@ -10,7 +11,7 @@ const props = defineProps({
     default: () => ({
       tableNumber: '2A桌',
       diners: 5,
-      status: '已開桌',
+      status: TABLE_STATUS.OCCUPIED, // 1: 已開桌
       diningTime: '01:13',
       totalAmount: 10520
     }),
@@ -50,26 +51,30 @@ const getPaymentConfig = (type) => {
   return getPaymentMethodById(type) || { displayLabel: type, icon: null, color: 'bg-gray-500' }
 }
 
-// 根據訂單狀態回傳對應的底色 class
+// 根據訂單狀態回傳對應的底色 class（直接使用 main.css 中定義的訂單狀態顏色變數）
 const statusBgClass = computed(() => {
   const status = props.order?.status
 
   const map = {
-    0: 'bg-gray-400',      // 未開桌（初始）
-    1: 'bg-ash-700',       // 已開桌
-    2: 'bg-yellow-700',    // 提醒桌
-    3: 'bg-indianred-400', // 超時桌
-    4: 'bg-green-500',     // 已結帳
-    5: 'bg-blue-500',      // 預訂桌
-    '未開桌': 'bg-gray-400',
-    '已開桌': 'bg-ash-700',
-    '提醒桌': 'bg-yellow-700',
-    '超時桌': 'bg-indianred-400',
-    '已結帳': 'bg-green-500',
-    '預訂桌': 'bg-blue-500',
+    [TABLE_STATUS.AVAILABLE]: 'bg-ordstatus-0-primary',   // 0: 未開桌
+    [TABLE_STATUS.OCCUPIED]: 'bg-ordstatus-1-primary',   // 1: 已開桌
+    [TABLE_STATUS.WARNING]: 'bg-ordstatus-2-primary',    // 2: 提醒桌
+    [TABLE_STATUS.OVERTIME]: 'bg-ordstatus-3-primary',   // 3: 超時桌
+    [TABLE_STATUS.CHECKED_OUT]: 'bg-ordstatus-4-primary', // 4: 已結帳
+    [TABLE_STATUS.CLEANING]: 'bg-ordstatus-5-primary',   // 5: 待清潔桌
+    [TABLE_STATUS.RESERVED]: 'bg-ordstatus-9-primary',   // 9: 預定桌
   }
 
   return map[status] || 'bg-layer-dark-tertiary'
+})
+
+// 獲取狀態顯示文字
+const statusLabel = computed(() => {
+  const status = props.order?.status
+  if (typeof status === 'number') {
+    return getStatusLabel(status)
+  }
+  return status || '未知狀態'
 })
 </script>
 
@@ -91,7 +96,7 @@ const statusBgClass = computed(() => {
                 <div class="text-text-on-color font-inter text-lg font-medium leading-tight">{{ order.diners }}</div>
               </div>
               <div class="flex items-center gap-3">
-                <div class="text-text-on-color font-noto text-lg font-normal leading-tight">{{ order.status }}</div>
+                <div class="text-text-on-color font-noto text-lg font-normal leading-tight">{{ statusLabel }}</div>
                 <div class="w-18 text-text-on-color text-center font-inter text-lg font-medium leading-tight">{{ order.diningTime }}</div>
               </div>
             </div>
@@ -188,3 +193,4 @@ const statusBgClass = computed(() => {
         </div>
       </div>
     </template>
+

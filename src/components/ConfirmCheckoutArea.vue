@@ -6,6 +6,7 @@ import {
   BadgeCheck,
 } from 'lucide-vue-next'
 import { paymentMethodsConfig } from '../config/paymentMethods'
+import { TABLE_STATUS } from '../config/tableStatus'
 import BaseModal from './BaseModal.vue'
 import { useOrderStore } from '@/stores/useOrderStore'
 
@@ -20,7 +21,7 @@ const props = defineProps({
     default: () => ({
       tableNumber: '2A桌',
       diners: 5,
-      status: '已開桌',
+      status: TABLE_STATUS.OCCUPIED, // 1: 已開桌
       diningTime: '01:13',
       totalAmount: 5250,
     }),

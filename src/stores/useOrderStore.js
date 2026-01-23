@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { TABLE_STATUS } from '../config/tableStatus'
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
@@ -7,7 +8,15 @@ export const useOrderStore = defineStore('order', {
       orderId: null,
       tableNumber: null,
       diners: null,
-      status: 'ordering' // 預設為 'ordering'
+      status: TABLE_STATUS.AVAILABLE, // 預設為 0: 未開桌
+      serviceType: null, // 'dine-in' | 'takeaway'
+      customerInfo: {
+        name: '',
+        phone: '',
+        email: '',
+        notes: ''
+      },
+      mealPlan: null
     },
 
     // 購物車
@@ -72,14 +81,22 @@ export const useOrderStore = defineStore('order', {
   actions: {
     /**
      * 初始化桌次與訂單資訊
-     * @param {Object} tableData - 桌次資料，包含 tableNumber, diners, orderId (可選)
+     * @param {Object} tableData - 桌次資料，包含 tableNumber, diners, orderId, serviceType, customerInfo, mealPlan (可選)
      */
     setTable(tableData) {
       this.orderInfo = {
         orderId: tableData.orderId || null,
         tableNumber: tableData.tableNumber || null,
         diners: tableData.diners || null,
-        status: tableData.status || 'ordering'
+        status: tableData.status !== undefined ? tableData.status : TABLE_STATUS.AVAILABLE,
+        serviceType: tableData.serviceType || null,
+        customerInfo: tableData.customerInfo || {
+          name: '',
+          phone: '',
+          email: '',
+          notes: ''
+        },
+        mealPlan: tableData.mealPlan || null
       }
     },
 
@@ -131,7 +148,15 @@ export const useOrderStore = defineStore('order', {
         orderId: null,
         tableNumber: null,
         diners: null,
-        status: 'ordering'
+        status: TABLE_STATUS.AVAILABLE,
+        serviceType: null,
+        customerInfo: {
+          name: '',
+          phone: '',
+          email: '',
+          notes: ''
+        },
+        mealPlan: null
       }
 
       this.cart = {
