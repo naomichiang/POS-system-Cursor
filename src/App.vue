@@ -2,8 +2,8 @@
   import { ref } from 'vue'
   import TopBar from './components/TopBar.vue'
   import AppSidebar from './components/AppSidebar.vue'
-  import CheckoutPanel from './components/CheckoutPanel.vue'
-  import CheckoutArea from './components/CheckoutArea.vue'
+  import ConfirmCheckoutPanel from './components/ConfirmCheckoutPanel.vue'
+  import ConfirmCheckoutArea from './components/ConfirmCheckoutArea.vue'
 
   // 訂單資料（單一來源）
   const order = ref({
@@ -27,9 +27,9 @@
     payments.value.splice(index, 1)
   }
 
-  // 處理結帳成功：切換到桌次頁
-  const handleCheckoutSuccess = () => {
-    console.log('結帳成功，切換到桌次頁')
+  // 處理確認結帳成功：切換到桌次頁
+  const handleConfirmCheckoutSuccess = () => {
+    console.log('確認結帳成功，切換到桌次頁')
     // TODO: 實作頁面切換邏輯（例如使用 router.push('/tables')）
   }
   </script>
@@ -43,20 +43,20 @@
         <AppSidebar class="w-18 shrink-0" h-full z-10/>
         <!-- Main Content -->
         <main class="flex flex-1 p-4 gap-4 min-h-0 min-w-0">
-          <!-- Checkout Panel -->
-          <CheckoutPanel
+          <!-- ConfirmCheckout Panel -->
+          <ConfirmCheckoutPanel
             class="w-[330px] h-full shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden"
             :order="order"
             :payments="payments"
             @remove-payment="handleRemovePayment"
           />
-          <!-- Checkout Area -->
-          <CheckoutArea
+          <!-- ConfirmCheckout Area -->
+          <ConfirmCheckoutArea
             class="flex-1 bg-white rounded-2xl shadow-sm  overflow-y-auto"
             :order="order"
             :payments="payments"
             @add-payment="handleAddPayment"
-            @checkout-success="handleCheckoutSuccess"
+            @confirm-checkout-success="handleConfirmCheckoutSuccess"
           />
         </main>
       </div>

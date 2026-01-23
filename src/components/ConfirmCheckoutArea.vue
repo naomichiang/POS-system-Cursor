@@ -26,7 +26,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['add-payment', 'checkout-success'])
+const emit = defineEmits(['add-payment', 'confirm-checkout-success'])
 
 // 定義鍵盤佈局
 const numpadRows = [
@@ -144,8 +144,8 @@ const handlePayment = (paymentId) => {
   inputValue.value = '0'
 }
 
-// 完成結帳：依未結與找零判斷彈窗
-const handleCompleteCheckout = () => {
+// 完成確認結帳：依未結與找零判斷彈窗
+const handleCompleteConfirmCheckout = () => {
   if (unpaidAmount.value > 0) {
     modalType.value = 'unpaid'
     showModal.value = true
@@ -165,7 +165,7 @@ const handleCompleteCheckout = () => {
   // 3 秒後自動關閉並觸發成功事件
   autoCloseTimer = setTimeout(() => {
     closeModal()
-    emit('checkout-success')
+    emit('confirm-checkout-success')
   }, 3000)
 }
 
@@ -299,7 +299,7 @@ onUnmounted(() => {
         </button>
         <button
           class="flex w-btn-lg h-full min-w-btn-md px-4 justify-center items-center rounded-2xl bg-button-danger active:bg-button-danger-hover transition-colors"
-          @click="handleCompleteCheckout">
+          @click="handleCompleteConfirmCheckout">
           <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
             完成結帳
           </div>
