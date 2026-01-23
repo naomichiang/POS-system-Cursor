@@ -1,30 +1,105 @@
 <script setup>
-  import { ref } from 'vue'
+  import { computed, onMounted } from 'vue'
+  import { useOrderStore } from './stores/useOrderStore'
   import TopBar from './components/TopBar.vue'
   import AppSidebar from './components/AppSidebar.vue'
   import ConfirmCheckoutPanel from './components/ConfirmCheckoutPanel.vue'
   import ConfirmCheckoutArea from './components/ConfirmCheckoutArea.vue'
 
-  // 訂單資料（單一來源）
-  const order = ref({
-    tableNumber: '2A桌',
-    diners: 5,
-    status: '已開桌',
-    diningTime: '01:13',
-    totalAmount: 5250,
+  const orderStore = useOrderStore()
+
+  // 開發環境：初始化測試資料
+  onMounted(() => {
+    // 只在開發環境時初始化測試資料（開發時可隨時更新測試資料）
+    if (import.meta.env.DEV) {
+      // 設置桌次資訊
+      orderStore.setTable({
+        orderId: 'ORD-20241201-001',
+        tableNumber: '3B桌',
+        diners: 7,
+        status: '已開桌'
+      })
+
+      // 添加測試商品到購物車
+      orderStore.addToCart({
+        id: 'PROD-001',
+        name: '經典牛肉漢堡',
+        price: 280,
+        quantity: 2,
+        note: '不要洋蔥',
+        modifiers: []
+      })
+
+      orderStore.addToCart({
+        id: 'PROD-002',
+        name: '薯條（大）',
+        price: 120,
+        quantity: 1,
+        note: '',
+        modifiers: []
+      })
+
+      orderStore.addToCart({
+        id: 'PROD-003',
+        name: '可樂',
+        price: 80,
+        quantity: 3,
+        note: '去冰',
+        modifiers: []
+      })
+
+      orderStore.addToCart({
+        id: 'PROD-004',
+        name: '雞塊（6塊）',
+        price: 150,
+        quantity: 1,
+        note: '',
+        modifiers: []
+      })
+
+      // 可選：添加一筆測試付款記錄
+      // orderStore.payment.details.push({
+      //   type: 'cash',
+      //   amount: 2000
+      // })
+      // orderStore.payment.receivedAmount = 2000
+    }
   })
 
-  // 付款列表狀態
-  const payments = ref([])
+  // 將 store 的資料映射為組件需要的格式
+  // 確保響應式追蹤：明確訪問 store 的每個屬性
+  const order = computed(() => {
+    const orderInfo = orderStore.orderInfo
+    return {
+      tableNumber: orderInfo.tableNumber || '2A桌',
+      diners: orderInfo.diners || 5,
+      status: orderInfo.status || '已開桌',
+      diningTime: '01:13', // TODO: 可從 store 或時間計算邏輯中取得
+      totalAmount: orderStore.totalAmount,
+    }
+  })
+
+  // 將 store 的 payment.details 映射為組件需要的 payments 格式
+  const payments = computed(() => orderStore.payment.details)
 
   // 處理新增付款
   const handleAddPayment = (payment) => {
-    payments.value.push(payment)
+    orderStore.payment.details.push(payment)
+    // 更新已收金額
+    orderStore.payment.receivedAmount = orderStore.payment.details.reduce(
+      (sum, p) => Number(sum) + Number(p.amount),
+      0
+    )
   }
 
   // 刪除付款項目
   const handleRemovePayment = (index) => {
-    payments.value.splice(index, 1)
+    orderStore.payment.details.splice(index, 1)
+    // 更新已收金額
+    orderStore.payment.receivedAmount = orderStore.payment.details.reduce(
+      (sum, p) => Number(sum) + Number(p.amount),
+      0
+    )
   }
 
   // 處理確認結帳成功：切換到桌次頁

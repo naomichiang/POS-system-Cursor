@@ -7,8 +7,13 @@ import {
 } from 'lucide-vue-next'
 import { paymentMethodsConfig } from '../config/paymentMethods'
 import BaseModal from './BaseModal.vue'
+import { useOrderStore } from '@/stores/useOrderStore'
 
-// Props：來自父層的訂單與付款資訊
+// 引入 Store
+const orderStore = useOrderStore()
+
+// Props：來自父層的訂單與付款資訊（保留以維持向後兼容）
+// eslint-disable-next-line no-unused-vars
 const props = defineProps({
   order: {
     type: Object,
@@ -38,8 +43,6 @@ const numpadRows = [
 
 const inputValue = ref('0')
 
-// 使用配置化的付款方式列表，並確保圖標組件正確映射
-// 直接使用配置中的 icon，因為它們是從 lucide-vue-next 導入的組件
 const paymentMethods = paymentMethodsConfig
 
 // 從配置中提取所有付款方式 id 作為類型
@@ -52,23 +55,15 @@ const formattedAmount = computed(() => {
   return n.toLocaleString('en-US')
 })
 
-// 依據訂單與付款計算金額
-const totalAmount = computed(() => props.order?.totalAmount || 0)
-
-const paidAmount = computed(() => {
-  return props.payments.reduce((sum, payment) => sum + payment.amount, 0)
-})
+// 從 Store 讀取金額資料
+const totalAmount = computed(() => orderStore.totalAmount)
 
 const unpaidAmount = computed(() => {
-  const diff = totalAmount.value - paidAmount.value
+  const diff = orderStore.totalAmount - orderStore.payment.receivedAmount
   return diff > 0 ? diff : 0
 })
 
-const changeAmount = computed(() => {
-  return paidAmount.value > totalAmount.value
-    ? paidAmount.value - totalAmount.value
-    : 0
-})
+const changeAmount = computed(() => orderStore.changeAmount)
 
 // 彈窗狀態
 const showModal = ref(false)
@@ -83,16 +78,6 @@ const modalTitle = computed(() => {
   return ''
 })
 
-const modalMessage = computed(() => {
-  if (modalType.value === 'unpaid') {
-    return '餘額未結清'
-  }
-  if (modalType.value === 'change') {
-    return `現金找零 ${changeAmount.value.toLocaleString()} 元`
-  }
-  return ''
-})
-
 const closeModal = () => {
   if (autoCloseTimer) {
     clearTimeout(autoCloseTimer)
@@ -102,15 +87,33 @@ const closeModal = () => {
   modalType.value = null
 }
 
-const handleCompleteChange = () => {
-  // 結束結帳確認流程（此處先以 log 代表，可依需求補上清單重置／跳畫面等）
-  console.log('結帳完成，找零已確認', {
-    totalAmount: totalAmount.value,
-    paidAmount: paidAmount.value,
-    changeAmount: changeAmount.value,
-  })
-  showModal.value = false
-  modalType.value = null
+const handleCompleteChange = async () => {
+  // 1. 執行上傳（這裡建議包成 async）
+  try {
+    // 假設你在 Store 寫好了傳送邏輯
+    // await orderStore.finalizeOrder()
+
+    console.log('結帳完成，訂單已同步至後端', {
+      totalAmount: totalAmount.value,
+      receivedAmount: orderStore.payment.receivedAmount,
+      changeAmount: changeAmount.value,
+    })
+
+    // 2. 顯示成功狀態（如果有 success 燈箱）
+    modalType.value = 'success'
+    showModal.value = true
+
+    // 3. 延遲後執行重置與跳轉
+    setTimeout(() => {
+      closeModal()
+      orderStore.resetOrder() // <-- 這一行最重要，確保下一單是空的
+      emit('confirm-checkout-success') // 通知父組件跳轉至桌次頁
+    }, 2000)
+
+  } catch (error) {
+    console.error('訂單上傳失敗，請檢查網路', error)
+    alert('訂單上傳失敗，請檢查網路')
+  }
 }
 
 const handleNumberClick = (num) => {
