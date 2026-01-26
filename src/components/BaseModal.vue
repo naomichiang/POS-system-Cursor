@@ -119,10 +119,10 @@ const handleDanger = () => {
         <button
           v-if="showClose"
           type="button"
-          class="absolute right-1.5 -top-4 flex w-icon-lg h-icon-lg items-center justify-center rounded-full active:bg-ash-100 transition-colors"
+          class="absolute -right-1 -top-7 flex w-14 h-14 items-center justify-center rounded-xl transition-colors active:bg-ash-100"
           @click="handleClose"
         >
-          <X class="w-icon-xl h-icon-xl text-text-disabled" />
+          <X class="w-icon-lg h-icon-lg text-text-disabled" />
         </button>
       </div>
 
