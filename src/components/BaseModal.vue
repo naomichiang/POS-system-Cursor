@@ -152,6 +152,14 @@ const handleDanger = () => {
             {{ secondaryButtonText }}
           </button>
           <button
+            v-if="dangerRButtonText"
+            type="button"
+            class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-danger active:bg-button-danger-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
+            @click="handleDanger"
+          >
+            {{ dangerRButtonText }}
+          </button>
+          <button
             v-if="primaryButtonText"
             type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-primary active:bg-button-primary-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
@@ -160,12 +168,12 @@ const handleDanger = () => {
             {{ primaryButtonText }}
           </button>
           <button
-            v-if="dangerButtonText"
+            v-if="dangerLButtonText"
             type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-danger active:bg-button-danger-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
             @click="handleDanger"
           >
-            {{ dangerButtonText }}
+            {{ dangerLButtonText }}
           </button>
 
         </slot>

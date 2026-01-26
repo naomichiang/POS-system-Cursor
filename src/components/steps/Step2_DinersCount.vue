@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from 'vue'
+import DinerPicker from '../DinerPicker.vue'
+
 defineProps({
   modelValue: {
     type: Number,
@@ -8,39 +11,79 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const selectDiners = (count) => {
-  emit('update:modelValue', count)
+// 定義各種人數的狀態
+const totalCount = ref(0)
+const adultCount = ref(0)
+const childCount = ref(0)
+const maleCount = ref(0)
+const femaleCount = ref(0)
+const seniorCount = ref(0)
+
+// 當總人數改變時，同步更新 modelValue
+const updateTotalCount = (value) => {
+  totalCount.value = value
+  emit('update:modelValue', value)
 }
 </script>
 
 <template>
-  <div class="space-y-6">
-    <h2 class="text-2xl font-bold text-text-primary mb-6">設定用餐人數</h2>
-    <div class="grid grid-cols-4 gap-4">
-      <button
-        v-for="count in 12"
-        :key="count"
-        @click="selectDiners(count)"
-        :class="[
-          'flex items-center justify-center p-6 rounded-xl border-2 transition-all text-lg font-semibold',
-          modelValue === count
-            ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg scale-105'
-            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:shadow-md'
-        ]"
-      >
-        {{ count }}人
-      </button>
-    </div>
-    <div class="mt-6">
-      <label class="block text-sm font-medium text-gray-700 mb-2">或輸入自訂人數</label>
-      <input
-        type="number"
-        :value="modelValue"
-        @input="emit('update:modelValue', parseInt($event.target.value) || null)"
-        min="1"
-        max="50"
-        placeholder="請輸入人數"
-        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-lg"
+  <div class="flex-1 bg-white rounded-2xl shadow-sm overflow-y-auto">
+    <div class="p-8 space-y-8">
+      <h2 class="text-2xl font-bold text-text-primary mb-6">設定用餐人數</h2>
+
+      <!-- 總人數 -->
+      <DinerPicker
+        v-model="totalCount"
+        label="總人數"
+        :quick-options="[2, 4, 6]"
+        :min="0"
+        :max="50"
+        @update:model-value="updateTotalCount"
+      />
+
+      <!-- 成人 -->
+      <DinerPicker
+        v-model="adultCount"
+        label="成人"
+        :quick-options="[1, 2, 3]"
+        :min="0"
+        :max="50"
+      />
+
+      <!-- 小孩 -->
+      <DinerPicker
+        v-model="childCount"
+        label="小孩"
+        :quick-options="[0, 1, 2]"
+        :min="0"
+        :max="50"
+      />
+
+      <!-- 男性 -->
+      <DinerPicker
+        v-model="maleCount"
+        label="男性"
+        :quick-options="[1, 2, 3]"
+        :min="0"
+        :max="50"
+      />
+
+      <!-- 女性 -->
+      <DinerPicker
+        v-model="femaleCount"
+        label="女性"
+        :quick-options="[1, 2, 3]"
+        :min="0"
+        :max="50"
+      />
+
+      <!-- 老年人 -->
+      <DinerPicker
+        v-model="seniorCount"
+        label="老年人"
+        :quick-options="[0, 1, 2]"
+        :min="0"
+        :max="50"
       />
     </div>
   </div>

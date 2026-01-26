@@ -94,19 +94,6 @@
   }
 
   /**
-   * 取消預約
-   */
-  const handleCancelReservation = () => {
-    if (confirm('確定要取消此筆預約嗎？')) {
-      if (reserveTableData.value) {
-        reserveTableData.value.status = 0
-      }
-      showReserveModal.value = false
-      reserveTableData.value = null
-    }
-  }
-
-  /**
    * 樣式映射表 (精簡化原本的 Switch)
    */
   const getTableStyles = (status) => {
