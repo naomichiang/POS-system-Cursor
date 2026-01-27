@@ -4,6 +4,7 @@ import { useOrderStore } from '../stores/useOrderStore'
 import { useRouter } from 'vue-router'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-vue-next'
 import { TABLE_STATUS } from '../config/tableStatus'
+import { DEFAULT_DINER_PICKER_CONFIG } from '../config/dinerPickerConfig'
 import Step1_Table from './steps/Step1_Table.vue'
 import Step2_DinersCount from './steps/Step2_DinersCount.vue'
 import Step3_CustomerInfo from './steps/Step3_CustomerInfo.vue'
@@ -13,6 +14,9 @@ const router = useRouter()
 const orderStore = useOrderStore()
 
 const currentStep = ref(1) // 預設顯示步驟 1（桌位）
+
+// 用餐人數 picker 設定（由後端提供，決定顯示幾個 picker；目前使用預設，對接 API 後可依桌位等參數取得）
+const pickerConfigs = ref(DEFAULT_DINER_PICKER_CONFIG)
 
 // 表單資料
 const formData = ref({
@@ -109,10 +113,11 @@ const handleSubmit = () => {
         @next="nextStep"
       />
       <!-- 步驟 2: 用餐人數 -->
-      <div v-if="currentStep === 2" class="flex-1 bg-white rounded-2xl shadow-sm overflow-y-auto p-8">
+      <div v-if="currentStep === 2">
         <Step2_DinersCount
           v-model="formData.diners"
           :table-id="formData.table"
+          :picker-configs="pickerConfigs"
           @next="nextStep"
         />
       </div>

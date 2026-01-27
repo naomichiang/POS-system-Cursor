@@ -1,28 +1,73 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import DinerPicker from '../DinerPicker.vue'
+import { DEFAULT_DINER_PICKER_CONFIG } from '../../config/dinerPickerConfig'
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: Number,
     default: null
+  },
+  tableId: {
+    type: [Number, String],
+    default: null
+  },
+  /** 由後端提供的 picker 設定，決定要顯示幾個 picker 與各自選項；未提供時使用預設設定 */
+  pickerConfigs: {
+    type: Array,
+    default: () => DEFAULT_DINER_PICKER_CONFIG
   }
 })
 
 const emit = defineEmits(['update:modelValue'])
 
-// 定義各種人數的狀態
-const totalCount = ref(0)
-const adultCount = ref(0)
-const childCount = ref(0)
-const maleCount = ref(0)
-const femaleCount = ref(0)
-const seniorCount = ref(0)
+const primaryKey = computed(
+  () => props.pickerConfigs.find((c) => c.isPrimary)?.key ?? props.pickerConfigs[0]?.key
+)
 
-// 當總人數改變時，同步更新 modelValue
-const updateTotalCount = (value) => {
-  totalCount.value = value
-  emit('update:modelValue', value)
+const pickerValues = ref({})
+
+function initPickerValues() {
+  const configs = props.pickerConfigs
+  const next = {}
+  for (const c of configs) {
+    const prev = pickerValues.value[c.key]
+    if (prev !== undefined) {
+      next[c.key] = prev
+    } else {
+      next[c.key] = c.key === primaryKey.value ? (props.modelValue ?? 0) : 0
+    }
+  }
+  pickerValues.value = next
+}
+
+watch(
+  () => props.pickerConfigs,
+  () => initPickerValues(),
+  { immediate: true }
+)
+
+watch(
+  () => pickerValues.value[primaryKey.value],
+  (v) => emit('update:modelValue', v ?? 0),
+  { immediate: true }
+)
+
+watch(
+  () => props.modelValue,
+  (v) => {
+    const pk = primaryKey.value
+    if (!pk) return
+    const current = pickerValues.value[pk]
+    const next = v ?? 0
+    if (current !== next) {
+      pickerValues.value = { ...pickerValues.value, [pk]: next }
+    }
+  }
+)
+
+function updatePicker(key, value) {
+  pickerValues.value = { ...pickerValues.value, [key]: value }
 }
 </script>
 
@@ -31,59 +76,16 @@ const updateTotalCount = (value) => {
     <div class="p-8 space-y-8">
       <h2 class="text-2xl font-bold text-text-primary mb-6">設定用餐人數</h2>
 
-      <!-- 總人數 -->
       <DinerPicker
-        v-model="totalCount"
-        label="總人數"
-        :quick-options="[2, 4, 6]"
-        :min="0"
-        :max="50"
-        @update:model-value="updateTotalCount"
-      />
-
-      <!-- 成人 -->
-      <DinerPicker
-        v-model="adultCount"
-        label="成人"
-        :quick-options="[1, 2, 3]"
-        :min="0"
-        :max="50"
-      />
-
-      <!-- 小孩 -->
-      <DinerPicker
-        v-model="childCount"
-        label="小孩"
-        :quick-options="[0, 1, 2]"
-        :min="0"
-        :max="50"
-      />
-
-      <!-- 男性 -->
-      <DinerPicker
-        v-model="maleCount"
-        label="男性"
-        :quick-options="[1, 2, 3]"
-        :min="0"
-        :max="50"
-      />
-
-      <!-- 女性 -->
-      <DinerPicker
-        v-model="femaleCount"
-        label="女性"
-        :quick-options="[1, 2, 3]"
-        :min="0"
-        :max="50"
-      />
-
-      <!-- 老年人 -->
-      <DinerPicker
-        v-model="seniorCount"
-        label="老年人"
-        :quick-options="[0, 1, 2]"
-        :min="0"
-        :max="50"
+        v-for="config in pickerConfigs"
+        :key="config.key"
+        :model-value="pickerValues[config.key] ?? 0"
+        @update:model-value="(v) => updatePicker(config.key, v)"
+        :label="config.label"
+        :quick-options="config.quickOptions"
+        :min="config.min"
+        :max="config.max"
+        :unit="config.unit ?? '人'"
       />
     </div>
   </div>
