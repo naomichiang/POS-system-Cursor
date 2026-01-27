@@ -1,3 +1,6 @@
+<!-- 用在 BaseModal，彈窗組件 -->
+
+
 <script setup>
 import { X } from 'lucide-vue-next'
 

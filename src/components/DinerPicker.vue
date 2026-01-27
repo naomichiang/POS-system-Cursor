@@ -1,3 +1,11 @@
+<!-- 用在 Step2_DinersCount，用於選擇用餐人數
+
+@param {Number} modelValue 選擇的人數
+@param {String} label 選擇的人數的標籤
+@param {Array} quickOptions 快速選擇的人數
+@param {String} unit 單位
+ -->
+
 <script setup>
 import { computed } from 'vue'
 import { Minus, Plus } from 'lucide-vue-next'
@@ -41,20 +49,20 @@ const decrement = () => {
 <template>
   <div class="h-btn-h-lg flex items-center gap-6 w-full">
     <div class="w-20 shrink-0">
-      <div class="text-text-helper text-xl font-medium font-noto tracking-wider">
+      <div class="text-text-helper text-lg font-medium font-noto tracking-wider">
         {{ label }}
       </div>
     </div>
 
     <!-- 選擇器區域 -->
-    <div class="flex-1 flex items-center gap-4 h-full">
+    <div class="flex-1 flex items-center gap-4 h-full min-w-0">
       <!-- 快速選擇按鈕 -->
       <button
         v-for="option in quickOptions"
         :key="option"
         @click="selectQuickOption(option)"
         :class="[
-          'w-40 h-full rounded-2xl flex justify-center items-center transition-all active:scale-95 shadow-sm',
+          'w-36 h-full rounded-2xl flex justify-center items-center transition-all active:scale-95 shadow-sm',
           currentValue === option
             ? 'bg-button-danger shadow-lg'
             : 'bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-hover'
@@ -88,7 +96,7 @@ const decrement = () => {
         </button>
 
         <!-- 數字顯示 -->
-        <div class="w-24 self-stretch inline-flex flex-col justify-center items-center">
+        <div class="w-20 self-stretch inline-flex flex-col justify-center items-center">
           <div class="text-center justify-center text-text-secondary text-4xl font-semibold font-inter">
             {{ currentValue }}
           </div>
@@ -115,7 +123,7 @@ const decrement = () => {
       </div>
 
       <!-- 單位標籤 -->
-      <div class="w-10 shrink-0 flex items-center justify-center">
+      <div class="w-6 shrink-0 flex items-center justify-center">
         <span class="text-text-secondary text-xl font-semibold font-noto">{{ unit }}</span>
       </div>
     </div>

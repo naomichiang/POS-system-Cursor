@@ -1,17 +1,20 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useOrderStore } from '../stores/useOrderStore'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-vue-next'
 import { TABLE_STATUS } from '../config/tableStatus'
 import { DEFAULT_DINER_PICKER_CONFIG } from '../config/dinerPickerConfig'
 import Step1_Table from './steps/Step1_Table.vue'
 import Step2_DinersCount from './steps/Step2_DinersCount.vue'
 import Step3_CustomerInfo from './steps/Step3_CustomerInfo.vue'
 import Step4_PlanDetail from './steps/Step4_PlanDetail.vue'
+import StepNavigationButtons from './StepNavigationButtons.vue'
 
 const router = useRouter()
 const orderStore = useOrderStore()
+
+// 根容器 ref，用來掛載觸控監聽（防止快速點擊縮放）
+const rootRef = ref(null)
 
 const currentStep = ref(1) // 預設顯示步驟 1（桌位）
 
@@ -100,10 +103,39 @@ const handleSubmit = () => {
   // 導航到主頁面
   router.push('/')
 }
+
+// -------- 防止快速連點觸發縮放（特別是 iOS Safari 雙擊縮放），同時保留按鈕連點行為 --------
+let lastTouchEnd = 0
+
+const handleTouchEnd = (event) => {
+  const now = Date.now()
+  // 兩次 touchend 間隔過短，視為快速連點，阻止預設縮放行為
+  if (now - lastTouchEnd <= 300) {
+    const targetButton = event.target.closest && event.target.closest('button')
+    // 若是按鈕，手動觸發一次 click，確保像人數 picker 這類元件可以正常連點
+    if (targetButton) {
+      targetButton.click()
+    }
+    event.preventDefault()
+  }
+  lastTouchEnd = now
+}
+
+onMounted(() => {
+  if (rootRef.value) {
+    rootRef.value.addEventListener('touchend', handleTouchEnd, { passive: false })
+  }
+})
+
+onBeforeUnmount(() => {
+  if (rootRef.value) {
+    rootRef.value.removeEventListener('touchend', handleTouchEnd)
+  }
+})
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-full bg-layer-secondary font-noto">
+  <div ref="rootRef" class="flex flex-col w-full h-full bg-layer-secondary font-noto">
     <!-- 主要內容區域 -->
     <div class="flex-1 overflow-hidden p-4 gap-4 bg-app-bg flex">
       <!-- 步驟 1: 桌位 -->
@@ -113,88 +145,75 @@ const handleSubmit = () => {
         @next="nextStep"
       />
       <!-- 步驟 2: 用餐人數 -->
-      <div v-if="currentStep === 2">
-        <Step2_DinersCount
-          v-model="formData.diners"
-          :table-id="formData.table"
-          :picker-configs="pickerConfigs"
-          @next="nextStep"
-        />
+      <div v-if="currentStep === 2" class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden">
+          <Step2_DinersCount
+            v-model="formData.diners"
+            :table-id="formData.table"
+            :picker-configs="pickerConfigs"
+            @next="nextStep"
+          />
+          <!-- 按鈕區域 -->
+          <StepNavigationButtons
+            :is-first-step="isFirstStep"
+            :is-last-step="isLastStep"
+            :can-proceed="canProceed"
+            @prev="prevStep"
+            @next="nextStep"
+            @submit="handleSubmit"
+          />
+        </div>
       </div>
 
       <!-- 步驟 3: 顧客基本資料 -->
-      <div v-if="currentStep === 3" class="flex-1 bg-white rounded-2xl shadow-sm overflow-y-auto p-8">
-        <Step3_CustomerInfo
-          v-model="formData.customerInfo"
-        />
+      <div v-if="currentStep === 3" class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden">
+          <Step3_CustomerInfo
+            v-model="formData.customerInfo"
+          />
+          <!-- 按鈕區域 -->
+          <StepNavigationButtons
+            :is-first-step="isFirstStep"
+            :is-last-step="isLastStep"
+            :can-proceed="canProceed"
+            @prev="prevStep"
+            @next="nextStep"
+            @submit="handleSubmit"
+          />
+        </div>
       </div>
 
       <!-- 步驟 4: 用餐方案 -->
-      <div v-if="currentStep === 4" class="flex-1 bg-white rounded-2xl shadow-sm overflow-y-auto p-8">
-        <Step4_PlanDetail
-          v-model="formData.mealPlan"
-        />
+      <div v-if="currentStep === 4" class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex-1 overflow-y-auto scrollbar-hide p-8">
+            <Step4_PlanDetail
+              v-model="formData.mealPlan"
+            />
+          </div>
+          <!-- 按鈕區域 -->
+          <StepNavigationButtons
+            :is-first-step="isFirstStep"
+            :is-last-step="isLastStep"
+            :can-proceed="canProceed"
+            @prev="prevStep"
+            @next="nextStep"
+            @submit="handleSubmit"
+          />
+        </div>
       </div>
-    </div>
-
-    <!-- 底部按鈕（步驟 1 時不顯示） -->
-    <div
-      v-if="currentStep !== 1"
-      class="flex items-center justify-between p-4 gap-4 bg-layer-secondary border-t border-border-primary"
-    >
-      <button
-        @click="prevStep"
-        :disabled="isFirstStep"
-        :class="[
-          'flex w-btn-md h-btn-h-md min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl transition-colors',
-          isFirstStep
-            ? 'bg-button-primary-disabled text-text-disabled cursor-not-allowed'
-            : 'bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-hover text-text-on-color'
-        ]"
-      >
-        <ArrowLeft class="w-icon-md h-icon-md" />
-        <div class="text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
-          上一步
-        </div>
-      </button>
-
-      <button
-        v-if="!isLastStep"
-        @click="nextStep"
-        :disabled="!canProceed"
-        :class="[
-          'flex w-btn-lg h-btn-h-md min-w-btn-md px-4 justify-center items-center gap-2 rounded-2xl transition-colors',
-          canProceed
-            ? 'bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-hover text-text-on-color'
-            : 'bg-button-primary-disabled text-text-disabled cursor-not-allowed'
-        ]"
-      >
-        <div class="text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
-          下一步
-        </div>
-        <ArrowRight class="w-icon-md h-icon-md" />
-      </button>
-
-      <button
-        v-else
-        @click="handleSubmit"
-        :disabled="!canProceed"
-        :class="[
-          'flex w-btn-lg h-btn-h-md min-w-btn-md px-4 justify-center items-center gap-2 rounded-2xl transition-colors',
-          canProceed
-            ? 'bg-button-danger hover:bg-button-danger-hover active:bg-button-danger-hover text-text-on-color'
-            : 'bg-button-primary-disabled text-text-disabled cursor-not-allowed'
-        ]"
-      >
-        <Check class="w-icon-md h-icon-md" />
-        <div class="text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
-          確認開桌
-        </div>
-      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* 自訂樣式 */
+/* 隱藏滾動條但保持滾動功能 */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
 </style>

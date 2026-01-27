@@ -27,6 +27,7 @@ const primaryKey = computed(
 
 const pickerValues = ref({})
 
+// 初始化：根據 Config 產生對應的 Key
 function initPickerValues() {
   const configs = props.pickerConfigs
   const next = {}
@@ -72,8 +73,9 @@ function updatePicker(key, value) {
 </script>
 
 <template>
-  <div class="flex-1 bg-white rounded-2xl shadow-sm overflow-y-auto">
-    <div class="p-8 space-y-8">
+  <!-- 內容區域（可滾動，不顯示卷軸） -->
+  <div class="flex-1 overflow-y-auto scrollbar-hide p-8">
+    <div class="space-y-8">
       <h2 class="text-2xl font-bold text-text-primary mb-6">設定用餐人數</h2>
 
       <DinerPicker
@@ -90,3 +92,15 @@ function updatePicker(key, value) {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* 隱藏滾動條但保持滾動功能 */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+</style>
