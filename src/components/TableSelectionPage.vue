@@ -40,21 +40,63 @@ const formData = ref({
 
 // 計算屬性
 const isFirstStep = computed(() => currentStep.value === 1)
-const isLastStep = computed(() => {
-  return currentStep.value === 4
-})
+const isLastStep = computed(() => currentStep.value === 4)
+
+// 通用必填欄位校驗
+/**
+ * 通用必填欄位校驗
+ * @param {Array} groups - 來自 RestaurantConfig 的 ExtraField 陣列（extraFields / extraFields2）
+ * @param {Object} values - 目前已選擇的資料，例如 formData.customerInfo.preferences
+ */
+const validateRequiredGroups = (groups = [], values = {}) => {
+  if (!Array.isArray(groups) || groups.length === 0) {
+    // 沒有任何欄位設定時，視為可通過
+    return true
+  }
+
+  // 只挑出 required 的群組
+  const requiredGroups = groups.filter(group => group?.required)
+
+  // 若沒有任何 required 欄位，也視為可通過
+  if (requiredGroups.length === 0) return true
+
+  return requiredGroups.every(group => {
+    const key = group.key ?? group.label
+    const val = values?.[key]
+
+    // 多選：必須有至少一個值
+    if (Array.isArray(val)) {
+      return val.length > 0
+    }
+
+    // 單選：不能是 null / undefined / 空字串
+    return val !== undefined && val !== null && val !== ''
+  })
+}
 
 // 檢查當前步驟是否可以繼續
 const canProceed = computed(() => {
+  const { table, diners, customerInfo, customerInfo2 } = formData.value
+
   switch (currentStep.value) {
     case 1: // 桌位
-      return formData.value.table !== null
+      return table !== null
+
     case 2: // 用餐人數
-      return formData.value.diners !== null && formData.value.diners > 0
-    case 3: // Step3 額外選項（可略過）
-      return true
-    case 4: // Step4 額外選項（可略過）
-      return true
+      return diners !== null && Number(diners) > 0
+
+    case 3: // Step3 額外選項校驗（extraFields）
+      return validateRequiredGroups(
+        preferenceGroups.value,
+        customerInfo?.preferences
+      )
+
+    case 4: // Step4 額外選項校驗（extraFields2）
+      return validateRequiredGroups(
+        SubOptions.value,
+        customerInfo2?.preferences
+      )
+
     default:
       return false
   }

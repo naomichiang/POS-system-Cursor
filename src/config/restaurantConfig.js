@@ -97,7 +97,7 @@ export const MOCK_RESTAURANT_A_CONFIG = {
       key: 'purpose',
       label: '聚餐用途',
       type: 'select',
-      required: true,
+      required: false,
       placeholder: '請選擇聚餐用途',
       options: [
         { value: 'business', label: '商務' },
@@ -128,7 +128,7 @@ export const MOCK_RESTAURANT_A_CONFIG = {
       key: 'purpose',
       label: '聚餐用途2222',
       type: 'select',
-      required: true,
+      required: false,
       placeholder: '請選擇聚餐用途',
       isLargeBtn: true,
       options: [
