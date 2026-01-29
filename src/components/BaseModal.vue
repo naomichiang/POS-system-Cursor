@@ -1,6 +1,5 @@
 <!-- 用在 BaseModal，彈窗組件 -->
 
-
 <script setup>
 import { X } from 'lucide-vue-next'
 
@@ -155,14 +154,6 @@ const handleDanger = () => {
             {{ secondaryButtonText }}
           </button>
           <button
-            v-if="dangerRButtonText"
-            type="button"
-            class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-danger active:bg-button-danger-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
-            @click="handleDanger"
-          >
-            {{ dangerRButtonText }}
-          </button>
-          <button
             v-if="primaryButtonText"
             type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-primary active:bg-button-primary-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
@@ -171,12 +162,12 @@ const handleDanger = () => {
             {{ primaryButtonText }}
           </button>
           <button
-            v-if="dangerLButtonText"
+            v-if="dangerButtonText"
             type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-danger active:bg-button-danger-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
             @click="handleDanger"
           >
-            {{ dangerLButtonText }}
+            {{ dangerButtonText }}
           </button>
 
         </slot>

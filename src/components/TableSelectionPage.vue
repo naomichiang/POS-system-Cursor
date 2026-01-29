@@ -3,11 +3,11 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useOrderStore } from '../stores/useOrderStore'
 import { useRouter } from 'vue-router'
 import { TABLE_STATUS } from '../config/tableStatus'
-import { DEFAULT_DINER_PICKER_CONFIG } from '../config/dinerPickerConfig'
+import { DEFAULT_RESTAURANT_CONFIG } from '../config/restaurantConfig'
 import Step1_Table from './steps/Step1_Table.vue'
-import Step2_DinersCount from './steps/Step2_DinersCount.vue'
-import Step3_CustomerInfo from './steps/Step3_CustomerInfo.vue'
-import Step4_PlanDetail from './steps/Step4_PlanDetail.vue'
+import Step2_DinerCount from './steps/Step2_DinerCount.vue'
+import Step3_MainOption from './steps/Step3_RestaurantMainOption.vue'
+import Step4_SubOption from './steps/Step4_RestaurantSubOption.vue'
 import StepNavigationButtons from './StepNavigationButtons.vue'
 
 const router = useRouter()
@@ -18,21 +18,24 @@ const rootRef = ref(null)
 
 const currentStep = ref(1) // 預設顯示步驟 1（桌位）
 
-// 用餐人數 picker 設定（由後端提供，決定顯示幾個 picker；目前使用預設，對接 API 後可依桌位等參數取得）
-const pickerConfigs = ref(DEFAULT_DINER_PICKER_CONFIG)
+// TODO: 串接後端時，請將此處改為呼叫 API 取得對應餐廳／分店的 RestaurantConfig
+// 例如：
+// const { data } = await api.getRestaurantConfig(restaurantId)
+// const restaurantConfig = ref(data)
+const restaurantConfig = ref(DEFAULT_RESTAURANT_CONFIG)
+
+// 用餐人數 picker 設定、額外欄位與用餐方案按鈕，從 RestaurantConfig 取出
+const pickerConfigs = computed(() => restaurantConfig.value?.dinerPickers ?? [])
+const preferenceGroups = computed(() => restaurantConfig.value?.extraFields ?? [])
+const SubOptions = computed(() => restaurantConfig.value?.extraFields2 ?? [])
 
 // 表單資料
 const formData = ref({
   serviceType: 'dine-in', // 所有訂單一律視為內用
   table: null,
   diners: null,
-  customerInfo: {
-    name: '',
-    phone: '',
-    email: '',
-    notes: ''
-  },
-  mealPlan: null
+  customerInfo: { preferences: {} },   // Step3 額外選項（extraFields）
+  customerInfo2: { preferences: {} }   // Step4 額外選項（extraFields2）
 })
 
 // 計算屬性
@@ -48,11 +51,10 @@ const canProceed = computed(() => {
       return formData.value.table !== null
     case 2: // 用餐人數
       return formData.value.diners !== null && formData.value.diners > 0
-    case 3: // 顧客基本資料
-      // 可以略過，所以只要有值或為空都可以繼續
+    case 3: // Step3 額外選項（可略過）
       return true
-    case 4: // 用餐方案
-      return formData.value.mealPlan !== null
+    case 4: // Step4 額外選項（可略過）
+      return true
     default:
       return false
   }
@@ -97,7 +99,7 @@ const handleSubmit = () => {
     status: TABLE_STATUS.OCCUPIED, // 1: 已開桌
     serviceType: 'dine-in', // 所有訂單一律視為內用
     customerInfo: formData.value.customerInfo,
-    mealPlan: formData.value.mealPlan
+    customerInfo2: formData.value.customerInfo2
   })
 
   // 導航到主頁面
@@ -116,7 +118,10 @@ const handleTouchEnd = (event) => {
     if (targetButton) {
       targetButton.click()
     }
-    event.preventDefault()
+    // 僅在事件可取消時呼叫 preventDefault，避免滾動中的 touchend 觸發 [Intervention] 警告
+    if (event.cancelable) {
+      event.preventDefault()
+    }
   }
   lastTouchEnd = now
 }
@@ -142,12 +147,13 @@ onBeforeUnmount(() => {
       <Step1_Table
         v-if="currentStep === 1"
         v-model="formData.table"
+        :table-areas="restaurantConfig.tableAreas"
         @next="nextStep"
       />
       <!-- 步驟 2: 用餐人數 -->
       <div v-if="currentStep === 2" class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden">
-          <Step2_DinersCount
+          <Step2_DinerCount
             v-model="formData.diners"
             :table-id="formData.table"
             :picker-configs="pickerConfigs"
@@ -165,11 +171,12 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <!-- 步驟 3: 顧客基本資料 -->
+      <!-- 步驟 3: Restaurant Main Option，用餐方案 / 用餐用途 -->
       <div v-if="currentStep === 3" class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden">
-          <Step3_CustomerInfo
+          <Step3_MainOption
             v-model="formData.customerInfo"
+            :preference-groups="preferenceGroups"
           />
           <!-- 按鈕區域 -->
           <StepNavigationButtons
@@ -183,14 +190,13 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <!-- 步驟 4: 用餐方案 -->
+      <!-- 步驟 4: Restaurant Sub Option，用餐方案 -->
       <div v-if="currentStep === 4" class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div class="flex-1 overflow-y-auto scrollbar-hide p-8">
-            <Step4_PlanDetail
-              v-model="formData.mealPlan"
-            />
-          </div>
+          <Step4_SubOption
+            v-model="formData.customerInfo2"
+            :preference-groups="SubOptions"
+          />
           <!-- 按鈕區域 -->
           <StepNavigationButtons
             :is-first-step="isFirstStep"

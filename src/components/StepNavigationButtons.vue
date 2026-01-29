@@ -12,7 +12,7 @@
 <script setup>
 import { ArrowLeft, ArrowRight, Check } from 'lucide-vue-next'
 
-const props = defineProps({
+defineProps({
   isFirstStep: {
     type: Boolean,
     required: true
@@ -31,12 +31,12 @@ const emit = defineEmits(['prev', 'next', 'submit'])
 </script>
 
 <template>
-  <div class="flex items-center justify-between p-4 gap-4 bg-layer-secondary border-t border-border-primary">
+  <div class="flex items-center justify-between p-4 gap-4 border-t border-border-primary">
     <button
       @click="emit('prev')"
       :disabled="isFirstStep"
       :class="[
-        'flex w-btn-md h-btn-h-md min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl transition-colors',
+        'flex w-btn-lg h-btn-h-md min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl transition-colors',
         isFirstStep
           ? 'bg-button-primary-disabled text-text-disabled cursor-not-allowed'
           : 'bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-hover text-text-on-color'

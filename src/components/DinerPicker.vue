@@ -1,4 +1,4 @@
-<!-- 用在 Step2_DinersCount，用於選擇用餐人數
+<!-- 用在 Step2_DinerCount，用於選擇用餐人數
 
 @param {Number} modelValue 選擇的人數
 @param {String} label 選擇的人數的標籤
@@ -124,7 +124,7 @@ const decrement = () => {
 
       <!-- 單位標籤 -->
       <div class="w-6 shrink-0 flex items-center justify-center">
-        <span class="text-text-secondary text-xl font-semibold font-noto">{{ unit }}</span>
+        <span class="text-text-secondary text-xl font-medium font-noto">{{ unit }}</span>
       </div>
     </div>
   </div>

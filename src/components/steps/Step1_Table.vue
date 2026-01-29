@@ -1,5 +1,5 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import { getStatusLabel } from '../../config/tableStatus'
   import BaseModal from '../BaseModal.vue'
@@ -10,6 +10,19 @@
     modelValue: {
       type: String,
       default: null
+    },
+    /**
+     * 由後端（RestaurantConfig）傳入的座位區設定
+     * 例如：
+     * [
+     *   { key: 'A', label: 'A 區', tableCount: 10 },
+     *   { key: 'B', label: 'B 區', tableCount: 8 }
+     * ]
+     * 目前桌況（佔用、預約、計時）仍為前端 mock，未與真實後端桌況串接
+     */
+    tableAreas: {
+      type: Array,
+      default: () => []
     }
   })
 
@@ -17,25 +30,39 @@
   const emit = defineEmits(['update:modelValue', 'next'])
   const router = useRouter()
 
-  // 模擬桌位資料 (邏輯保持不變)
-  const areaA = ref([
-    { id: 'A1', label: 'A1 桌', status: 0, timer: null },
-    { id: 'A2', label: 'A2 桌', status: 0, timer: null },
-    { id: 'A3', label: 'A3 桌', status: 0, timer: null },
-    { id: 'A4', label: 'A4 桌', status: 1, timer: '01:15:03' }
-  ])
+  /**
+   * 根據 RestaurantConfig.tableAreas 產生實際桌位列表
+   * 目前仍為前端 mock：
+   * - id：`${area.key}${index + 1}`
+   * - label：`${area.key}${index + 1} 桌`
+   * - status：一律 0（未開桌）
+   * - timer：null
+   *
+   * 未來若要串接真實桌況，可在此處改成吃後端「桌位狀態列表」。
+   */
+  const normalizedAreas = computed(() => {
+    if (!props.tableAreas?.length) return []
 
-  const areaB = ref([
-    { id: 'B1', label: 'B1 桌', status: 9, timer: null },
-    { id: 'B2', label: 'B2 桌', status: 1, timer: '01:15:03' },
-    { id: 'B3', label: 'B3 桌', status: 1, timer: '01:15:03' },
-    { id: 'B4', label: 'B4 桌', status: 0, timer: null },
-    { id: 'B5', label: 'B5 桌', status: 2, timer: '01:15:03' },
-    { id: 'B6', label: 'B6 桌', status: 3, timer: '01:15:03' },
-    { id: 'B7', label: 'B7 桌', status: 0, timer: null },
-    { id: 'B8', label: 'B8 桌', status: 4, timer: null },
-    { id: 'B9', label: 'B9 桌', status: 1, timer: '01:15:03' }
-  ])
+    return props.tableAreas.map((area) => {
+      const tables = []
+      const count = area.tableCount ?? 0
+      for (let i = 0; i < count; i++) {
+        const tableId = `${area.key}${i + 1}`
+        tables.push({
+          id: tableId,
+          label: `${tableId} 桌`,
+          status: 0,
+          timer: null
+        })
+      }
+
+      return {
+        key: area.key,
+        label: area.label,
+        tables
+      }
+    })
+  })
 
   // Modal 控制狀態
   const showReserveModal = ref(false)
@@ -122,73 +149,51 @@
 
   <template>
     <div class="flex-1 bg-white rounded-2xl shadow-sm overflow-y-auto">
-      <div class="p-8 space-y-6">
-        <h2 class="text-xl font-semibold text-text-primary mb-6">請選桌次</h2>
+      <div class="p-8 space-y-4">
+        <h2 class="text-xl font-bold text-text-secondary mb-6">請選桌次</h2>
 
-        <div class="flex items-start content-start gap-4 self-stretch flex-wrap">
-          <button
-            v-for="table in areaA"
-            :key="table.id"
-            @click="handleTableClick(table)"
-            :class="[
-              'flex h-34 min-w-40 flex-col justify-center items-center rounded-2xl overflow-hidden transition-all active:scale-95',
-              props.modelValue === table.id ? 'ring-4 ring-button-primary ring-offset-2 z-10' : ''
-            ]"
-          >
-            <div
-              class="flex justify-center items-center flex-1 self-stretch"
-              :class="getTableStyles(table.status).main"
-            >
-              <div class="text-white text-center font-noto text-[28px] font-semibold tracking-[1.2px]">
-                {{ table.label }}
-              </div>
-            </div>
-            <div
-              class="flex h-14 justify-center items-center shrink-0 self-stretch"
-              :class="getTableStyles(table.status).caption"
+        <div
+          v-for="(area, index) in normalizedAreas"
+          :key="area.key"
+          class="space-y-4"
+        >
+          <div class="flex items-start content-start gap-4 self-stretch flex-wrap">
+            <button
+              v-for="table in area.tables"
+              :key="table.id"
+              @click="handleTableClick(table)"
+              :class="[
+                'flex h-34 min-w-40 flex-col justify-center items-center rounded-2xl overflow-hidden transition-all active:scale-95',
+                props.modelValue === table.id ? 'ring-4 ring-button-primary ring-offset-2 z-10' : ''
+              ]"
             >
               <div
-                class="text-center font-noto text-xl font-medium"
-                :class="table.timer ? 'text-white font-inter font-medium' : getTableStyles(table.status).text"
+                class="flex justify-center items-center flex-1 self-stretch"
+                :class="getTableStyles(table.status).main"
               >
-                {{ getStatusText(table) }}
+                <div class="text-white text-center font-noto text-[28px] font-semibold tracking-[1.2px]">
+                  {{ table.label }}
+                </div>
               </div>
-            </div>
-          </button>
-        </div>
-
-        <div class="h-0.5 self-stretch bg-border-primary"></div>
-
-        <div class="flex items-start content-start gap-4 self-stretch flex-wrap">
-          <button
-            v-for="table in areaB"
-            :key="table.id"
-            @click="handleTableClick(table)"
-            :class="[
-              'flex h-34 min-w-40 flex-col justify-center items-center rounded-2xl overflow-hidden transition-all active:scale-95',
-              props.modelValue === table.id ? 'ring-4 ring-button-primary ring-offset-2 z-10' : ''
-            ]"
-          >
-            <div
-              class="flex justify-center items-center flex-1 self-stretch"
-              :class="getTableStyles(table.status).main"
-            >
-              <div class="text-white text-center font-noto text-[28px] font-semibold tracking-[1.2px]">
-                {{ table.label }}
-              </div>
-            </div>
-            <div
-              class="flex h-14 justify-center items-center shrink-0 self-stretch"
-              :class="getTableStyles(table.status).caption"
-            >
               <div
-                class="text-center font-noto text-xl font-medium"
-                :class="table.timer ? 'text-white font-inter font-medium' : getTableStyles(table.status).text"
+                class="flex h-14 justify-center items-center shrink-0 self-stretch"
+                :class="getTableStyles(table.status).caption"
               >
-                {{ getStatusText(table) }}
+                <div
+                  class="text-center font-noto text-xl font-medium"
+                  :class="table.timer ? 'text-white font-inter font-medium' : getTableStyles(table.status).text"
+                >
+                  {{ getStatusText(table) }}
+                </div>
               </div>
-            </div>
-          </button>
+            </button>
+          </div>
+
+          <!-- 區與區之間的分隔線 -->
+          <div
+            v-if="index < normalizedAreas.length - 1"
+            class="h-0.5 self-stretch bg-border-primary"
+          ></div>
         </div>
       </div>
 

@@ -10,13 +10,8 @@ export const useOrderStore = defineStore('order', {
       diners: null,
       status: TABLE_STATUS.AVAILABLE, // 預設為 0: 未開桌
       serviceType: null, // 'dine-in' | 'takeaway'
-      customerInfo: {
-        name: '',
-        phone: '',
-        email: '',
-        notes: ''
-      },
-      mealPlan: null
+      customerInfo: { preferences: {} },   // Step3 額外選項（extraFields）
+      customerInfo2: { preferences: {} }   // Step4 額外選項（extraFields2）
     },
 
     // 購物車
@@ -80,8 +75,8 @@ export const useOrderStore = defineStore('order', {
 
   actions: {
     /**
-     * 初始化桌次與訂單資訊
-     * @param {Object} tableData - 桌次資料，包含 tableNumber, diners, orderId, serviceType, customerInfo, mealPlan (可選)
+     * 初始化桌次與訂單資訊（開桌時存桌位、人數、customerInfo、customerInfo2）
+     * @param {Object} tableData - 桌次資料，包含 tableNumber, diners, orderId, serviceType, customerInfo, customerInfo2
      */
     setTable(tableData) {
       this.orderInfo = {
@@ -90,13 +85,8 @@ export const useOrderStore = defineStore('order', {
         diners: tableData.diners || null,
         status: tableData.status !== undefined ? tableData.status : TABLE_STATUS.AVAILABLE,
         serviceType: tableData.serviceType || null,
-        customerInfo: tableData.customerInfo || {
-          name: '',
-          phone: '',
-          email: '',
-          notes: ''
-        },
-        mealPlan: tableData.mealPlan || null
+        customerInfo: tableData.customerInfo ?? { preferences: {} },
+        customerInfo2: tableData.customerInfo2 ?? { preferences: {} }
       }
     },
 
@@ -150,13 +140,8 @@ export const useOrderStore = defineStore('order', {
         diners: null,
         status: TABLE_STATUS.AVAILABLE,
         serviceType: null,
-        customerInfo: {
-          name: '',
-          phone: '',
-          email: '',
-          notes: ''
-        },
-        mealPlan: null
+        customerInfo: { preferences: {} },
+        customerInfo2: { preferences: {} }
       }
 
       this.cart = {

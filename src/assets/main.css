@@ -41,9 +41,9 @@
     --color-ash-100: #EEF5F6;
     --color-ash-200: #DFE9ED;
     --color-ash-300: #C6D4DF;
-    --color-ash-400: #B4C6D6;
+    --color-ash-400: #AEC4D8;
     --color-ash-500: #92A7C0;
-    --color-ash-600: #6C84A8;
+    --color-ash-600: #718AB0;
     --color-ash-700: #516F9C;
     --color-ash-800: #2E446D;
     --color-ash-900: #202F4F;
@@ -165,7 +165,7 @@
      --color-modal-bg: var(--color-ash-700);
 
      /* Buttons */
-     --color-button-primary: var(--color-ash-700);
+     --color-button-primary: var(--color-ash-600);
      --color-button-primary-hover: var(--color-ash-900);
      --color-button-primary-disabled: var(--color-ash-200);
      --color-button-secondary: var(--color-ash-400);
@@ -235,8 +235,8 @@
      --spacing-btn-xl: 240px;
 
      --spacing-btn-h-sm: 64px;
-     --spacing-btn-h-md: 80px; /* 主要 Footer-CTA 按鈕高度 */
-     --spacing-btn-h-lg: 88px;
+     --spacing-btn-h-md: 72px; /* 主要 Footer-CTA 按鈕高度 */
+     --spacing-btn-h-lg: 80px;
 
      /* ============================================================
         4. 圓角 (Radius)

@@ -246,7 +246,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Payment Methods -->
-      <div class="flex flex-col items-start self-stretch">
+      <div class="flex flex-col items-start self-stretch bg-layer-tertiary">
         <div
           class="flex flex-col items-start gap-px flex-1 self-stretch overflow-hidden"
         >
@@ -255,7 +255,7 @@ onUnmounted(() => {
             :key="method.id"
             @click="handlePayment(method.id)"
             :class="[
-              'flex w-btn-lg h-btn-h-lg min-w-[100px] max-w-btn-xl px-4 justify-center items-center transition-colors',
+              'flex w-btn-lg h-[88px] min-w-[100px] max-w-btn-xl px-4 justify-center items-center transition-colors',
               method.paddingClass,
               'bg-button-primary hover:bg-button-primary-hover',
               'active:bg-button-primary-hover active:scale-[0.98]'
