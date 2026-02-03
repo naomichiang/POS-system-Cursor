@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useOrderStore } from '../stores/useOrderStore'
+import { useTableSyncStore } from '../stores/useTableSyncStore'
 import { useRouter } from 'vue-router'
 import { TABLE_STATUS } from '../config/tableStatus'
 import { DEFAULT_RESTAURANT_CONFIG } from '../config/restaurantConfig'
@@ -12,6 +13,7 @@ import StepNavigationButtons from './StepNavigationButtons.vue'
 
 const router = useRouter()
 const orderStore = useOrderStore()
+const tableSyncStore = useTableSyncStore()
 
 // 根容器 ref，用來掛載觸控監聽（防止快速點擊縮放）
 const rootRef = ref(null)
@@ -132,20 +134,47 @@ const prevStep = () => {
   currentStep.value--
 }
 
-const handleSubmit = () => {
-  // 保存到 store
-  orderStore.setTable({
+const submitLoading = ref(false)
+const submitError = ref(null)
+
+const handleSubmit = async () => {
+  const tableId = formData.value.table
+  if (!tableId) return
+
+  submitLoading.value = true
+  submitError.value = null
+
+  // 1. 準備要傳送的資料（開發階段模擬，後端 API 就緒後可改為呼叫 createOrder）
+  const orderData = {
     orderId: `ORD-${Date.now()}`,
-    tableNumber: formData.value.table,
+    tableNumber: tableId,
     diners: formData.value.diners,
     status: TABLE_STATUS.OCCUPIED, // 1: 已開桌
-    serviceType: 'dine-in', // 所有訂單一律視為內用
+    serviceType: formData.value.serviceType ?? 'dine-in',
     customerInfo: formData.value.customerInfo,
-    customerInfo2: formData.value.customerInfo2
-  })
+    customerInfo2: formData.value.customerInfo2,
+    openedAt: new Date().toISOString()
+  }
 
-  // 導航到主頁面
-  router.push('/')
+  try {
+    // --- 模擬 API 請求（開發用）---
+    console.log('正在傳送開桌資料至後端...', orderData)
+    await new Promise(resolve => setTimeout(resolve, 800))
+    console.log('後端已確認開桌，訂單已建立')
+    // --- 模擬結束 ---
+
+    // 2. 更新前端全域狀態 (Pinia Store)
+    orderStore.setTable(orderData)
+    tableSyncStore.setTableStatus(tableId, TABLE_STATUS.OCCUPIED)
+
+    // 3. 導向點餐頁
+    router.push(`/order/${orderData.tableNumber}`)
+  } catch (error) {
+    console.error('模擬開桌發生錯誤:', error)
+    submitError.value = error?.message ?? '開桌失敗，請稍後再試'
+  } finally {
+    submitLoading.value = false
+  }
 }
 
 // -------- 防止快速連點觸發縮放（特別是 iOS Safari 雙擊縮放），同時保留按鈕連點行為 --------
@@ -172,6 +201,7 @@ onMounted(() => {
   if (rootRef.value) {
     rootRef.value.addEventListener('touchend', handleTouchEnd, { passive: false })
   }
+  tableSyncStore.connectWs()
 })
 
 onBeforeUnmount(() => {
@@ -190,6 +220,7 @@ onBeforeUnmount(() => {
         v-if="currentStep === 1"
         v-model="formData.table"
         :table-areas="restaurantConfig.tableAreas"
+        :table-status-map="tableSyncStore.tableStatusMap"
         @next="nextStep"
       />
       <!-- 步驟 2: 用餐人數 -->
@@ -206,6 +237,7 @@ onBeforeUnmount(() => {
             :is-first-step="isFirstStep"
             :is-last-step="isLastStep"
             :can-proceed="canProceed"
+            :submit-loading="submitLoading"
             @prev="prevStep"
             @next="nextStep"
             @submit="handleSubmit"
@@ -225,6 +257,7 @@ onBeforeUnmount(() => {
             :is-first-step="isFirstStep"
             :is-last-step="isLastStep"
             :can-proceed="canProceed"
+            :submit-loading="submitLoading"
             @prev="prevStep"
             @next="nextStep"
             @submit="handleSubmit"
@@ -244,10 +277,12 @@ onBeforeUnmount(() => {
             :is-first-step="isFirstStep"
             :is-last-step="isLastStep"
             :can-proceed="canProceed"
+            :submit-loading="submitLoading"
             @prev="prevStep"
             @next="nextStep"
             @submit="handleSubmit"
           />
+          <p v-if="submitError" class="mt-2 text-center text-button-danger text-lg">{{ submitError }}</p>
         </div>
       </div>
     </div>

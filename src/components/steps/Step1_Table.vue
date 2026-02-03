@@ -13,16 +13,18 @@
     },
     /**
      * 由後端（RestaurantConfig）傳入的座位區設定
-     * 例如：
-     * [
-     *   { key: 'A', label: 'A 區', tableCount: 10 },
-     *   { key: 'B', label: 'B 區', tableCount: 8 }
-     * ]
-     * 目前桌況（佔用、預約、計時）仍為前端 mock，未與真實後端桌況串接
      */
     tableAreas: {
       type: Array,
       default: () => []
+    },
+    /**
+     * 桌號 -> 狀態（由 useTableSyncStore 提供，含 WebSocket 即時更新）
+     * 未在 map 內視為 0（未開桌）
+     */
+    tableStatusMap: {
+      type: Object,
+      default: () => ({})
     }
   })
 
@@ -31,17 +33,12 @@
   const router = useRouter()
 
   /**
-   * 根據 RestaurantConfig.tableAreas 產生實際桌位列表
-   * 目前仍為前端 mock：
-   * - id：`${area.key}${index + 1}`
-   * - label：`${area.key}${index + 1} 桌`
-   * - status：一律 0（未開桌）
-   * - timer：null
-   *
-   * 未來若要串接真實桌況，可在此處改成吃後端「桌位狀態列表」。
+   * 根據 RestaurantConfig.tableAreas 與 tableStatusMap 產生桌位列表
+   * status 來自 tableStatusMap（WebSocket 同步），無則為 0（未開桌）
    */
   const normalizedAreas = computed(() => {
     if (!props.tableAreas?.length) return []
+    const statusMap = props.tableStatusMap ?? {}
 
     return props.tableAreas.map((area) => {
       const tables = []
@@ -51,7 +48,7 @@
         tables.push({
           id: tableId,
           label: `${tableId} 桌`,
-          status: 0,
+          status: statusMap[tableId] ?? 0,
           timer: null
         })
       }
@@ -84,12 +81,9 @@
       reserveTableData.value = table
       showReserveModal.value = true
     }
-    // 狀態 1, 2, 3: 用餐中
+    // 狀態 1, 2, 3: 用餐中（已開桌，進入點餐/編輯頁）
     else if ([1, 2, 3].includes(table.status)) {
-      router.push({
-        path: '/ordering',
-        query: { tableId: table.id, mode: 'edit' }
-      })
+      router.push(`/order/${table.id}`)
     }
     // 狀態 4, 5: 結帳/待清
     else if ([4, 5].includes(table.status)) {

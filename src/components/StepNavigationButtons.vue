@@ -24,6 +24,10 @@ defineProps({
   canProceed: {
     type: Boolean,
     required: true
+  },
+  submitLoading: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -68,17 +72,17 @@ const emit = defineEmits(['prev', 'next', 'submit'])
     <button
       v-else
       @click="emit('submit')"
-      :disabled="!canProceed"
+      :disabled="!canProceed || submitLoading"
       :class="[
         'flex w-btn-lg h-btn-h-md min-w-btn-md px-4 justify-center items-center gap-2 rounded-2xl transition-colors',
-        canProceed
+        canProceed && !submitLoading
           ? 'bg-button-danger hover:bg-button-danger-hover active:bg-button-danger-hover text-text-on-color'
           : 'bg-button-primary-disabled text-text-disabled cursor-not-allowed'
       ]"
     >
       <Check class="w-icon-md h-icon-md" />
       <div class="text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
-        確認開桌
+        {{ submitLoading ? '處理中…' : '確認開桌' }}
       </div>
     </button>
   </div>

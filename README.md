@@ -11,11 +11,9 @@
 ## 🛠️ 技術棧 (Tech Stack)
 - **Framework**: Vue 3 (Composition API)
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS v4 (採用最新 @theme 變數配置)
+- **Styling**: Tailwind CSS v4 (自定義 main.css 變數系統)
 - **Language**: TypeScript
 
-## 📦 快速開始
 
-### 1. 安裝依賴
-```bash
-pnpm install
+規格書：
+https://docs.google.com/document/d/17BZXlPkMqwTK0y2L7pBIOgRGMTnK3qkWDKH4od21xoI/edit?usp=sharing
