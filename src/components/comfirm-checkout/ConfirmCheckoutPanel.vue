@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { X } from 'lucide-vue-next'
-import { getPaymentMethodById } from '../config/paymentMethods'
-import { TABLE_STATUS, getStatusLabel } from '../config/tableStatus'
+import { getPaymentMethodById } from '../../config/paymentMethods'
+import { TABLE_STATUS, getStatusLabel } from '../../config/tableStatus'
 
 // 定義 props 和 emits（使用純 JavaScript，避免 TS 解析問題）
 const props = defineProps({

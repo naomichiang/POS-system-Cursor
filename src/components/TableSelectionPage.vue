@@ -5,11 +5,11 @@ import { useTableSyncStore } from '../stores/useTableSyncStore'
 import { useRouter } from 'vue-router'
 import { TABLE_STATUS } from '../config/tableStatus'
 import { DEFAULT_RESTAURANT_CONFIG } from '../config/restaurantConfig'
-import Step1_Table from './steps/Step1_Table.vue'
-import Step2_DinerCount from './steps/Step2_DinerCount.vue'
-import Step3_MainOption from './steps/Step3_RestaurantMainOption.vue'
-import Step4_SubOption from './steps/Step4_RestaurantSubOption.vue'
-import StepNavigationButtons from './StepNavigationButtons.vue'
+import Step1_Table from './table-selection/Step1_Table.vue'
+import Step2_DinerCount from './table-selection/Step2_DinerCount.vue'
+import Step3_MainOption from './table-selection/Step3_RestaurantMainOption.vue'
+import Step4_SubOption from './table-selection/Step4_RestaurantSubOption.vue'
+import StepNavigationButtons from './table-selection/StepNavigationButtons.vue'
 
 const router = useRouter()
 const orderStore = useOrderStore()
@@ -202,6 +202,15 @@ onMounted(() => {
     rootRef.value.addEventListener('touchend', handleTouchEnd, { passive: false })
   }
   tableSyncStore.connectWs()
+
+  // 開發階段：直接模擬一筆 A2 桌、狀態 1、總金額 1770 的訂單
+  // 會透過 useTableSyncStore.mockOrderForDev() 更新桌位狀態，讓桌次頁看到 A2 已開桌
+  try {
+    const mockOrder = tableSyncStore.mockOrderForDev()
+    console.log('[DEV] 已載入模擬訂單：', mockOrder)
+  } catch (e) {
+    console.warn('[DEV] 載入模擬訂單失敗：', e)
+  }
 })
 
 onBeforeUnmount(() => {

@@ -1,5 +1,3 @@
-<!-- 用在 Step3_RestaurantMainOption 和 Step4_RestaurantSubOption，用於選擇額外資訊 -->
-
 <script setup>
 const props = defineProps({
   /**
@@ -8,6 +6,7 @@ const props = defineProps({
    *   {
    *     key: 'plan',
    *     label: '方案',
+   *     isMultiple: false, // 預設為單選
    *     options: [{ value: 'plan-599', label: '吃到飽 599' }, ...],
    *     isLargeBtn: true  // 此組為大寬度按鈕，未設則小寬度
    *   }
@@ -17,26 +16,24 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  /**
-   * v-model 綁定的選取結果
-   * 預設為單選：
-   * - isMultiple = false（預設）：{ [groupKey]: string | undefined }
-   * - isMultiple = true：{ [groupKey]: string[] }
-   *
-   * 若某一組需要覆寫成多選，可在該 group 上設定 isMultiple: true
-   */
+
   modelValue: {
     type: Object,
     default: () => ({})
   },
-  /**
-   * 是否允許多選
-   * - 預設為 false（單選）
-   * - 若 group 上有設定 isMultiple，會優先採用 group 的設定
-   */
+
   isMultiple: {
     type: Boolean,
     default: false
+  },
+  /**
+   * 顯示模式： default/order
+   * - default：目前 Step3 / Step4 使用的大版面
+   * - order：點餐頁細項設定用，小一號、間距更緊湊，並顯示加價金額
+   */
+  mode: {
+    type: String,
+    default: 'default'
   }
 })
 
@@ -87,37 +84,64 @@ const isSelected = (groupKey, optionValue) => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-start items-start gap-6">
+  <div
+    class="w-full flex flex-col justify-start items-start"
+    :class="mode === 'order' ? 'gap-2' : 'gap-6'"
+  >
     <div
       v-for="group in groups"
       :key="group.key || group.label"
-      class="w-full inline-flex justify-start items-start gap-6"
+      class="w-full inline-flex justify-start items-start"
+      :class="mode === 'order' ? 'gap-2' : 'gap-6'"
       :data-選項數量="group.options?.length || 0"
     >
       <!-- 左側標籤 -->
-      <div class="w-20 h-btn-h-lg flex items-center shrink-0">
-        <div class="text-text-helper text-lg font-medium font-noto tracking-wider">
+      <div
+        class="flex items-center shrink-0"
+        :class="mode === 'order' ? 'w-16 h-10' : 'w-20 h-btn-h-lg'"
+      >
+        <div
+          class="text-text-helper font-medium font-noto tracking-wider"
+          :class="mode === 'order' ? 'text-sm' : 'text-lg'"
+        >
           {{ group.label }}
         </div>
       </div>
 
       <!-- 右側選項群組 -->
-      <div class="flex-1 flex justify-start items-start gap-4 flex-wrap content-start">
+      <div
+        class="flex-1 flex justify-start items-start flex-wrap content-start"
+        :class="mode === 'order' ? 'gap-2' : 'gap-4'"
+      >
         <button
           v-for="option in group.options"
           :key="option.value ?? option.label"
           type="button"
           @click="toggleOption(group, option.value ?? option.label)"
           :class="[
-            'h-btn-h-lg px-4 rounded-2xl flex justify-center items-center gap-2 transition-all active:scale-95',
-            group.isLargeBtn === true ? 'min-w-60' : 'min-w-44 max-w-48',
+            'rounded-2xl flex justify-center items-center transition-all active:scale-95',
+            mode === 'order'
+              ? 'min-w-28 h-10 px-3'
+              : 'h-btn-h-lg px-4 ' + (group.isLargeBtn === true ? 'min-w-60' : 'min-w-44 max-w-48'),
             isSelected(group.key || group.label, option.value ?? option.label)
               ? 'bg-button-danger active:bg-button-danger-hover shadow-lg'
               : 'bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-hover'
           ]"
         >
-          <div class="text-center text-text-on-color text-xl font-medium font-noto leading-7">
-            {{ option.label }}
+          <div
+            class="flex items-center justify-center text-text-on-color font-noto font-medium leading-tight"
+            :class="mode === 'order' ? 'text-xs' : 'text-xl'"
+          >
+            <span class="text-center">
+              {{ option.label }}
+            </span>
+            <span
+              v-if="mode === 'order' && Number(option.price) > 0"
+              class="ml-1 font-inter"
+              :class="mode === 'order' ? 'text-[10px]' : 'text-sm'"
+            >
+              +{{ Number(option.price) }}
+            </span>
           </div>
         </button>
       </div>

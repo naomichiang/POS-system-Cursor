@@ -5,9 +5,9 @@ import {
   DollarSign,
   BadgeCheck,
 } from 'lucide-vue-next'
-import { paymentMethodsConfig } from '../config/paymentMethods'
-import { TABLE_STATUS } from '../config/tableStatus'
-import BaseModal from './BaseModal.vue'
+import { paymentMethodsConfig } from '../../config/paymentMethods'
+import { TABLE_STATUS } from '../../config/tableStatus'
+import BaseModal from '../common/BaseModal.vue'
 import { useOrderStore } from '@/stores/useOrderStore'
 
 // 引入 Store

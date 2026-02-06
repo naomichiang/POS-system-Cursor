@@ -61,6 +61,45 @@ export const useTableSyncStore = defineStore('tableSync', {
     },
 
     /**
+     * 開發用：模擬一筆訂單（無後端 / 無 WS 時使用）
+     * - A2 桌、狀態 1、總金額 1770
+     * - 會順便透過 handleWsMessage 更新桌位狀態
+     */
+    mockOrderForDev() {
+      const mockOrder = {
+        orderId: 'DEV-ORDER-A2-001',
+        tableNumber: 'A2',
+        status: 1,
+        totalAmount: 1770,
+        items: [
+          {
+            productId: 'P001',
+            name: '測試品項一',
+            qty: 1,
+            price: 770,
+            subtotal: 770
+          },
+          {
+            productId: 'P002',
+            name: '測試品項二',
+            qty: 1,
+            price: 1000,
+            subtotal: 1000
+          }
+        ]
+      }
+
+      // 模擬一筆 WS 訊息，讓桌位狀態同步更新
+      this.handleWsMessage({
+        type: 'order_created',
+        tableNumber: mockOrder.tableNumber,
+        status: mockOrder.status
+      })
+
+      return mockOrder
+    },
+
+    /**
      * 建立 WebSocket 連線並訂閱桌次更新
      * 僅在設定 VITE_WS_URL 時連線；開發階段未設定則不連線，避免連到 Vite 的 port 噴錯
      * 後端需廣播：{ type: 'table_updated' | 'order_created', tableId/tableNumber, status }

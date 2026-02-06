@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import DinerProfileGroups from '../ExtraField.vue'
+import DinerProfileGroups from '../common/ExtraField.vue'
 
 const props = defineProps({
   modelValue: {

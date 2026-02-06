@@ -2,7 +2,7 @@
   import { ref, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import { getStatusLabel } from '../../config/tableStatus'
-  import BaseModal from '../BaseModal.vue'
+  import BaseModal from '../common/BaseModal.vue'
   import { CalendarCheck, SprayCan } from 'lucide-vue-next'
 
   // 接收 Props

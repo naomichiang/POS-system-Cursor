@@ -3,62 +3,11 @@ import { computed, onMounted } from 'vue'
 import { useOrderStore } from '../stores/useOrderStore'
 import { useRouter } from 'vue-router'
 import { TABLE_STATUS, getStatusLabel } from '../config/tableStatus'
-import ConfirmCheckoutPanel from './ConfirmCheckoutPanel.vue'
-import ConfirmCheckoutArea from './ConfirmCheckoutArea.vue'
+import ConfirmCheckoutPanel from './comfirm-checkout/ConfirmCheckoutPanel.vue'
+import ConfirmCheckoutArea from './comfirm-checkout/ConfirmCheckoutArea.vue'
 
 const router = useRouter()
 const orderStore = useOrderStore()
-
-// 開發環境：初始化測試資料
-onMounted(() => {
-  // 只在開發環境時初始化測試資料（開發時可隨時更新測試資料）
-  if (import.meta.env.DEV) {
-    // 設置桌次資訊
-    orderStore.setTable({
-      orderId: 'ORD-20241201-001',
-      tableNumber: '3B桌',
-      diners: 7,
-      status: TABLE_STATUS.OCCUPIED // 1: 已開桌
-    })
-
-    // 添加測試商品到購物車
-    orderStore.addToCart({
-      id: 'PROD-001',
-      name: '經典牛肉漢堡',
-      price: 280,
-      quantity: 2,
-      note: '不要洋蔥',
-      modifiers: []
-    })
-
-    orderStore.addToCart({
-      id: 'PROD-002',
-      name: '薯條（大）',
-      price: 120,
-      quantity: 1,
-      note: '',
-      modifiers: []
-    })
-
-    orderStore.addToCart({
-      id: 'PROD-003',
-      name: '可樂',
-      price: 80,
-      quantity: 3,
-      note: '去冰',
-      modifiers: []
-    })
-
-    orderStore.addToCart({
-      id: 'PROD-004',
-      name: '雞塊（6塊）',
-      price: 150,
-      quantity: 1,
-      note: '',
-      modifiers: []
-    })
-  }
-})
 
 // 將 store 的資料映射為組件需要的格式
 // 確保響應式追蹤：明確訪問 store 的每個屬性

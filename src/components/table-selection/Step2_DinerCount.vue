@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import DinerPicker from '../DinerPicker.vue'
+import DinerPicker from './DinerPicker.vue'
 import { DEFAULT_DINER_PICKER_CONFIG } from '../../config/restaurantConfig'
 
 const props = defineProps({
