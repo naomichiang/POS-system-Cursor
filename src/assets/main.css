@@ -112,7 +112,7 @@
      --color-purple-500: #7562AC;
 
     /* Indianred 系列 */
-    --color-indianred-100: #FDECEC;
+    --color-indianred-100: #FCE8E8;
     --color-indianred-200: #F6C9C9;
     --color-indianred-300: #F996A8;
     --color-indianred-400: #E07C7C;
@@ -174,6 +174,8 @@
      --color-button-danger-hover: var(--color-indianred-800);
      --color-button-highlight-red: var(--color-indianred-100);
      --color-button-highlight-red-hover: var(--color-indianred-300);
+     --color-button-highlight: var(--color-ash-100);
+     --color-button-highlight-hover: var(--color-ash-200);
 
      /* Borders */
      --color-border-primary: var(--color-gray-300);
@@ -229,6 +231,7 @@
      --spacing-icon-xl: 40px;
 
      /* LabelButton Widths (以 8pt 為基準) */
+     --spacing-btn-xs: 64px; /* 輔助功能鍵：發票 */
      --spacing-btn-sm: 80px; /* 輔助功能鍵：發票 */
      --spacing-btn-md: 120px; /* 主要功能鍵：確認、結帳 */
      --spacing-btn-lg: 200px;

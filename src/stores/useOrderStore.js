@@ -121,6 +121,14 @@ export const useOrderStore = defineStore('order', {
     },
 
     /**
+     * 根據商品 id 從購物車中刪除單一品項
+     * @param {string|number} id - 要刪除的商品 id
+     */
+    removeFromCart(id) {
+      this.cart.items = this.cart.items.filter(item => item.id !== id)
+    },
+
+    /**
      * 更新折扣邏輯
      * @param {string} type - 折扣類型：'none' | 'percent' | 'amount'
      * @param {number} value - 折扣值（百分比或金額）

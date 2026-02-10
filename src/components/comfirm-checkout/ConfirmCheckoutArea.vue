@@ -285,16 +285,16 @@ onUnmounted(() => {
 
     <!-- Bottom Actions -->
     <div
-      class="flex p-4 items-start gap-4 self-stretch border-t border-border-primary"
+      class="flex h-24 w-full p-3 items-start gap-3 self-stretch border-t border-border-primary"
     >
       <button
-        class="shrink-0 flex w-btn-md h-btn-h-md min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
+        class="shrink-0 flex w-btn-md h-full min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
         <div
           class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
           發票
         </div>
       </button>
-      <div class="flex h-btn-h-md justify-end items-center gap-4 flex-1">
+      <div class="flex h-full justify-end items-center gap-3 flex-1">
         <button
           class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
           <div class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">

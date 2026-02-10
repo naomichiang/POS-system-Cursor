@@ -167,9 +167,9 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-1 w-full min-w-0 h-full min-h-0 overflow-hidden">
+  <div class="flex flex-1 w-full min-w-0 h-full min-h-0 overflow-hidden p-4 gap-3">
     <!-- 左側主內容區：扣除 OrderPanel 後的剩餘寬度，CatTab 固定高度、下方為 SubCatList/配置區 -->
-    <div class="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden p-4 gap-4 basis-0">
+    <div class="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden gap-3 basis-0">
       <!-- 上方主類別 tabs（固定高度、寬度受左欄約束，不撐開版面） -->
       <div class="shrink-0 w-full min-w-0 overflow-hidden">
         <CatTabs
@@ -221,7 +221,13 @@ watch(
 
     <!-- 右側點餐明細（固定寬度、不被擠壓） -->
     <div class="shrink-0 flex-none h-full">
-      <OrderPanel class="h-full" />
+      <OrderPanel
+        class="h-full"
+        :items="orderStore.cart.items"
+        :total-count="orderStore.cart.items.length"
+        :total-amount="orderStore.subtotal.toLocaleString()"
+        @delete-all="orderStore.cart.items = []"
+      />
     </div>
   </div>
 </template>

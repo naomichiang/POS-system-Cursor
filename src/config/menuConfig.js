@@ -377,7 +377,36 @@ export const DEFAULT_MENU_CATEGORIES = [
             ]
           }
         ]
-      }
+      },
+      {
+        id: 'test_skin',
+        name: '測試名稱超激長長長長長長芹測試名稱超激長長長長長長芹菜菜',
+        price: 20099,
+        optionGroups:[
+          {
+            key: 'spicy',
+            label: '辣度',
+            type: 'select',
+            options: [
+              { value: 'none', label: '不辣' },
+              { value: 'mild', label: '小辣' },
+              { value: 'hot', label: '大辣' }
+            ]
+          },
+          {
+            key: 'sides',
+            label: '配菜',
+            type: 'select',
+            isMultiple: true,
+            options: [
+              { value: 'tofu', label: '長長長長長長長長測試名稱超激長長長長長長芹菜長長文字測試小魚豆腐', price: 1920 },
+              { value: 'bean_sprout', label: '鹹蛋豆芽菜', price: 20 },
+              { value: 'veggie_soup', label: '蔬菜湯', price: 10 },
+              { value: 'egg_soup', label: '蛋花湯', price: 10 }
+            ]
+          }
+        ]
+      },
     ]
   },
   {
@@ -1159,7 +1188,7 @@ export const DEFAULT_MENU_CATEGORIES = [
       {
         id: 'black_sugar_pearl_milk',
         name: '黑糖珍珠鮮奶',
-        price: 80,
+        price: 18880,
         optionGroups: [
           {
             key: 'portion',

@@ -2,7 +2,7 @@
 // 點餐頁細項設定容器：只是把 config 轉接給共用的 ExtraField
 import ExtraField from '../common/ExtraField.vue'
 
-const props = defineProps({
+defineProps({
   groups: {
     type: Array,
     default: () => []
