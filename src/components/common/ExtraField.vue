@@ -86,7 +86,7 @@ const isSelected = (groupKey, optionValue) => {
 <template>
   <div
     class="w-full flex flex-col justify-start items-start"
-    :class="mode === 'order' ? 'gap-2' : 'gap-6'"
+    :class="mode === 'order' ? 'gap-4' : 'gap-6'"
   >
     <div
       v-for="group in groups"
@@ -98,11 +98,11 @@ const isSelected = (groupKey, optionValue) => {
       <!-- 左側標籤 -->
       <div
         class="flex items-center shrink-0"
-        :class="mode === 'order' ? 'w-16 h-10' : 'w-20 h-btn-h-lg'"
+        :class="mode === 'order' ? 'w-10 h-btn-h-sm' : 'w-20 h-btn-h-lg'"
       >
         <div
           class="text-text-helper font-medium font-noto tracking-wider"
-          :class="mode === 'order' ? 'text-sm' : 'text-lg'"
+          :class="mode === 'order' ? 'text-lg' : 'text-lg'"
         >
           {{ group.label }}
         </div>
@@ -119,26 +119,30 @@ const isSelected = (groupKey, optionValue) => {
           type="button"
           @click="toggleOption(group, option.value ?? option.label)"
           :class="[
-            'rounded-2xl flex justify-center items-center transition-all active:scale-95',
+            'relative overflow-hidden rounded-2xl flex transition-all active:scale-95',
             mode === 'order'
-              ? 'min-w-28 h-10 px-3'
+              ? 'min-w-22 max-w-48 h-btn-h-sm'
               : 'h-btn-h-lg px-4 ' + (group.isLargeBtn === true ? 'min-w-60' : 'min-w-44 max-w-48'),
             isSelected(group.key || group.label, option.value ?? option.label)
-              ? 'bg-button-danger active:bg-button-danger-hover shadow-lg'
-              : 'bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-hover'
+              ? 'bg-button-selected active:bg-button-selected-hover'
+              : 'bg-button-primary active:bg-button-primary-hover'
           ]"
         >
           <div
-            class="flex items-center justify-center text-text-on-color font-noto font-medium leading-tight"
-            :class="mode === 'order' ? 'text-xs' : 'text-xl'"
+            class="flex-1 flex min-w-0 px-2 items-center justify-center"
+            :class="mode === 'order' ? 'text-lg' : 'text-xl'"
           >
-            <span class="text-center">
+            <span class="text-center line-clamp-2 break-all overflow-hidden text-text-on-color font-noto font-medium leading-tight">
               {{ option.label }}
             </span>
+          </div>
+          <div>
             <span
               v-if="mode === 'order' && Number(option.price) > 0"
-              class="ml-1 font-inter"
-              :class="mode === 'order' ? 'text-[10px]' : 'text-sm'"
+              class="w-12 h-full flex items-center justify-center shrink-0 font-inter text-sm font-medium text-text-on-color"
+              :class="isSelected(group.key || group.label, option.value ?? option.label)
+                ? 'bg-white/20'
+                : 'bg-white/10'"
             >
               +{{ Number(option.price) }}
             </span>

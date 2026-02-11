@@ -96,8 +96,8 @@ watch(
           'text-center text-text-on-color text-xl font-medium font-noto leading-7',
           'transition-colors active:scale-[0.98]',
           cat.key === activeKey
-            ? 'bg-yellow-800'
-            : 'bg-button-primary hover:bg-button-primary-hover'
+            ? 'bg-button-selected active:bg-button-selected-hover'
+            : 'bg-button-primary active:bg-button-primary-hover'
         ]"
         @click="handleClick(cat.key)"
       >

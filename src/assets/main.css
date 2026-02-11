@@ -176,7 +176,8 @@
      --color-button-highlight-red-hover: var(--color-indianred-300);
      --color-button-highlight: var(--color-ash-100);
      --color-button-highlight-hover: var(--color-ash-200);
-
+     --color-button-selected: var(--color-yellow-800);
+     --color-button-selected-hover: var(--color-yellow-900);
      /* Borders */
      --color-border-primary: var(--color-gray-300);
      --color-border-primary-focus: var(--color-ash-700);
