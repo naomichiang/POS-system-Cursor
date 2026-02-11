@@ -23,8 +23,10 @@ const handleClick = (item) => {
         @click="handleClick(item)"
         class="rounded-2xl flex justify-center items-center transition-all active:scale-95 h-btn-h-sm px-6 min-w-24 max-w-48 bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-hover"
       >
-        <div class="flex items-center justify-center text-text-on-color font-noto font-medium leading-tight text-xl">
-          <span class="text-center">{{ item.name }}</span>
+        <div class="flex items-center justify-center text-text-on-color font-noto font-medium leading-tight">
+          <span class="text-center text-lg line-clamp-2 break-all overflow-hidden">
+            {{ item.name }}
+          </span>
         </div>
       </button>
     </div>

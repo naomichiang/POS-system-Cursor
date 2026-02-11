@@ -99,15 +99,15 @@ watch(showArrows, (val) => {
         @click="handleSelect(item.id)"
         :class="[
           // 通用設定：固定高度、動畫、Flex 佈局
-          'flex-none h-12 px-2 flex font-medium items-center justify-center leading-tight font-noto text-md transition-all active:scale-95 text-left',
+          'flex-none h-btn-h-xs px-2 flex font-medium items-center justify-center leading-tight font-noto text-md transition-all active:scale-95 text-left',
 
           item.id === activeId
             ? [ // 選中狀態：寬度 100%，圓角右側設為 0 (如果要完全黏住)
-              'w-full h-12 bg-layer-primary text-lg text-yellow-900 shadow-md z-10',
+              'w-full  bg-layer-primary text-lg text-yellow-900 shadow-md z-10',
               'rounded-l-xl rounded-r-none' // 右邊不設圓角，視覺上更黏合右側
             ]
             : [ // 未選中狀態：寬度縮減 8px，四邊維持圓角
-              'w-[calc(100%-8px)] bg-button-primary text-text-on-color rounded-xl opacity-90',
+              'w-[calc(100%-8px)] bg-button-primary text-text-on-color rounded-xl opacity-85',
               'active:bg-button-primary-hover active:scale-95'
             ]
         ]"

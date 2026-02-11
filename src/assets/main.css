@@ -231,12 +231,13 @@
      --spacing-icon-xl: 40px;
 
      /* LabelButton Widths (以 8pt 為基準) */
-     --spacing-btn-xs: 64px; /* 輔助功能鍵：發票 */
+     --spacing-btn-xs: 64px; /* 輔助功能鍵：上下頁 */
      --spacing-btn-sm: 80px; /* 輔助功能鍵：發票 */
      --spacing-btn-md: 120px; /* 主要功能鍵：確認、結帳 */
      --spacing-btn-lg: 200px;
      --spacing-btn-xl: 240px;
 
+     --spacing-btn-h-xs: 56px; /* 輔助功能鍵：ItemSideMenu 其餘選項按鈕高度 */
      --spacing-btn-h-sm: 64px;
      --spacing-btn-h-md: 72px; /* 主要 Footer-CTA 按鈕高度 */
      --spacing-btn-h-lg: 80px;
