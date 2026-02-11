@@ -57,7 +57,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 109 }
             ]
           },
@@ -68,7 +68,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             options: [
               { value: 'none', label: '不辣' },
               { value: 'mild', label: '小辣' },
-              { value: 'medium', label: '中辣' },
+              { value: 'medium', label: '中辣', isDefault: true },
               { value: 'hot', label: '大辣' }
             ]
           },
@@ -96,7 +96,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -105,7 +105,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -136,7 +136,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             type: 'select',
             options: [
               { value: 'xs', label: '迷你份', price: 0 },
-              { value: 'small', label: '小份', price: 22 },
+              { value: 'small', label: '小份', price: 22, isDefault: true },
               { value: 'medium', label: '中份', price: 40 }
             ]
           },
@@ -145,7 +145,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
             ]
@@ -174,7 +174,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -202,7 +202,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -211,7 +211,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'hot', label: '大辣' }
             ]
           },
@@ -239,7 +239,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -248,7 +248,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -278,7 +278,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -287,7 +287,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -323,7 +323,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -341,9 +341,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
-              { value: 'mild', label: '小辣' },
-              { value: 'hot', label: '大辣' }
+              { value: 'none', label: '不辣', isDefault: true }
             ]
           }
         ]
@@ -358,7 +356,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'xs', label: '迷你份', price: 0 }
+              { value: 'xs', label: '迷你份', price: 0, isDefault: true }
             ]
           }
         ]
@@ -373,7 +371,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 }
+              { value: 'small', label: '小份', price: 0, isDefault: true }
             ]
           }
         ]
@@ -388,7 +386,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'hot', label: '大辣' }
             ]
@@ -423,7 +421,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -432,7 +430,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -462,7 +460,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -471,7 +469,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -501,7 +499,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'xs', label: '迷你份', price: 0 },
+              { value: 'xs', label: '迷你份', price: 0, isDefault: true },
               { value: 'small', label: '小份', price: 22 },
               { value: 'medium', label: '中份', price: 40 }
             ]
@@ -511,7 +509,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
             ]
@@ -540,7 +538,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -568,7 +566,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -577,7 +575,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'hot', label: '大辣' }
             ]
           },
@@ -605,7 +603,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -614,7 +612,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -644,7 +642,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 },
+              { value: 'small', label: '小份', price: 0, isDefault: true },
               { value: 'large', label: '大份', price: 49 }
             ]
           },
@@ -653,7 +651,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '辣度',
             type: 'select',
             options: [
-              { value: 'none', label: '不辣' },
+              { value: 'none', label: '不辣', isDefault: true },
               { value: 'mild', label: '小辣' },
               { value: 'medium', label: '中辣' },
               { value: 'hot', label: '大辣' }
@@ -1195,7 +1193,25 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'xs', label: '迷你份', price: 0 }
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
             ]
           }
         ]
@@ -1210,7 +1226,29 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'xs', label: '迷你份', price: 0 }
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
             ]
           }
         ]
@@ -1225,7 +1263,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'xs', label: '單杯', price: 0 },
+              { value: 'xs', label: '單杯', price: 0, isDefault: true },
               { value: 's', label: '一瓶', price: 1160 }
             ]
           }
@@ -1241,7 +1279,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1251,7 +1289,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1263,7 +1301,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1298,7 +1336,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1308,7 +1346,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1320,7 +1358,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1355,7 +1393,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1365,7 +1403,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1377,7 +1415,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1412,7 +1450,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1422,7 +1460,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1434,7 +1472,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1469,7 +1507,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1479,7 +1517,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1491,7 +1529,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1526,7 +1564,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1536,7 +1574,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1548,7 +1586,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1583,7 +1621,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1593,7 +1631,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1605,7 +1643,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1640,7 +1678,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1650,7 +1688,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1662,7 +1700,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1697,7 +1735,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 },
               { value: 'xl', label: '壺裝', price: 110 }
             ]
@@ -1707,7 +1745,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '甜度',
             type: 'select',
             options: [
-              { value: 'full', label: '全糖', price: 0 },
+              { value: 'full', label: '全糖', price: 0, isDefault: true },
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
@@ -1719,7 +1757,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1747,7 +1785,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '份量',
             type: 'select',
             options: [
-              { value: 'md', label: '中杯', price: 0 },
+              { value: 'md', label: '中杯', price: 0, isDefault: true },
               { value: 'lg', label: '大杯', price: 10 }
             ]
           },
@@ -1760,7 +1798,7 @@ export const DEFAULT_MENU_CATEGORIES = [
               { value: 'less', label: '少糖', price: 0 },
               { value: 'half', label: '半糖', price: 0 },
               { value: 'quarter', label: '微糖', price: 0 },
-              { value: 'none', label: '無糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0, isDefault: true },
             ]
           },
           {
@@ -1768,7 +1806,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '冰塊',
             type: 'select',
             options: [
-              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'full', label: '正常冰', price: 0, isDefault: true },
               { value: 'less', label: '少冰', price: 0 },
               { value: 'half', label: '微冰', price: 0 },
               { value: 'quarter', label: '去冰', price: 0 },
@@ -1780,10 +1818,8 @@ export const DEFAULT_MENU_CATEGORIES = [
             label: '牛奶',
             type: 'select',
             options: [
-              { value: 'full', label: '全脂', price: 0 },
-              { value: 'less', label: '半脂', price: 0 },
+              { value: 'full', label: '全脂', price: 0, isDefault: true },
               { value: 'half', label: '低脂', price: 0 },
-              { value: 'quarter', label: '無脂', price: 0 },
             ]
           },
           {
@@ -1792,7 +1828,7 @@ export const DEFAULT_MENU_CATEGORIES = [
             type: 'select',
             options: [
               { value: 'dark', label: '深烘培', price: 10 },
-              { value: 'medium', label: '中烘培', price: 10 },
+              { value: 'medium', label: '中烘培', price: 10, isDefault: true },
               { value: 'light', label: '淺烘培', price: 10 },
             ]
           }

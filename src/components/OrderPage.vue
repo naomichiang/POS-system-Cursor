@@ -52,6 +52,31 @@ const optionSelections = ref({})
 // 數量控制
 const quantity = ref(1)
 
+/**
+ * 根據商品的 optionGroups 掃描 isDefault: true 的選項，建立預設配置
+ * - 單選 (isMultiple: false)：currentConfig[groupKey] = defaultValue
+ * - 多選 (isMultiple: true)：currentConfig[groupKey] = [defaultValue1, defaultValue2, ...]
+ */
+const buildDefaultConfig = (item) => {
+  if (!item || !Array.isArray(item.optionGroups)) return {}
+  const config = {}
+  for (const group of item.optionGroups) {
+    const groupKey = group.key || group.label
+    const isMultiple = group.isMultiple === true
+    const defaultOptions = (group.options || []).filter(o => o.isDefault === true)
+    const defaultValues = defaultOptions.map(o => o.value ?? o.label)
+
+    if (defaultValues.length === 0) continue
+
+    if (isMultiple) {
+      config[groupKey] = [...defaultValues]
+    } else {
+      config[groupKey] = defaultValues[0]
+    }
+  }
+  return config
+}
+
 // 切換主類別：回到選品模式並預設第一個商品
 const handleCatChange = (key) => {
   activeCatKey.value = key
@@ -63,17 +88,18 @@ const handleCatChange = (key) => {
   quantity.value = 1
 }
 
-// 選品模式下選擇商品
+// 選品模式下選擇商品（SubCatList 點擊觸發）
 const handleSelectItemFromGrid = (item) => {
   if (!item) return
   selectedItemId.value = item.id
-  optionSelections.value = {}
   quantity.value = 1
 
-  // 若商品有細項設定，進入配置模式；否則直接加入購物車
+  // 若商品有細項設定：先初始化預設配置，再進入配置模式
   if (Array.isArray(item.optionGroups) && item.optionGroups.length > 0) {
+    optionSelections.value = buildDefaultConfig(item)
     mode.value = 'config'
   } else {
+    optionSelections.value = {}
     addItemToCart(item)
   }
 }
@@ -81,8 +107,9 @@ const handleSelectItemFromGrid = (item) => {
 // 配置模式左側選單切換商品
 const handleSideMenuSelect = (itemId) => {
   selectedItemId.value = itemId
-  optionSelections.value = {}
   quantity.value = 1
+  const item = activeCategory.value?.items?.find(i => i.id === itemId)
+  optionSelections.value = item ? buildDefaultConfig(item) : {}
 }
 
 // 計算加價金額
