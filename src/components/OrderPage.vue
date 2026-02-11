@@ -171,7 +171,7 @@ watch(
     <!-- 左側主內容區：扣除 OrderPanel 後的剩餘寬度，CatTab 固定高度、下方為 SubCatList/配置區 -->
     <div class="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden gap-3 basis-0">
       <!-- 上方主類別 tabs（固定高度、寬度受左欄約束，不撐開版面） -->
-      <div class="shrink-0 w-full min-w-0 overflow-hidden">
+      <div class="shrink-0 h-14 w-full min-w-0 overflow-hidden">
         <CatTabs
           :categories="categories"
           :active-key="activeCatKey"

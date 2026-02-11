@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { TABLE_STATUS } from '../config/tableStatus'
+import { DEFAULT_RESTAURANT_CONFIG } from '@/config/restaurantConfig'
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
@@ -16,7 +17,7 @@ export const useOrderStore = defineStore('order', {
 
     // 購物車
     cart: {
-      items: [] // 每個 item 包含: id, name, price, quantity, note, modifiers
+      items: [] // 每個 item 包含: cartItemId, id, name, price, quantity, note, modifiers
     },
 
     // 帳單資訊
@@ -91,25 +92,64 @@ export const useOrderStore = defineStore('order', {
     },
 
     /**
+     * 產生購物車品項唯一 id（用於 split 模式及 removeFromCart）
+     */
+    _generateCartItemId(product) {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID()
+      }
+      return `${product.id}-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    },
+
+    /**
+     * 判斷兩筆是否為「同商品且客製化相同」（供 merge 模式比對）
+     */
+    _isSameProductAndCustomization(item, product) {
+      if (item.id !== product.id) return false
+      const itemMod = JSON.stringify(item.modifiers || [])
+      const productMod = JSON.stringify(product.modifiers || [])
+      if (itemMod !== productMod) return false
+      return (item.note || '') === (product.note || '')
+    },
+
+    /**
      * 新增商品到購物車
-     * 若商品已在購物車中，則增加數量
+     * - split：每次點擊為獨立項目，以 cartItemId 區分
+     * - merge：同 id 且客製化相同則累加 quantity，否則新增
      * @param {Object} product - 商品資料，包含 id, name, price, quantity, note (可選), modifiers (可選)
      */
     addToCart(product) {
-      const existingItemIndex = this.cart.items.findIndex(
-        item => item.id === product.id
+      const strategy = DEFAULT_RESTAURANT_CONFIG.aggregationStrategy || 'merge'
+
+      if (strategy === 'split') {
+        const cartItemId = this._generateCartItemId(product)
+        this.cart.items.push({
+          cartItemId,
+          id: product.id,
+          name: product.name,
+          price: Number(product.price),
+          quantity: Number(product.quantity || 1),
+          note: product.note || '',
+          modifiers: product.modifiers || []
+        })
+        return
+      }
+
+      // merge：找同商品且客製化相同的項目
+      const existingItemIndex = this.cart.items.findIndex(item =>
+        this._isSameProductAndCustomization(item, product)
       )
 
       if (existingItemIndex !== -1) {
-        // 商品已存在，增加數量
         const existingItem = this.cart.items[existingItemIndex]
         this.cart.items[existingItemIndex] = {
           ...existingItem,
           quantity: Number(existingItem.quantity) + Number(product.quantity || 1)
         }
       } else {
-        // 新增商品
+        const cartItemId = this._generateCartItemId(product)
         this.cart.items.push({
+          cartItemId,
           id: product.id,
           name: product.name,
           price: Number(product.price),
@@ -121,11 +161,13 @@ export const useOrderStore = defineStore('order', {
     },
 
     /**
-     * 根據商品 id 從購物車中刪除單一品項
-     * @param {string|number} id - 要刪除的商品 id
+     * 根據購物車品項 id (cartItemId) 從購物車中刪除單一品項
+     * @param {string} cartItemId - 要刪除的購物車品項唯一 id（相容舊資料：若品項無 cartItemId 則以 id 比對）
      */
-    removeFromCart(id) {
-      this.cart.items = this.cart.items.filter(item => item.id !== id)
+    removeFromCart(cartItemId) {
+      this.cart.items = this.cart.items.filter(
+        item => (item.cartItemId != null ? item.cartItemId !== cartItemId : String(item.id) !== String(cartItemId))
+      )
     },
 
     /**

@@ -73,6 +73,8 @@
 /** A 餐廳範例：需要 總人數（大人、小孩、長者）、聚餐用途、吃到飽方案 */
 export const MOCK_RESTAURANT_A_CONFIG = {
   restaurantId: 'A_RESTAURANT',
+  // 份數顯示方式：'merge' (自動合併) 或 'split' (每份獨立列出)
+  aggregationStrategy: 'merge',
   tableAreas: [
     { key: 'A', label: 'A 區', tableCount: 5 },
     { key: 'B', label: 'B 區', tableCount: 8 }
@@ -145,6 +147,7 @@ export const MOCK_RESTAURANT_A_CONFIG = {
 /** B 餐廳範例：需要 總人數（男性、女性、小孩）、用餐方案（吃到飽 or 單點） */
 export const MOCK_RESTAURANT_B_CONFIG = {
   restaurantId: 'B_RESTAURANT',
+  aggregationStrategy: 'split',
   tableAreas: [
     { key: 'MAIN', label: '主用餐區', tableCount: 15 },
     { key: 'ROOM', label: '包廂區', tableCount: 4 }

@@ -71,9 +71,9 @@ const handleDeleteAll = () => {
   emit('delete-all')
 }
 
-const handleDeleteItem = (id) => {
-  if (!id) return
-  orderStore.removeFromCart(id)
+const handleDeleteItem = (cartItemId) => {
+  if (!cartItemId) return
+  orderStore.removeFromCart(cartItemId)
 }
 </script>
 
@@ -100,13 +100,13 @@ const handleDeleteItem = (id) => {
         >
           <div
             v-for="(item, index) in props.items"
-            :key="item.id"
+            :key="item.cartItemId"
             class="relative flex w-full gap-3 px-3 pt-2 pb-3"
             :class="isExpanded ? 'items-start' : 'items-center'"
           >
             <!-- delete-Button -->
             <button
-              @click="handleDeleteItem(item.id)"
+              @click="handleDeleteItem(item.cartItemId)"
               class="flex-none w-btn-xs h-btn-xs mt-8-0-5 flex items-center justify-center rounded-xl bg-button-highlight-red active:bg-button-highlight-red-hover transition-colors">
               <Icon icon="tabler:x" class="w-icon-lg h-icon-lg text-button-secondary"/>
             </button>
@@ -128,7 +128,7 @@ const handleDeleteItem = (id) => {
                 </div>
 
                 <div
-                  v-if="isExpanded"
+                  v-if="isExpanded && item.quantity > 1"
                   class="flex-none w-12 text-right font-inter text-lg pr-8-0-5 font-medium leading-7 text-text-tertiary"
                 >
                   x {{ item.quantity }}
