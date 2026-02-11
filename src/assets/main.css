@@ -261,6 +261,11 @@
 
   }
 
+/* 全域禁用雙擊縮放（快速點擊不放大螢幕） */
+html {
+  touch-action: manipulation;
+}
+
 /* 針對平板尺寸（通常是 768px 以上）強制放大基礎字級 */
 @media (min-width: 768px) {
   html {
@@ -299,4 +304,5 @@ body {
   width: 100%;
   height: 100dvh;
   overflow: hidden;
+  touch-action: manipulation; /* 延續 html/body，確保整個 app 層級都禁用雙擊縮放 */
 }

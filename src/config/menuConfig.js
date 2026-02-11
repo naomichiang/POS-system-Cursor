@@ -1232,16 +1232,568 @@ export const DEFAULT_MENU_CATEGORIES = [
         ]
       },
       {
-        id: 'shrimp_spring_roll',
-        name: '蝦春捲',
-        price: 200,
+        id: 'high_mountain_pear_tea',
+        name: '高山梨茶',
+        price: 40,
         optionGroups: [
           {
             key: 'portion',
             label: '份量',
             type: 'select',
             options: [
-              { value: 'small', label: '小份', price: 0 }
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'chanterelle_black_tea',
+        name: '初韻紅茶',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'spring_tea',
+        name: '四季春',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'oatmeal_milk_tea',
+        name: '燕麥鮮奶',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'autumn_green_tea',
+        name: '秋青',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'winter_red_tea',
+        name: '紛冬',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'golden_horseradish_tea',
+        name: '黃金蕎麥茶',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'sugar_roasted_horseradish_tea',
+        name: '烤糖蕎麥凍奶青',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'toppings',
+            label: '加料',
+            type: 'select',
+            options: [
+              { value: 'pearl', label: '珍珠', price: 10 },
+              { value: 'boba', label: '波霸', price: 10 },
+              { value: 'grass_jelly', label: '仙草', price: 10 },
+              { value: 'coconut_jelly', label: '椰果', price: 10 },
+              { value: 'pudding', label: '布丁', price: 15 },
+              { value: 'almond_tea_jelly', label: '杏仁茶凍', price: 15 },
+              { value: 'red_bean', label: '紅豆', price: 15 },
+              { value: 'ice_cream', label: '冰淇淋', price: 15 },
+              { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'signature_americano',
+        name: '招牌美式',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 },
+              { value: 'xl', label: '壺裝', price: 110 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'roast',
+            label: '烘培',
+            type: 'select',
+            options: [
+              { value: 'dark', label: '深烘培', price: 10 },
+              { value: 'medium', label: '中烘培', price: 10 },
+              { value: 'light', label: '淺烘培', price: 10 },
+            ]
+          }
+        ]
+      },{
+        id: 'thick_latte',
+        name: '厚拿鐵',
+        price: 40,
+        optionGroups: [
+          {
+            key: 'portion',
+            label: '份量',
+            type: 'select',
+            options: [
+              { value: 'md', label: '中杯', price: 0 },
+              { value: 'lg', label: '大杯', price: 10 }
+            ]
+          },
+          {
+            key: 'sweetness',
+            label: '甜度',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全糖', price: 0 },
+              { value: 'less', label: '少糖', price: 0 },
+              { value: 'half', label: '半糖', price: 0 },
+              { value: 'quarter', label: '微糖', price: 0 },
+              { value: 'none', label: '無糖', price: 0 },
+            ]
+          },
+          {
+            key: 'ice',
+            label: '冰塊',
+            type: 'select',
+            options: [
+              { value: 'full', label: '正常冰', price: 0 },
+              { value: 'less', label: '少冰', price: 0 },
+              { value: 'half', label: '微冰', price: 0 },
+              { value: 'quarter', label: '去冰', price: 0 },
+              { value: 'none', label: '常溫', price: 0 },
+            ]
+          },
+          {
+            key: 'milk',
+            label: '牛奶',
+            type: 'select',
+            options: [
+              { value: 'full', label: '全脂', price: 0 },
+              { value: 'less', label: '半脂', price: 0 },
+              { value: 'half', label: '低脂', price: 0 },
+              { value: 'quarter', label: '無脂', price: 0 },
+            ]
+          },
+          {
+            key: 'roast',
+            label: '烘培',
+            type: 'select',
+            options: [
+              { value: 'dark', label: '深烘培', price: 10 },
+              { value: 'medium', label: '中烘培', price: 10 },
+              { value: 'light', label: '淺烘培', price: 10 },
             ]
           }
         ]
