@@ -191,6 +191,11 @@ watch(
   },
   { immediate: true }
 )
+// 判斷當前選中的商品是否為該類別的第一筆
+const isFirstItem = computed(() => {
+  const items = activeCategory.value?.items || []
+  return items.length > 0 && items[0].id === selectedItemId.value
+})
 </script>
 
 <template>
@@ -218,7 +223,12 @@ watch(
             @select="handleSideMenuSelect" />
 
           <div
-            class="flex-1 flex flex-col min-h-0 overflow-hidden bg-white rounded-2xl shadow-[0px_4px_8px_0px] shadow-ash-700/30">
+            class="flex-1 flex flex-col min-h-0 overflow-hidden bg-white shadow-[0px_4px_8px_0px] shadow-ash-700/30 transition-all duration-100"
+            :class="[
+              isFirstItem
+                ? 'rounded-tr-2xl rounded-br-2xl rounded-bl-2xl' // 如果是第一個，左上角變直角 (不寫 rounded-tl)
+                : 'rounded-2xl' // 其他情況維持全圓角
+            ]">
             <div class="flex-1 overflow-y-auto scrollbar-hide p-4">
               <OptGroup v-if="currentItem?.optionGroups?.length" :groups="currentItem.optionGroups"
                 v-model="optionSelections" />
