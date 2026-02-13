@@ -52,6 +52,9 @@ const optionSelections = ref({})
 // 數量控制
 const quantity = ref(1)
 
+// OptGroup 滾動容器 ref，供 QtyBar 上下捲動按鈕使用
+const optGroupScrollRef = ref(null)
+
 /**
  * 根據商品的 optionGroups 掃描 isDefault: true 的選項，建立預設配置
  * - 單選 (isMultiple: false)：currentConfig[groupKey] = defaultValue
@@ -196,6 +199,22 @@ const isFirstItem = computed(() => {
   const items = activeCategory.value?.items || []
   return items.length > 0 && items[0].id === selectedItemId.value
 })
+// 處理捲動歸零與重新偵測
+watch(selectedItemId, () => {
+  if (optGroupScrollRef.value) {
+    // 1. 先歸零
+    optGroupScrollRef.value.scrollTop = 0
+
+    // 2. 關鍵：等 DOM 更新完成後，再手動觸發一次滾動事件
+    // 這會強迫 QtyBar 重新執行 updateScrollState
+    setTimeout(() => {
+      if (optGroupScrollRef.value) {
+        optGroupScrollRef.value.dispatchEvent(new Event('scroll'))
+      }
+    }, 50) // 50ms 的小緩衝
+  }
+})
+
 </script>
 
 <template>
@@ -229,14 +248,14 @@ const isFirstItem = computed(() => {
                 ? 'rounded-tr-2xl rounded-br-2xl rounded-bl-2xl' // 如果是第一個，左上角變直角 (不寫 rounded-tl)
                 : 'rounded-2xl' // 其他情況維持全圓角
             ]">
-            <div class="flex-1 overflow-y-auto scrollbar-hide p-4">
-              <OptGroup v-if="currentItem?.optionGroups?.length" :groups="currentItem.optionGroups"
-                v-model="optionSelections" />
+            <div ref="optGroupScrollRef" class="flex-1 overflow-y-auto scrollbar-hide p-4">
+              <OptGroup v-if="currentItem?.optionGroups?.length" :key="selectedItemId"
+                :groups="currentItem.optionGroups" v-model="optionSelections" />
             </div>
 
             <!-- 底部數量 / 加入 -->
-            <QtyBar :item-name="currentItem?.name" :unit-price="finalUnitPrice" v-model:quantity="quantity"
-              @increase="increaseQty" @decrease="decreaseQty" @add="addItemToCart" />
+            <QtyBar :item-name="currentItem?.name" :unit-price="finalUnitPrice" :scroll-container="optGroupScrollRef"
+              v-model:quantity="quantity" @increase="increaseQty" @decrease="decreaseQty" @add="addItemToCart" />
           </div>
         </template>
       </div>

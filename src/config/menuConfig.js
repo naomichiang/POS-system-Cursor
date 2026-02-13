@@ -2034,6 +2034,31 @@ export const DEFAULT_MENU_CATEGORIES = [
               { value: 'ice_cream', label: '冰淇淋', price: 15 },
               { value: 'taro_ball', label: '芋圓', price: 15 },
             ]
+          },
+          {
+            key: 'cup_type',
+            label: '杯型',
+            type: 'select',
+            options: [
+              { value: 'inner', label: '內用杯', price: 0, isDefault: true },
+              { value: 'outlet', label: '外帶杯', price: 10 },
+            ]
+          },
+          {
+            key: 'premium_sides',
+            label: '升級',
+            type: 'select',
+            options: [
+              { value: 'premium_sides', label: '升級', price: 10 },
+            ]
+          },
+          {
+            key: 'test_sides',
+            label: '測試',
+            type: 'select',
+            options: [
+              { value: 'premium_sides', label: '測測測測', price: 10 },
+            ]
           }
         ]
       },
@@ -2090,6 +2115,31 @@ export const DEFAULT_MENU_CATEGORIES = [
               { value: 'red_bean', label: '紅豆', price: 15 },
               { value: 'ice_cream', label: '冰淇淋', price: 15 },
               { value: 'taro_ball', label: '芋圓', price: 15 },
+            ]
+          },
+          {
+            key: 'cup_type',
+            label: '杯型',
+            type: 'select',
+            options: [
+              { value: 'inner', label: '內用杯', price: 0, isDefault: true },
+              { value: 'outlet', label: '外帶杯', price: 10 },
+            ]
+          },
+          {
+            key: 'premium_sides',
+            label: '升級',
+            type: 'select',
+            options: [
+              { value: 'premium_sides', label: '升級', price: 10 },
+            ]
+          },
+          {
+            key: 'test_sides',
+            label: '測試',
+            type: 'select',
+            options: [
+              { value: 'premium_sides', label: '測測測測', price: 10 },
             ]
           }
         ]
