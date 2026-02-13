@@ -14,8 +14,8 @@ const handleClick = (item) => {
 </script>
 
 <template>
-  <div class="flex-1 flex flex-col p-4">
-    <div class="flex flex-wrap items-start content-start gap-2 w-full h-full overflow-y-auto scrollbar-hide">
+  <div class="w-full h-full bg-layer-primary rounded-2xl overflow-hidden flex flex-col p-4">
+    <div class="flex-1 flex flex-wrap items-start content-start gap-2 w-full h-full overflow-y-auto scrollbar-hide">
       <button
         v-for="item in items"
         :key="item.id"
@@ -25,11 +25,12 @@ const handleClick = (item) => {
       >
         <div class="flex items-center justify-center text-text-on-color font-noto font-medium leading-tight">
           <span class="text-center text-lg line-clamp-2 break-all overflow-hidden">
-            {{ item.name }}
+          {{ item.name }}
           </span>
         </div>
       </button>
     </div>
   </div>
+
 </template>
 

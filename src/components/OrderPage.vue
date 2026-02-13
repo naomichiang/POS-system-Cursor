@@ -194,53 +194,39 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-1 w-full min-w-0 h-full min-h-0 overflow-hidden p-4 gap-3">
+  <div class="flex flex-1 w-full min-w-0 h-full min-h-0 p-4 gap-3">
     <!-- 左側主內容區：扣除 OrderPanel 後的剩餘寬度，CatTab 固定高度、下方為 SubCatList/配置區 -->
-    <div class="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden gap-3 basis-0">
+    <div class="flex-1 flex flex-col min-w-0 min-h-0 gap-3 basis-0">
       <!-- 上方主類別 tabs（固定高度、寬度受左欄約束，不撐開版面） -->
-      <div class="shrink-0 h-14 w-full min-w-0 overflow-hidden">
-        <CatTabs
-          :categories="categories"
-          :active-key="activeCatKey"
-          @change="handleCatChange"
-        />
+      <div class="shrink-0 h-btn-h-sm w-full min-w-0 overflow-hidden">
+        <CatTabs :categories="categories" :active-key="activeCatKey" @change="handleCatChange" />
       </div>
 
       <!-- 中間區塊：佔滿剩餘高度，依模式切換 -->
-      <div class="flex-1 flex min-h-0 bg-layer-primary rounded-2xl shadow-sm overflow-hidden">
+      <div class="flex-1 flex min-h-0 transition-all duration-200" :class="[
+        mode === 'selection'
+          ? 'bg-layer-primary rounded-2xl shadow-[0px_4px_8px_0px] shadow-ash-700/40 overflow-hidden' //選品模式有陰影
+          : 'bg-transparent shadow-none' // 配置模式下父層完全隱形
+      ]">
         <!-- 選品模式：大按鈕網格 -->
-        <SubCatList
-          v-if="mode === 'selection'"
-          :items="activeCategory?.items || []"
-          @select="handleSelectItemFromGrid"
-        />
+        <SubCatList v-if="mode === 'selection'" :items="activeCategory?.items || []"
+          @select="handleSelectItemFromGrid" />
 
         <!-- 配置模式：左側清單 + 右側細項 -->
         <template v-else>
-          <ItemSideMenu
-            :items="activeCategory?.items || []"
-            :active-id="selectedItemId"
-            @select="handleSideMenuSelect"
-          />
+          <ItemSideMenu :items="activeCategory?.items || []" :active-id="selectedItemId"
+            @select="handleSideMenuSelect" />
 
-          <div class="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
+          <div
+            class="flex-1 flex flex-col min-h-0 overflow-hidden bg-white rounded-2xl shadow-[0px_4px_8px_0px] shadow-ash-700/30">
             <div class="flex-1 overflow-y-auto scrollbar-hide p-4">
-              <OptGroup
-                v-if="currentItem?.optionGroups?.length"
-                :groups="currentItem.optionGroups"
-                v-model="optionSelections"
-              />
+              <OptGroup v-if="currentItem?.optionGroups?.length" :groups="currentItem.optionGroups"
+                v-model="optionSelections" />
             </div>
 
             <!-- 底部數量 / 加入 -->
-            <QtyBar
-              :item-name="currentItem?.name"
-              :unit-price="finalUnitPrice"
-              v-model:quantity="quantity"
-              @increase="increaseQty"
-              @decrease="decreaseQty"
-              @add="addItemToCart"
-            />
+            <QtyBar :item-name="currentItem?.name" :unit-price="finalUnitPrice" v-model:quantity="quantity"
+              @increase="increaseQty" @decrease="decreaseQty" @add="addItemToCart" />
           </div>
         </template>
       </div>
@@ -248,13 +234,8 @@ watch(
 
     <!-- 右側點餐明細（固定寬度、不被擠壓） -->
     <div class="shrink-0 flex-none h-full">
-      <OrderPanel
-        class="h-full"
-        :items="orderStore.cart.items"
-        :total-count="orderStore.cart.items.length"
-        :total-amount="orderStore.subtotal.toLocaleString()"
-        @delete-all="orderStore.cart.items = []"
-      />
+      <OrderPanel class="h-full" :items="orderStore.cart.items" :total-count="orderStore.cart.items.length"
+        :total-amount="orderStore.subtotal.toLocaleString()" @delete-all="orderStore.cart.items = []" />
     </div>
   </div>
 </template>

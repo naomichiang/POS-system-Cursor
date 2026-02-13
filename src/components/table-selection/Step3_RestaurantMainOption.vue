@@ -18,10 +18,7 @@ const props = defineProps({
    *     label: '方案',
    *     options: [
    *       { value: 'plan-599', label: '吃到飽 599' },
-   *       ...
-   *     ]
-   *   },
-   *   ...
+   *
    * ]
    */
   preferenceGroups: {
