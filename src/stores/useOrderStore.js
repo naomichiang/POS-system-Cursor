@@ -15,10 +15,13 @@ export const useOrderStore = defineStore('order', {
       customerInfo2: { preferences: {} }   // Step4 額外選項（extraFields2）
     },
 
-    // 購物車
+    // 購物車（未下單）
     cart: {
       items: [] // 每個 item 包含: cartItemId, id, name, price, quantity, note, modifiers
     },
+
+    // 已下單餐點（已送出給廚房，加點時顯示）
+    placedItems: [],
 
     // 支付資訊
     payment: {
@@ -29,7 +32,7 @@ export const useOrderStore = defineStore('order', {
   }),
 
   getters: {
-    // 計算小計：加總所有商品的 price * quantity
+    // 計算購物車小計：加總所有未下單商品的 price * quantity
     subtotal: (state) => {
       return state.cart.items.reduce((sum, item) => {
         const itemTotal = Number(item.price) * Number(item.quantity)
@@ -37,9 +40,17 @@ export const useOrderStore = defineStore('order', {
       }, 0)
     },
 
-    // 計算總金額：等同 subtotal
+    // 計算已下單餐點小計
+    placedSubtotal: (state) => {
+      return state.placedItems.reduce((sum, item) => {
+        const itemTotal = Number(item.price) * Number(item.quantity)
+        return Number(sum) + Number(itemTotal)
+      }, 0)
+    },
+
+    // 計算總金額：已下單 + 未下單
     totalAmount() {
-      return this.subtotal
+      return this.placedSubtotal + this.subtotal
     },
 
     // 計算找零金額：receivedAmount - totalAmount
@@ -137,6 +148,21 @@ export const useOrderStore = defineStore('order', {
     },
 
     /**
+     * 清空當前購物車
+     */
+    clearCart() {
+      this.cart.items = []
+    },
+
+    /**
+     * 設定已下單餐點（加點時從 MockPlacedOrders 或 API 載入）
+     * @param {Array} items - 已送出給廚房的餐點陣列
+     */
+    setPlacedItems(items) {
+      this.placedItems = Array.isArray(items) ? [...items] : []
+    },
+
+    /**
      * 根據購物車品項 id (cartItemId) 從購物車中刪除單一品項
      * @param {string} cartItemId - 要刪除的購物車品項唯一 id（相容舊資料：若品項無 cartItemId 則以 id 比對）
      */
@@ -164,6 +190,8 @@ export const useOrderStore = defineStore('order', {
       this.cart = {
         items: []
       }
+
+      this.placedItems = []
 
       this.payment = {
         receivedAmount: 0,

@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { Icon } from '@iconify/vue'
-import { Utensils, DollarSign } from 'lucide-vue-next';
+import { Utensils, DollarSign, History } from 'lucide-vue-next';
 import { useOrderStore } from '@/stores/useOrderStore'
 
 const orderStore = useOrderStore()
@@ -19,11 +19,84 @@ const props = defineProps({
     type: [Number, String],
     default: 0,
   },
+  /** 是否有可送出的購物車項目（未下單），用於控制送出按鈕是否可點 */
+  canSubmit: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['delete-all', 'submit', 'save-as-draft'])
 
 const isExpanded = ref(false)
+
+// 上下捲動：參考 CatTab 的邊界偵測與 disable 邏輯
+const scrollEl = ref(null)
+const scrollStep = 200
+const showArrows = ref(false)
+const isAtTop = ref(true)
+const isAtBottom = ref(true)
+
+function updateScrollState() {
+  if (!scrollEl.value) return
+  const { scrollHeight, clientHeight, scrollTop } = scrollEl.value
+  const threshold = 5
+
+  showArrows.value = scrollHeight > clientHeight
+  isAtTop.value = scrollTop <= threshold
+  isAtBottom.value = scrollTop + clientHeight >= scrollHeight - threshold
+}
+
+const scrollPrev = () => {
+  const el = scrollEl.value
+  if (!el || isAtTop.value) return
+
+  if (el.scrollTop < scrollStep) {
+    el.scrollTo({ top: 0, behavior: 'smooth' })
+  } else {
+    el.scrollBy({ top: -scrollStep, behavior: 'smooth' })
+  }
+}
+
+const scrollNext = () => {
+  const el = scrollEl.value
+  if (!el || isAtBottom.value) return
+
+  const maxScroll = el.scrollHeight - el.clientHeight
+  if (maxScroll - el.scrollTop < scrollStep) {
+    el.scrollTo({ top: maxScroll, behavior: 'smooth' })
+  } else {
+    el.scrollBy({ top: scrollStep, behavior: 'smooth' })
+  }
+}
+
+let scrollElInst = null
+let resizeObserver = null
+
+onMounted(() => {
+  nextTick(() => {
+    updateScrollState()
+    scrollElInst = scrollEl.value
+    if (scrollElInst) {
+      scrollElInst.addEventListener('scroll', updateScrollState)
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(updateScrollState)
+        resizeObserver.observe(scrollElInst)
+      }
+    }
+  })
+})
+
+onUnmounted(() => {
+  if (scrollElInst) scrollElInst.removeEventListener('scroll', updateScrollState)
+  if (resizeObserver && scrollElInst) resizeObserver.disconnect()
+})
+
+watch(
+  () => props.items,
+  () => nextTick(updateScrollState),
+  { deep: true }
+)
 
 const formatOptions = (item) => {
   if (!item) return ''
@@ -71,8 +144,8 @@ const handleDeleteAll = () => {
   emit('delete-all')
 }
 
-const handleDeleteItem = (cartItemId) => {
-  if (!cartItemId) return
+const handleDeleteItem = (cartItemId, isPlaced) => {
+  if (!cartItemId || isPlaced) return // 已下單不可刪除
   orderStore.removeFromCart(cartItemId)
 }
 </script>
@@ -85,19 +158,27 @@ const handleDeleteItem = (cartItemId) => {
     <div
       class="flex h-full w-full flex-col items-start justify-start overflow-hidden rounded-2xl bg-layer-primary shadow-[0px_4px_8px_0px] shadow-ash-700/40">
       <!-- list -->
-      <div class="flex-1 w-full overflow-y-auto">
+      <div ref="scrollEl" class="flex-1 w-full overflow-y-auto">
         <div v-if="props.items.length === 0"
           class="flex h-full items-start justify-center text-text-placeholder text-lg">
           <span class="text-center py-12">- 尚未點餐 -</span>
         </div>
         <TransitionGroup name="fade" tag="div">
           <div v-for="(item, index) in props.items" :key="item.cartItemId"
-            class="relative flex w-full gap-3 px-3 pt-2 pb-3" :class="isExpanded ? 'items-start' : 'items-center'">
+            class="relative flex w-full gap-3 px-3 pt-2 pb-2.5" :class="[
+              isExpanded ? 'items-start' : 'items-center',
+              item.status === 'placed' ? 'bg-yellow-100' : ''
+            ]">
             <!-- delete-Button -->
-            <button @click="handleDeleteItem(item.cartItemId)"
+            <button v-if="!item.isPlaced" @click="handleDeleteItem(item.cartItemId, item.isPlaced)"
               class="flex-none w-btn-xs h-btn-xs mt-8-0-5 flex items-center justify-center rounded-xl bg-button-highlight-red active:bg-button-highlight-red-hover transition-colors">
-              <Icon icon="tabler:x" class="w-icon-lg h-icon-lg text-text-disabled [&_path]:stroke-[2.2px]" />
+              <Icon icon="tabler:x" class="w-icon-lg h-icon-lg text-text-tertiary [&_path]:stroke-[2.5px]" />
             </button>
+            <!-- 已點單的餐點：不顯示刪除，顯示歷史標記 -->
+            <div v-else
+              class="flex-none w-btn-xs h-btn-xs mt-8-0-5 flex cursor-default items-center justify-center rounded-xl pointer-events-none border-2 border-dashed border-ash-600/20">
+              <History :stroke-width="2.2" class="text-text-warning/50 w-icon-lg h-icon-lg" />
+            </div>
 
             <!-- index -->
             <div v-if="isExpanded"
@@ -145,8 +226,10 @@ const handleDeleteItem = (cartItemId) => {
           <Icon icon="tabler:trash-x-filled" class="text-ash-700 h-icon-lg w-icon-lg" />
         </button>
 
-        <button type="button"
-          class="flex flex-1 items-center justify-center border-r border-border-primary-focus/20 text-ash-600 active:bg-button-light-hover transition-colors">
+        <button type="button" aria-label="往上捲動" :disabled="!showArrows || isAtTop" :class="[
+          'flex flex-1 items-center justify-center border-r border-border-primary-focus/20 text-ash-600 transition-colors',
+          !showArrows || isAtTop ? 'opacity-30 cursor-not-allowed' : 'active:bg-button-light-hover'
+        ]" @click="scrollPrev">
           <svg class="w-icon-lg h-icon-lg shrink-0" viewBox="0 0 23 13" fill="none">
             <path
               d="M1.33333 12.5333C0.933333 12.5333 0.611556 12.4 0.368 12.1333C0.124444 11.8667 0.00177778 11.5556 0 11.2C0 11.1111 0.133334 10.8 0.4 10.2667L10.0667 0.599998C10.2889 0.377776 10.5111 0.222223 10.7333 0.133334C10.9556 0.0444449 11.2 0 11.4667 0C11.7333 0 11.9778 0.0444449 12.2 0.133334C12.4222 0.222223 12.6444 0.377776 12.8667 0.599998L22.5333 10.2667C22.6667 10.4 22.7671 10.5449 22.8347 10.7013C22.9022 10.8578 22.9351 11.024 22.9333 11.2C22.9333 11.5556 22.8116 11.8667 22.568 12.1333C22.3244 12.4 22.0018 12.5333 21.6 12.5333H1.33333Z"
@@ -154,8 +237,10 @@ const handleDeleteItem = (cartItemId) => {
           </svg>
         </button>
 
-        <button type="button"
-          class="flex flex-1 items-center justify-center text-ash-600 active:bg-button-light-hover transition-colors">
+        <button type="button" aria-label="往下捲動" :disabled="!showArrows || isAtBottom" :class="[
+          'flex flex-1 items-center justify-center text-ash-600 transition-colors',
+          !showArrows || isAtBottom ? 'opacity-30 cursor-not-allowed' : 'active:bg-button-light-hover'
+        ]" @click="scrollNext">
           <svg class="w-icon-lg h-icon-lg shrink-0 rotate-180" viewBox="0 0 23 13" fill="none">
             <path
               d="M1.33333 12.5333C0.933333 12.5333 0.611556 12.4 0.368 12.1333C0.124444 11.8667 0.00177778 11.5556 0 11.2C0 11.1111 0.133334 10.8 0.4 10.2667L10.0667 0.599998C10.2889 0.377776 10.5111 0.222223 10.7333 0.133334C10.9556 0.0444449 11.2 0 11.4667 0C11.7333 0 11.9778 0.0444449 12.2 0.133334C12.4222 0.222223 12.6444 0.377776 12.8667 0.599998L22.5333 10.2667C22.6667 10.4 22.7671 10.5449 22.8347 10.7013C22.9022 10.8578 22.9351 11.024 22.9333 11.2C22.9333 11.5556 22.8116 11.8667 22.568 12.1333C22.3244 12.4 22.0018 12.5333 21.6 12.5333H1.33333Z"
@@ -167,17 +252,12 @@ const handleDeleteItem = (cartItemId) => {
       <!-- summary row: 已點餐點數 / 已點金額 -->
       <div
         class="flex z-10 h-16 items-center justify-between self-stretch border-y border-border-primary bg-layer-primary px-4">
-        <!-- summary: 已點餐點數 -->
+        <!-- summary: 已點餐點數（含已下單與未下單） -->
         <div class="flex items-center gap-2">
           <Utensils :stroke-width="2.8" :class="'text-ash-400 w-6 h-6'" />
           <div class="flex items-baseline gap-1">
             <span class="font-inter text-2xl font-bold leading-none text-button-primary">
-              {{
-                props.items.reduce(
-                  (sum, item) => sum + Number(item.quantity || 0),
-                  0
-                )
-              }}
+              {{ props.totalCount }}
             </span>
           </div>
         </div>
@@ -221,9 +301,9 @@ const handleDeleteItem = (cartItemId) => {
           </div>
         </button>
 
-        <button type="button" :disabled="props.items.length === 0" @click="emit('submit')" :class="[
+        <button type="button" :disabled="!props.canSubmit" @click="emit('submit')" :class="[
           'flex h-full flex-1 items-center justify-center gap-2 rounded-2xl transition-all duration-200',
-          props.items.length === 0
+          !props.canSubmit
             ? 'bg-ash-300 cursor-not-allowed opacity-50'
             : 'bg-button-danger active:bg-button-danger-hover active:scale-95'
         ]">

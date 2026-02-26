@@ -9,10 +9,11 @@
  * - 開發階段：config/menuConfig.js 的 DEFAULT_MENU_CATEGORIES
  * - 正式串接時：可改由 API 或 Store 傳入同樣結構的 config
  */
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useOrderStore } from '../stores/useOrderStore'
 import { DEFAULT_MENU_CATEGORIES } from '../config/menuConfig'
+import { MOCK_PLACED_ORDERS } from '../config/MockPlacedOrders'
 import CatTabs from './order/CatTab.vue'
 import SubCatList from './order/SubCatList.vue'
 import ItemSideMenu from './order/ItemSideMenu.vue'
@@ -184,6 +185,41 @@ const addItemToCart = (itemOverride) => {
   quantity.value = 1
 }
 
+// 合併顯示：已下單（Placed）在前，未下單（In Cart）在後
+const combinedItems = computed(() => {
+  const placed = (orderStore.placedItems || []).map((item, idx) => ({
+    ...item,
+    cartItemId: item.cartItemId || item.id || `placed-${idx}-${item.name}`,
+    isPlaced: true
+  }))
+  const inCart = (orderStore.cart.items || []).map((item) => ({
+    ...item,
+    isPlaced: false
+  }))
+  return [...placed, ...inCart]
+})
+
+// 送出訂單：模擬 API 請求，成功後清空購物車並提示（僅送出未下單部分）
+const handleFinalSubmit = () => {
+  const cartItems = orderStore.cart.items
+  console.log('[送出訂單] 購物車內容：', cartItems)
+
+  setTimeout(() => {
+    orderStore.clearCart()
+    alert('訂單已送出')
+  }, 1000)
+}
+
+// 進入頁面時，根據 tableId 載入該桌已下單餐點（加點用）
+onMounted(() => {
+  const id = route.params.tableId
+  if (id && MOCK_PLACED_ORDERS[id]) {
+    orderStore.setPlacedItems(MOCK_PLACED_ORDERS[id])
+  } else {
+    orderStore.setPlacedItems([])
+  }
+})
+
 // 若 tableId 與 store 中不一致，簡單同步一下（之後可加強保護）
 watch(
   () => orderStore.orderInfo.tableNumber,
@@ -263,8 +299,12 @@ watch(selectedItemId, () => {
 
     <!-- 右側點餐明細（固定寬度、不被擠壓） -->
     <div class="shrink-0 flex-none h-full">
-      <OrderPanel class="h-full" :items="orderStore.cart.items" :total-count="orderStore.cart.items.length"
-        :total-amount="orderStore.subtotal.toLocaleString()" @delete-all="orderStore.cart.items = []" />
+      <OrderPanel class="h-full" :items="combinedItems"
+        :total-count="combinedItems.reduce((s, i) => s + Number(i.quantity || 0), 0)"
+        :total-amount="orderStore.totalAmount.toLocaleString()"
+        :can-submit="orderStore.cart.items.length > 0"
+        @delete-all="orderStore.clearCart"
+        @submit="handleFinalSubmit" />
     </div>
   </div>
 </template>
