@@ -21,7 +21,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['delete-all'])
+const emit = defineEmits(['delete-all', 'submit', 'save-as-draft'])
 
 const isExpanded = ref(false)
 
@@ -214,14 +214,19 @@ const handleDeleteItem = (cartItemId) => {
         </button>
         <!-- 面板收起時隱藏暫存按鈕 -->
         <button v-if="isExpanded" type="button"
-          class="flex h-full w-26 items-center justify-center rounded-2xl bg-button-primary px-4 active:bg-button-primary-hover active:scale-95 transition-transform">
+          class="flex h-full w-26 items-center justify-center rounded-2xl bg-button-primary px-4 active:bg-button-primary-hover active:scale-95 transition-transform"
+          @click="emit('save-as-draft')">
           <div class="text-center font-noto text-2xl font-medium tracking-wide text-text-on-color">
             暫存
           </div>
         </button>
 
-        <button type="button"
-          class="flex h-full flex-1 items-center justify-center gap-2 rounded-2xl bg-button-danger px-4 active:bg-button-danger-hover active:scale-95 transition-transform">
+        <button type="button" :disabled="props.items.length === 0" @click="emit('submit')" :class="[
+          'flex h-full flex-1 items-center justify-center gap-2 rounded-2xl transition-all duration-200',
+          props.items.length === 0
+            ? 'bg-ash-300 cursor-not-allowed opacity-50'
+            : 'bg-button-danger active:bg-button-danger-hover active:scale-95'
+        ]">
           <div class="flex items-center justify-start pt-1" />
           <div
             class="justify-start text-center font-noto text-2xl font-medium leading-9 tracking-wide text-text-on-color">

@@ -286,7 +286,7 @@ const getStatusText = (table) => {
 
           <button type="button"
             class="col-span-2 h-28 rounded-2xl  bg-button-light active:bg-button-light-hover  active:scale-95 transition-all flex flex-col items-center justify-center gap-2 text-ash-700 border border-ash-600"
-            @click="handleOccupiedAction('close')">
+            @click="handleOccupiedAction('reset-order')">
             <BookmarkMinus class="w-7 h-7" />
             <span class="text-xl font-semibold">重新開單</span>
           </button>
