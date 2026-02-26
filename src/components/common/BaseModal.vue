@@ -56,7 +56,12 @@ defineProps({
   // 內容寬度樣式，預設 440px、最小高度 300px
   widthClass: {
     type: String,
-    default: 'w-[440px] max-w-[90vw] min-h-[100px]',
+    default: 'w-[440px] max-w-[90vw]',
+  },
+  // 內容高度樣式，預設 300px
+  heightClass: {
+    type: String,
+    default: 'h-[300px] max-h-[90vh]',
   },
 })
 
@@ -81,34 +86,22 @@ const handleDanger = () => {
 
 <template>
   <!-- 燈箱：覆蓋全畫面，點外面無作用；內容垂直置中 -->
-  <div
-    v-if="open"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-modal-bg/60"
-  >
-    <div
-      :class="[
-        'relative rounded-3xl bg-white shadow-2xl px-4 pt-10 pb-4 flex flex-col items-stretch ',
-        widthClass,
-      ]"
-    >
+  <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center bg-modal-bg/60">
+    <div :class="[
+      'relative rounded-3xl bg-white shadow-2xl px-4 pt-10 pb-4 flex flex-col items-stretch ',
+      widthClass,
+      heightClass,
+    ]">
       <!-- Header：Icon + 標題 + 副標題（整體水平置中） -->
       <div class="relative">
         <!-- 置中的 Icon + 標題 + 副標 -->
         <div class="flex flex-col items-center justify-center gap-3 mb-1">
-          <div
-            v-if="headerIcon"
-            class="flex w-16 h-16 items-center justify-center rounded-full bg-white"
-          >
-            <component
-              :is="headerIcon"
-              :class="['w-14 h-14', headerIconColorClass]"
-            />
+          <div v-if="headerIcon" class="flex w-16 h-16 items-center justify-center rounded-full bg-white">
+            <component :is="headerIcon" :class="['w-14 h-14', headerIconColorClass]" />
           </div>
           <div class="flex flex-col gap-1 items-center text-center">
-            <h2
-              v-if="title"
-              class="mb-1 text-text-secondary font-noto text-2xl font-semibold leading-tight tracking-[0.05em] text-center"
-            >
+            <h2 v-if="title"
+              class="mb-1 text-text-secondary font-noto text-2xl font-semibold leading-tight tracking-[0.05em] text-center">
               {{ title }}
             </h2>
             <p v-if="subTitle" class="text-text-helper font-noto text-md leading-snug text-center">
@@ -118,12 +111,9 @@ const handleDanger = () => {
         </div>
 
         <!-- 右上角關閉按鈕，不影響標題置中 -->
-        <button
-          v-if="showClose"
-          type="button"
+        <button v-if="showClose" type="button"
           class="absolute -right-1 -top-7 flex w-14 h-14 items-center justify-center rounded-xl transition-colors active:bg-ash-100"
-          @click="handleClose"
-        >
+          @click="handleClose">
           <X class="w-icon-lg h-icon-lg text-text-disabled" />
         </button>
       </div>
@@ -132,10 +122,7 @@ const handleDanger = () => {
       <div class="flex items-center justify-center my-2">
         <div class="w-full flex justify-center text-center">
           <slot>
-            <p
-              v-if="content"
-              class="text-text-primary font-noto text-md leading-relaxed text-center"
-            >
+            <p v-if="content" class="text-text-primary font-noto text-md leading-relaxed text-center">
               {{ content }}
             </p>
           </slot>
@@ -145,28 +132,19 @@ const handleDanger = () => {
       <!-- Footer：按鈕列（可為 1 顆 / 2 顆），也可用 slot 覆蓋，水平置中 -->
       <div class="mt-4 flex justify-center gap-3">
         <slot name="footer">
-          <button
-            v-if="secondaryButtonText"
-            type="button"
+          <button v-if="secondaryButtonText" type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-secondary active:bg-button-secondary-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
-            @click="handleSecondary"
-          >
+            @click="handleSecondary">
             {{ secondaryButtonText }}
           </button>
-          <button
-            v-if="primaryButtonText"
-            type="button"
+          <button v-if="primaryButtonText" type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-primary active:bg-button-primary-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
-            @click="handlePrimary"
-          >
+            @click="handlePrimary">
             {{ primaryButtonText }}
           </button>
-          <button
-            v-if="dangerButtonText"
-            type="button"
+          <button v-if="dangerButtonText" type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-danger active:bg-button-danger-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"
-            @click="handleDanger"
-          >
+            @click="handleDanger">
             {{ dangerButtonText }}
           </button>
 
@@ -175,4 +153,3 @@ const handleDanger = () => {
     </div>
   </div>
 </template>
-

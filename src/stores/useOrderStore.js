@@ -20,13 +20,6 @@ export const useOrderStore = defineStore('order', {
       items: [] // 每個 item 包含: cartItemId, id, name, price, quantity, note, modifiers
     },
 
-    // 帳單資訊
-    billing: {
-      discountType: 'none', // 'none' | 'percent' | 'amount'
-      discountValue: 0,
-      serviceChargeRate: 0.1 // 預設服務費率 10%
-    },
-
     // 支付資訊
     payment: {
       receivedAmount: 0,
@@ -44,26 +37,9 @@ export const useOrderStore = defineStore('order', {
       }, 0)
     },
 
-    // 計算折扣金額
-    discountAmount() {
-      const subtotal = this.subtotal
-
-      if (this.billing.discountType === 'percent') {
-        return Number(subtotal) * (Number(this.billing.discountValue) / 100)
-      } else if (this.billing.discountType === 'amount') {
-        return Number(this.billing.discountValue)
-      }
-      return 0
-    },
-
-    // 計算總金額：(subtotal - discount) * (1 + serviceChargeRate)
+    // 計算總金額：等同 subtotal
     totalAmount() {
-      const subtotal = this.subtotal
-      const discount = this.discountAmount
-
-      const amountAfterDiscount = Number(subtotal) - Number(discount)
-      const serviceCharge = amountAfterDiscount * Number(this.billing.serviceChargeRate)
-      return Number(amountAfterDiscount) + Number(serviceCharge)
+      return this.subtotal
     },
 
     // 計算找零金額：receivedAmount - totalAmount
@@ -170,15 +146,6 @@ export const useOrderStore = defineStore('order', {
       )
     },
 
-    /**
-     * 更新折扣邏輯
-     * @param {string} type - 折扣類型：'none' | 'percent' | 'amount'
-     * @param {number} value - 折扣值（百分比或金額）
-     */
-    updateDiscount(type, value) {
-      this.billing.discountType = type
-      this.billing.discountValue = Number(value) || 0
-    },
 
     /**
      * 重置所有狀態為初始值
@@ -196,12 +163,6 @@ export const useOrderStore = defineStore('order', {
 
       this.cart = {
         items: []
-      }
-
-      this.billing = {
-        discountType: 'none',
-        discountValue: 0,
-        serviceChargeRate: 0.1
       }
 
       this.payment = {

@@ -191,7 +191,7 @@
      --color-text-dark-secondary: var(--color-ash-200);
      --color-border-dark-primary: var(--color-ash-800);
 
-     /* Order Status */
+     /* Table Status */
      --color-ordstatus-0-primary: var(--color-gray-400);
      --color-ordstatus-0-secondary: var(--color-gray-200);
      --color-ordstatus-1-primary: var(--color-ash-700);
@@ -203,7 +203,7 @@
      --color-ordstatus-4-primary: var(--color-green-500);
      --color-ordstatus-4-secondary: var(--color-green-700);
      --color-ordstatus-5-primary: var(--color-indianred-300);
-     --color-ordstatus-5-secondary: var(--color-gray-200);
+     --color-ordstatus-5-secondary: var(--color-indianred-200);
      --color-ordstatus-9-primary: var(--color-blue-500);
      --color-ordstatus-9-secondary: var(--color-blue-700);
 

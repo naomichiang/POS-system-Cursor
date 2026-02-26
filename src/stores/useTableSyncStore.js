@@ -61,9 +61,10 @@ export const useTableSyncStore = defineStore('tableSync', {
     },
 
     /**
-     * 開發用：模擬一筆訂單（無後端 / 無 WS 時使用）
-     * - A2 桌、狀態 1、總金額 1770
-     * - 會順便透過 handleWsMessage 更新桌位狀態
+     * 開發用：模擬訂單（無後端 / 無 WS 時使用）
+     * - A2 桌：已開桌 (status 1)、總金額 1770
+     * - A5 桌：預定桌 (status 9)
+     * - B1 桌：超時桌 (status 3)
      */
     mockOrderForDev() {
       const mockOrder = {
@@ -89,11 +90,12 @@ export const useTableSyncStore = defineStore('tableSync', {
         ]
       }
 
-      // 模擬一筆 WS 訊息，讓桌位狀態同步更新
-      this.handleWsMessage({
-        type: 'order_created',
-        tableNumber: mockOrder.tableNumber,
-        status: mockOrder.status
+      // 模擬多桌狀態：A2 已開桌、A5 預定桌、B1 超時桌
+      this.setTableStatusBatch({
+        A2: TABLE_STATUS.OCCUPIED,   // 1: 已開桌
+        A5: TABLE_STATUS.RESERVED,   // 9: 預定桌
+        B1: TABLE_STATUS.OVERTIME,  // 3: 超時桌
+        B5: TABLE_STATUS.WARNING    // 2: 提醒桌
       })
 
       return mockOrder
