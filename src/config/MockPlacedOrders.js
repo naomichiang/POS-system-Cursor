@@ -9,7 +9,7 @@ export const MOCK_PLACED_ORDERS = {
       name: '黃金開口笑',
       price: 220,
       quantity: 1,
-      status: 'placed', // 建議加上狀態位，方便在 UI 區隔已出餐
+      status: 'placed', // 加上狀態位，方便在 UI 區隔已出餐
       modifiers: {
         optionSelections: {
           portion: 'small',

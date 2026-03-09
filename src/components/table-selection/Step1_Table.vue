@@ -227,21 +227,24 @@ const getStatusText = (table) => {
       :sub-title="currentReserveDetail[0]?.tableLabel ?? reserveTableData?.label ?? ''" :header-icon="CalendarCheck"
       header-icon-color-class="text-blue-400" secondary-button-text="返回"
       :primary-button-text="currentReserveDetail.length > 0 ? '確認帶位' : ''" width-class="w-[460px] max-w-[90vw]"
-      height-class="h-[500px] max-h-[90vh]" @close="showReserveModal = false" @secondary="showReserveModal = false"
+      height-class="h-auto max-h-[90vh]" @close="showReserveModal = false" @secondary="showReserveModal = false"
       @primary="confirmReserveOpen">
-      <div v-if="currentReserveDetail.length > 0" class="space-y-3 text-left bg-layer-light p-4 rounded-2xl w-full">
-        <div class="grid grid-cols-[140px_1fr] gap-y-1">
-          <p class="text-text-helper">預約人：</p>
-          <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].customerName }}</p>
-          <p class="text-text-helper">預約時間：</p>
-          <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].reserveTime }}</p>
-          <p class="text-text-helper">預約人數：</p>
-          <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].dinerCount }} 位</p>
-          <p class="text-text-helper">預約電話：</p>
-          <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].phone }}</p>
+      <div class="flex w-full flex-col justify-start">
+        <div v-if="currentReserveDetail.length > 0" class="text-left bg-layer-light p-4 rounded-2xl w-full -mb-2">
+          <div class="grid grid-cols-[140px_1fr] gap-y-1">
+            <p class="text-text-helper">預約人：</p>
+            <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].customerName }}</p>
+            <p class="text-text-helper">預約時間：</p>
+            <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].reserveTime }}</p>
+            <p class="text-text-helper">預約人數：</p>
+            <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].dinerCount }} 位</p>
+            <p class="text-text-helper">預約電話：</p>
+            <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].phone }}</p>
+          </div>
         </div>
+        <p v-else class="text-text-helper font-noto text-lg text-center py-6">查無預約資訊</p>
       </div>
-      <p v-else class="text-text-helper font-noto text-lg text-center py-6">查無預約資訊</p>
+
     </BaseModal>
 
     <!-- 清潔完成確認燈箱 -->
@@ -253,9 +256,9 @@ const getStatusText = (table) => {
     <!-- 已開桌燈箱功能選單：點餐、結帳、拆桌、併桌、重新開單-->
     <BaseModal :open="showOccupiedModal" :show-close="true" @close="handleOccupiedAction('close')"
       :title="occupiedTableData ? occupiedTableData.label : '桌位'" width-class="w-[480px] max-w-[80vw]"
-      height-class="h-[450px] max-h-[90vh]">
+      height-class="h-auto max-h-[90vh] min-h-[300px]">
       <template #footer>
-        <div class="w-full grid grid-cols-6 gap-3">
+        <div class="w-full grid grid-cols-6 gap-3 -mt-4">
           <button type="button"
             class="col-span-3 h-38 rounded-2xl bg-button-primary active:bg-button-primary-hover active:scale-95 transition-all flex flex-col items-center justify-center gap-4 text-white"
             @click="handleOccupiedAction('order')">
