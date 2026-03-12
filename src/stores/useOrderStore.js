@@ -1,9 +1,18 @@
 import { defineStore } from 'pinia'
-import { TABLE_STATUS } from '../config/tableStatus'
+import { TABLE_STATUS, getStatusLabel } from '../config/tableStatus'
+import { formatDiningTime } from '@/utils/formatDiningTime'
 import { DEFAULT_RESTAURANT_CONFIG } from '@/config/restaurantConfig'
+import { MockOrder001 } from '@/mock/orderMock'
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
+    /** 當前訂單（由 fetchOrderData 載入，模擬 API 回傳） */
+    currentOrder: null,
+    /** 當前桌號（fetchOrderData 時設定，供 getter 預設值使用） */
+    currentTableId: null,
+    /** 是否正在載入訂單 */
+    isLoading: false,
+
     // 訂單資訊
     orderInfo: {
       orderId: null,
@@ -58,6 +67,38 @@ export const useOrderStore = defineStore('order', {
       const totalAmount = this.totalAmount
       const change = Number(this.payment.receivedAmount) - Number(totalAmount)
       return Math.max(0, change) // 確保找零不會是負數
+    },
+
+    /**
+     * 訂單顯示用資訊（整合 tableInfo 與 summary，含 formatDiningTime、getStatusLabel）
+     * 若 currentOrder 或 tableInfo 為空，回傳基礎預設值
+     */
+    orderInfoForDisplay(state) {
+      const order = state.currentOrder
+      const tableInfo = order?.tableInfo
+
+      if (!order || !tableInfo) {
+        return {
+          tableNumber: state.currentTableId || '-',
+          diners: 0,
+          status: TABLE_STATUS.AVAILABLE,
+          statusLabel: '未開桌',
+          diningTime: '00:00',
+          totalItems: 0,
+          totalAmount: 0
+        }
+      }
+
+      const status = tableInfo.status ?? TABLE_STATUS.OCCUPIED
+      return {
+        tableNumber: tableInfo.tableNumber || state.currentTableId || '-',
+        diners: tableInfo.diners ?? 0,
+        status,
+        statusLabel: getStatusLabel(status),
+        diningTime: formatDiningTime(tableInfo.openTime),
+        totalItems: order.summary?.totalItems ?? 0,
+        totalAmount: order.summary?.totalAmount ?? 0
+      }
     }
   },
 
@@ -155,7 +196,7 @@ export const useOrderStore = defineStore('order', {
     },
 
     /**
-     * 設定已下單餐點（加點時從 MockPlacedOrders 或 API 載入）
+     * 設定已下單餐點（加點時從 mock/MockPlacedOrders 或 API 載入）
      * @param {Array} items - 已送出給廚房的餐點陣列
      */
     setPlacedItems(items) {
@@ -172,6 +213,19 @@ export const useOrderStore = defineStore('order', {
       )
     },
 
+
+    /**
+     * 模擬載入訂單資料（模擬 API 延遲 500ms）
+     * @param {string} [tableId] - 桌號，可於正式串接時傳入 API
+     */
+    async fetchOrderData(tableId) {
+      this.isLoading = true
+      this.currentOrder = null
+      this.currentTableId = tableId ?? null
+      await new Promise(resolve => setTimeout(resolve, 500))
+      this.currentOrder = { ...MockOrder001 }
+      this.isLoading = false
+    },
 
     /**
      * 重置所有狀態為初始值
@@ -198,6 +252,10 @@ export const useOrderStore = defineStore('order', {
         details: [],
         isPaid: false
       }
+
+      this.currentOrder = null
+      this.currentTableId = null
+      this.isLoading = false
     }
   }
 })

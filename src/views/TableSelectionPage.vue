@@ -1,15 +1,15 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { useOrderStore } from '../stores/useOrderStore'
-import { useTableSyncStore } from '../stores/useTableSyncStore'
+import { useOrderStore } from '@/stores/useOrderStore'
+import { useTableSyncStore } from '@/stores/useTableSyncStore'
 import { useRouter } from 'vue-router'
-import { TABLE_STATUS } from '../config/tableStatus'
-import { DEFAULT_RESTAURANT_CONFIG } from '../config/restaurantConfig'
-import Step1_Table from './table-selection/Step1_Table.vue'
-import Step2_DinerCount from './table-selection/Step2_DinerCount.vue'
-import Step3_MainOption from './table-selection/Step3_RestaurantMainOption.vue'
-import Step4_SubOption from './table-selection/Step4_RestaurantSubOption.vue'
-import StepNavigationButtons from './table-selection/StepNavigationButtons.vue'
+import { TABLE_STATUS } from '@/config/tableStatus'
+import { DEFAULT_RESTAURANT_CONFIG } from '@/config/restaurantConfig'
+import Step1_Table from '@/components/table-selection/Step1_Table.vue'
+import Step2_DinerCount from '@/components/table-selection/Step2_DinerCount.vue'
+import Step3_MainOption from '@/components/table-selection/Step3_RestaurantMainOption.vue'
+import Step4_SubOption from '@/components/table-selection/Step4_RestaurantSubOption.vue'
+import StepNavigationButtons from '@/components/table-selection/StepNavigationButtons.vue'
 
 const router = useRouter()
 const orderStore = useOrderStore()

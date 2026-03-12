@@ -1,16 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import TableSelectionPage from '../components/TableSelectionPage.vue'
-import HomePage from '../components/HomePage.vue'
-import OrderPage from '../components/OrderPage.vue'
-import CheckoutPage from '../components/CheckoutPage.vue'
+import TableSelectionPage from '@/views/TableSelectionPage.vue'
+import BillPayPage from '@/views/bill/BillPayPage.vue'
+import OrderPage from '@/views/order/OrderPage.vue'
+import BillAdjustPage from '@/views/bill/BillAdjustPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomePage
+      redirect: '/table-selection'
+    },
+    {
+      path: '/bill-pay/:tableId',
+      name: 'bill-pay',
+      component: BillPayPage
     },
     {
       path: '/table-selection',
@@ -23,9 +27,9 @@ const router = createRouter({
       component: OrderPage
     },
     {
-      path: '/checkout/:tableId',
-      name: 'checkout',
-      component: CheckoutPage
+      path: '/bill-adjust/:tableId',
+      name: 'bill-adjust',
+      component: BillAdjustPage
     }
   ],
 })

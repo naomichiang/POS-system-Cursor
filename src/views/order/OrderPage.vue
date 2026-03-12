@@ -6,26 +6,26 @@
  *   2) 配置模式：左側商品清單 + 右側細項設定（ExtraField / OptGroup）+ 底部 QtyBar
  *
  * 資料來源：
- * - 開發階段：config/menuConfig.js 的 DEFAULT_MENU_CATEGORIES
+ * - 開發階段：mock/menuMock.js 的 DEFAULT_MENU_CATEGORIES
  * - 正式串接時：可改由 API 或 Store 傳入同樣結構的 config
  */
 import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useOrderStore } from '../stores/useOrderStore'
-import { DEFAULT_MENU_CATEGORIES } from '../config/menuConfig'
-import { MOCK_PLACED_ORDERS } from '../config/MockPlacedOrders'
-import CatTabs from './order/CatTab.vue'
-import SubCatList from './order/SubCatList.vue'
-import ItemSideMenu from './order/ItemSideMenu.vue'
-import OptGroup from './order/OptGroup.vue'
-import OrderPanel from './order/OrderPanel.vue'
-import QtyBar from './order/QtyBar.vue'
+import { useOrderStore } from '@/stores/useOrderStore'
+import { DEFAULT_MENU_CATEGORIES } from '@/mock/menuMock'
+import { MOCK_PLACED_ORDERS } from '@/mock/MockPlacedOrders'
+import CatTabs from '@/components/order/CatTab.vue'
+import SubCatList from '@/components/order/SubCatList.vue'
+import ItemSideMenu from '@/components/order/ItemSideMenu.vue'
+import OptGroup from '@/components/order/OptGroup.vue'
+import OrderPanel from '@/components/order/OrderPanel.vue'
+import QtyBar from '@/components/order/QtyBar.vue'
 
 const route = useRoute()
 const orderStore = useOrderStore()
 const tableId = route.params.tableId
 
-// ---------------- 菜單分類（完整資料來自 menuConfig，之後可改由 props/store 傳入） ----------------
+// ---------------- 菜單分類（完整資料來自 menuMock，之後可改由 props/store 傳入） ----------------
 const categories = ref([...DEFAULT_MENU_CATEGORIES])
 
 // ---------------- 狀態：主類別 / 商品 / 模式 ----------------

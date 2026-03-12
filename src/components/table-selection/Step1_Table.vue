@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getStatusLabel } from '../../config/tableStatus'
-import { MOCK_RESERVE_LIST } from '../../config/reserveTableData'
+import { MOCK_RESERVE_LIST } from '../../mock/reserveTableDataMock'
 import BaseModal from '../common/BaseModal.vue'
 import { CalendarCheck, SprayCan, Utensils, ScrollText, ArrowLeftRight, Users, BookmarkMinus } from 'lucide-vue-next'
 
@@ -141,7 +141,7 @@ const handleOccupiedAction = (action) => {
       router.push(`/order/${table.id}`)
       break
     case 'checkout':
-      router.push(`/checkout/${table.id}`)
+      router.push(`/bill-adjust/${table.id}`)
       break
     case 'change-table':
       // TODO: 換桌流程
