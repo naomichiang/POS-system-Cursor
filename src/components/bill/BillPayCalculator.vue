@@ -8,6 +8,7 @@ import {
 import { paymentMethodsConfig } from '@/config/paymentMethods'
 import { TABLE_STATUS } from '@/config/tableStatus'
 import BaseModal from '@/components/common/BaseModal.vue'
+import BillActionFooter from '@/components/bill/BillActionFooter.vue'
 import { useOrderStore } from '@/stores/useOrderStore'
 
 // 引入 Store
@@ -253,33 +254,18 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Bottom Actions -->
-    <div class="flex h-24 w-full p-3 items-start gap-3 self-stretch border-t border-border-primary">
-      <button
-        class="shrink-0 flex w-btn-md h-full min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
-        <div
-          class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
-          發票
-        </div>
-      </button>
-      <div class="flex h-full justify-end items-center gap-3 flex-1">
+    <!-- Bottom Actions Footer-->
+    <BillActionFooter second-button-text="暫存" primary-button-text="完成結帳" @primary-click="handleCompleteConfirmCheckout">
+      <template #leftGroup>
         <button
-          class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
+          class="shrink-0 flex w-btn-md h-full min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
           <div
             class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
-            暫存
+            發票
           </div>
         </button>
-        <button
-          class="flex w-btn-lg h-full min-w-btn-md px-4 justify-center items-center rounded-2xl bg-button-danger active:bg-button-danger-hover transition-colors"
-          @click="handleCompleteConfirmCheckout">
-          <div
-            class="shrink-0 text-text-on-color text-center font-noto text-2xl font-medium leading-[128%] tracking-[0.05em]">
-            完成結帳
-          </div>
-        </button>
-      </div>
-    </div>
+      </template>
+    </BillActionFooter>
 
     <!-- 共用燈箱 BaseModal：白底圓角 + 燈箱；點彈窗外無作用 -->
     <BaseModal :open="showModal" :title="modalTitle" :content="''" :show-close="false"
