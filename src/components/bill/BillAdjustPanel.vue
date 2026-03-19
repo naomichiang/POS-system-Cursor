@@ -1,13 +1,32 @@
 <script setup>
 defineOptions({ name: 'BillAdjustPanel' })
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
-import { Users, Utensils, ChevronUp, ChevronDown, DollarSign } from 'lucide-vue-next'
+import { Utensils, ChevronUp, ChevronDown, DollarSign } from 'lucide-vue-next'
+import { TABLE_STATUS } from '@/config/tableStatus'
 import { useOrderStore } from '@/stores/useOrderStore'
 
 const orderStore = useOrderStore()
 
 // 訂單顯示資訊（由 store getter 統一提供）
 const order = computed(() => orderStore.orderInfoForDisplay)
+
+// 根據訂單狀態回傳對應的底色 class
+const statusBgClass = computed(() => {
+  const status = order.value?.status
+  const map = {
+    [TABLE_STATUS.AVAILABLE]: 'bg-ordstatus-0-primary',
+    [TABLE_STATUS.OCCUPIED]: 'bg-ordstatus-1-primary',
+    [TABLE_STATUS.WARNING]: 'bg-ordstatus-2-primary',
+    [TABLE_STATUS.OVERTIME]: 'bg-ordstatus-3-primary',
+    [TABLE_STATUS.CHECKED_OUT]: 'bg-ordstatus-4-primary',
+    [TABLE_STATUS.CLEANING]: 'bg-ordstatus-5-primary',
+    [TABLE_STATUS.RESERVED]: 'bg-ordstatus-9-primary',
+  }
+  return map[status] || 'bg-layer-dark-tertiary'
+})
+
+// 狀態顯示文字
+const statusLabel = computed(() => order.value?.statusLabel || '查詢中')
 
 // 餐點列表（從 orderStore.currentOrder.items 取得）
 const orderItems = computed(() => {
@@ -91,26 +110,32 @@ watch(
 
 <template>
   <div class="w-[330px] h-full shrink-0 flex flex-col rounded-2xl shadow-sm overflow-hidden bg-layer-primary">
-    <!-- 1. 桌次資訊列 (OrderInfoHeader) -->
-    <div class="flex shrink-0 items-center gap-2 px-3 py-2 bg-layer-dark-primary">
-      <span class="rounded-lg px-2 py-0.5 font-noto text-lg font-medium text-ash-800 bg-blue-200">
-        {{ order.tableNumber }}桌
-      </span>
-      <div class="flex items-center gap-1">
-        <Users class="w-icon-md h-icon-md text-text-on-color shrink-0" />
-        <span class="font-inter text-lg font-medium text-text-on-color">
-          {{ order.diners }}
-        </span>
+    <!-- 1. Header 訂單資訊列(桌號、訂單狀態) -->
+    <div class="flex w-full h-12 shrink-0 items-start">
+      <div class="flex w-22 flex-col justify-center items-center shrink-0 self-stretch bg-layer-dark-primary">
+        <div class="text-center font-noto pl-1 text-lg tracking-[0.2em] leading-tight text-text-on-color">{{
+          order.tableNumber }}桌</div>
       </div>
-      <span class="rounded-lg px-2 py-0.5 font-noto text-lg font-normal text-ash-800 bg-blue-200">
-        {{ order.statusLabel }}
-      </span>
-      <span class="ml-auto font-inter text-lg font-medium text-text-on-color tabular-nums">
-        {{ order.diningTime }}
-      </span>
+      <div class="flex justify-center items-center gap-4 flex-1 self-stretch" :class="statusBgClass">
+        <div class="flex items-center gap-1">
+          <div class="flex w-icon-md h-icon-md justify-center items-center">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M15.9997 16C14.533 16 13.2775 15.4778 12.233 14.4333C11.1886 13.3889 10.6663 12.1333 10.6663 10.6666C10.6663 9.19998 11.1886 7.94442 12.233 6.89998C13.2775 5.85554 14.533 5.33331 15.9997 5.33331C17.4663 5.33331 18.7219 5.85554 19.7663 6.89998C20.8108 7.94442 21.333 9.19998 21.333 10.6666C21.333 12.1333 20.8108 13.3889 19.7663 14.4333C18.7219 15.4778 17.4663 16 15.9997 16ZM5.33301 24V22.9333C5.33301 22.1778 5.52767 21.4835 5.91701 20.8506C6.30634 20.2178 6.82279 19.7342 7.46634 19.4C8.84412 18.7111 10.2441 18.1946 11.6663 17.8506C13.0886 17.5066 14.533 17.3342 15.9997 17.3333C17.4663 17.3324 18.9108 17.5049 20.333 17.8506C21.7552 18.1964 23.1552 18.7129 24.533 19.4C25.1775 19.7333 25.6943 20.2169 26.0837 20.8506C26.473 21.4844 26.6672 22.1786 26.6663 22.9333V24C26.6663 24.7333 26.4055 25.3613 25.8837 25.884C25.3619 26.4066 24.7339 26.6675 23.9997 26.6666H7.99967C7.26634 26.6666 6.63879 26.4058 6.11701 25.884C5.59523 25.3622 5.3339 24.7342 5.33301 24Z"
+                fill="white" />
+            </svg>
+          </div>
+          <div class="text-text-on-color font-inter text-lg font-medium leading-tight">{{ order.diners }}</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-text-on-color font-noto text-lg font-normal leading-tight">{{ statusLabel }}</div>
+          <div class="w-18 text-text-on-color text-center font-inter text-lg font-medium leading-tight">{{
+            order.diningTime }}</div>
+        </div>
+      </div>
     </div>
 
-    <!-- 2. 餐點帳單 List（BillDetailList，可捲動） -->
+    <!-- 2. 餐點帳單 List（可捲動） -->
     <div ref="scrollEl" class="flex-1 min-h-0 overflow-y-auto scrollbar-hide bg-layer-primary">
       <div v-if="orderStore.isLoading"
         class="flex h-full min-h-24 items-center justify-center text-text-placeholder font-noto text-lg">
@@ -121,29 +146,49 @@ watch(
         - 尚未點餐 -
       </div>
       <div v-else class="flex flex-col">
-        <div v-for="(item, index) in orderItems" :key="item.cartItemId"
-          class="relative flex items-start gap-2 px-3 py-2 border-b border-border-primary">
-          <span class="shrink-0 w-6 text-center font-inter text-lg font-medium text-text-placeholder">
+        <div v-for="(item, index) in orderItems" :key="item.cartItemId" @click="selectedItemId = item.cartItemId"
+          :class="[
+            'relative flex items-start gap-2 px-3 py-3 border-b border-border-primary cursor-pointer transition-colors',
+            selectedItemId === item.cartItemId ? 'bg-blue-50/80' : 'bg-transparent'
+          ]">
+          <span class="shrink-0 w-6 pt-0.5 text-center font-inter text-lg font-medium text-text-placeholder">
             {{ index + 1 }}
           </span>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline justify-between gap-2">
-              <span class="font-noto text-lg font-normal text-text-primary line-clamp-2 break-all">
+
+          <div class="flex-1 min-w-0 flex flex-col gap-1">
+
+            <div class="flex items-start justify-between gap-2">
+              <span class="font-noto text-lg font-normal text-text-primary line-clamp-2 break-all leading-tight">
                 {{ item.name }}
-                <span v-if="item.isGift" class="text-text-helper text-sm">(招待)</span>
               </span>
-              <span v-if="item.quantity > 1" class="shrink-0 font-inter text-lg font-medium text-text-tertiary">
-                x {{ item.quantity }}
-              </span>
+
+              <div class="flex items-center gap-1 shrink-0 pt-0.5">
+                <span :class="[
+                  'font-inter text-lg tabular-nums',
+                  item.isGift || item.discountLabel ? 'text-text-helper line-through font-normal' : 'text-text-primary font-medium'
+                ]">
+                  {{ item.price.toLocaleString() }}
+                </span>
+                <DollarSign :size="16" :stroke-width="2.5" class="text-ash-600 shrink-0" />
+              </div>
             </div>
-            <div class="flex items-center justify-end gap-1 mt-0.5">
-              <span
-                :class="item.isGift ? 'font-inter text-lg font-normal text-text-helper line-through' : 'font-inter text-lg font-medium text-text-primary'">
-                {{ (item.subtotal ?? item.price * item.quantity).toLocaleString() }}
+
+            <div v-if="item.isGift || item.discountLabel" class="flex items-center justify-between gap-2">
+              <span class="font-noto text-base font-medium text-status-danger">
+                └ {{ item.isGift ? '招待' : item.discountLabel }}
               </span>
-              <DollarSign :size="16" :stroke-width="2.5" class="text-ash-600 shrink-0" />
+
+              <div class="flex items-center gap-1 shrink-0">
+                <span class="font-inter text-lg font-bold text-status-danger tabular-nums">
+                  {{ item.isGift ? '0' : item.subtotal.toLocaleString() }}
+                </span>
+                <DollarSign :size="16" :stroke-width="2.5" class="text-status-danger shrink-0" />
+              </div>
             </div>
+
           </div>
+
+          <div v-if="selectedItemId === item.cartItemId" class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
         </div>
       </div>
     </div>
