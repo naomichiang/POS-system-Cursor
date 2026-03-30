@@ -140,7 +140,7 @@
      --color-text-disabled: var(--color-gray-500);
      --color-text-placeholder: var(--color-gray-400);
      --color-text-on-color: var(--color-white);
-     --color-text-error: var(--color-indianred-600);
+     --color-text-error: var(--color-indianred-700);
      --color-text-amount-positive: var(--color-ash-800);
      --color-text-amount-negative: var(--color-indianred-600);
      --color-text-success: var(--color-green-500);

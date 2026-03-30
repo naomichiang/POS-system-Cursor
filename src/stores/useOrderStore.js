@@ -8,6 +8,8 @@ export const useOrderStore = defineStore('order', {
   state: () => ({
     /** 當前訂單（由 fetchOrderData 載入，模擬 API 回傳） */
     currentOrder: null,
+    /** 帳單調整面板中，目前選取中的餐點 index（對應 currentOrder.items 的索引） */
+    selectedOrderItemIndex: null,
     /** 當前桌號（fetchOrderData 時設定，供 getter 預設值使用） */
     currentTableId: null,
     /** 是否正在載入訂單 */
@@ -204,6 +206,95 @@ export const useOrderStore = defineStore('order', {
     },
 
     /**
+     * 設定 / 切換目前選取中的已下單餐點
+     * - 再次點擊同一筆則取消選取
+     * @param {number} index - currentOrder.items 的索引
+     */
+    setSelectedOrderItem(index) {
+      const order = this.currentOrder
+      if (!order || !Array.isArray(order.items)) {
+        this.selectedOrderItemIndex = null
+        return
+      }
+      if (index == null || index < 0 || index >= order.items.length) {
+        this.selectedOrderItemIndex = null
+        return
+      }
+
+      if (this.selectedOrderItemIndex === index) {
+        // 再次點擊同一筆 → 取消選取
+        this.selectedOrderItemIndex = null
+      } else {
+        this.selectedOrderItemIndex = index
+      }
+    },
+
+    /**
+     * 對目前選取中的餐點套用折扣並重算小計與總額
+     * @param {{ type: 'gift' | 'complimentary' | 'percentage', label: string, value?: number }} payload
+     */
+    applyDiscountToSelectedItem(payload) {
+      const order = this.currentOrder
+      const idx = this.selectedOrderItemIndex
+      if (!order || !Array.isArray(order.items) || idx == null || idx < 0 || idx >= order.items.length) {
+        return
+      }
+
+      const target = order.items[idx]
+      const type = payload?.type
+      const label = payload?.label || ''
+
+      const unitPrice = Number(target.unitPrice ?? target.price)
+      const quantity = Number(target.quantity) || 0
+      const baseSubtotal = unitPrice * quantity
+
+      let newSubtotal = baseSubtotal
+
+      if (type === 'gift' || type === 'complimentary') { // 招待 / 禮物 → 全額免費
+        newSubtotal = 0
+        target.isGift = true
+      } else if (type === 'percentage') { // 百分比折扣
+        const value = Number(payload.value)
+        if (!Number.isFinite(value)) return
+        const rate = value / 100
+        // 四捨五入到整數金額
+        newSubtotal = Math.round(baseSubtotal * rate)
+        target.isGift = false
+        target.discountValue = value
+      }
+
+      target.discountType = type
+      target.discountLabel = label
+      target.subtotal = newSubtotal
+
+      this._recalculateCurrentOrderSummary()
+    },
+
+    /**
+     * 依據 currentOrder.items 重新計算 summary（總品項數量與總金額）
+     */
+    _recalculateCurrentOrderSummary() {
+      const order = this.currentOrder
+      if (!order || !Array.isArray(order.items)) return
+
+      let totalItems = 0
+      let totalAmount = 0
+      order.items.forEach(item => {
+        const qty = Number(item.quantity) || 0
+        const subtotal = Number(item.subtotal) || 0
+        totalItems += qty
+        totalAmount += subtotal
+      })
+
+      order.summary = {
+        ...(order.summary || {}),
+        totalItems,
+        subtotal: totalAmount,
+        totalAmount
+      }
+    },
+
+    /**
      * 根據購物車品項 id (cartItemId) 從購物車中刪除單一品項
      * @param {string} cartItemId - 要刪除的購物車品項唯一 id（相容舊資料：若品項無 cartItemId 則以 id 比對）
      */
@@ -254,6 +345,7 @@ export const useOrderStore = defineStore('order', {
       }
 
       this.currentOrder = null
+      this.selectedOrderItemIndex = null
       this.currentTableId = null
       this.isLoading = false
     }

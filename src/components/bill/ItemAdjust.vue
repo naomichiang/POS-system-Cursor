@@ -1,6 +1,7 @@
 <script setup>
 defineOptions({ name: 'ItemAdjust' })
 import { CircleDollarSign } from 'lucide-vue-next'
+import { useOrderStore } from '@/stores/useOrderStore'
 
 const iconMap = {
   CircleDollarSign,
@@ -11,9 +12,9 @@ const gridItems = [
   { label: '禮物', type: 'action', action: 'gift', variant: 'secondary', colSpan: 1, cellClass: 'border-b border-white' },
   { label: '刪除', type: 'action', action: 'delete', variant: 'danger', colSpan: 1, cellClass: 'border-b border-r border-white' },
   { label: '', type: 'placeholder', variant: 'empty', colSpan: 1, cellClass: 'border-b border-white' },
-  { label: '', type: 'placeholder', variant: 'empty', colSpan: 1, cellClass: 'border-b border-r border-white' },
+  { label: '', type: 'placeholder', variant: 'empty', colSpan: 1, cellClass: 'border-b border-l border-r border-white' },
   { label: '', type: 'placeholder', variant: 'empty', colSpan: 1, cellClass: 'border-b border-white' },
-  { label: '', type: 'placeholder', variant: 'empty', colSpan: 1, cellClass: 'border-r border-white' },
+  { label: '', type: 'placeholder', variant: 'empty', colSpan: 1, cellClass: 'border-r border-l border-white' },
   { label: '', type: 'placeholder', variant: 'empty', colSpan: 1, cellClass: '' },
   { label: '追加金額', type: 'addAmount', variant: 'primary', colSpan: 2, cellClass: '', icon: 'CircleDollarSign' },
   { label: '90 %', type: 'percentage', value: 90, variant: 'secondary', colSpan: 1, cellClass: 'border-b border-r border-white' },
@@ -23,6 +24,8 @@ const gridItems = [
   { label: '70 %', type: 'percentage', value: 70, variant: 'secondary', colSpan: 1, cellClass: 'border-r border-white' },
   { label: '其他', type: 'action', action: 'other', variant: 'secondary', colSpan: 1, cellClass: '' },
 ]
+
+const orderStore = useOrderStore()
 
 const variantClasses = {
   secondary: 'bg-ash-600 active:bg-ash-700',
@@ -36,9 +39,22 @@ const baseCellClass = 'flex min-h-0 items-center justify-center font-noto text-x
 function handleClick(item) {
   if (item.type === 'placeholder') return
   if (item.type === 'action') {
+    if (item.action === 'complimentary' || item.action === 'gift') {
+      // 針對目前在帳單列表中選取的餐點，套用「招待 / 禮物」
+      orderStore.applyDiscountToSelectedItem({
+        type: item.action,
+        label: item.label
+      })
+      return
+    }
     console.log('ItemAdjust action:', item.action)
   } else if (item.type === 'percentage') {
-    console.log('ItemAdjust percentage:', item.value)
+    // 百分比折扣（例如 90% → 九折）
+    orderStore.applyDiscountToSelectedItem({
+      type: 'percentage',
+      label: item.label,
+      value: item.value
+    })
   } else if (item.type === 'addAmount') {
     console.log('ItemAdjust addAmount')
   }

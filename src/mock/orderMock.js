@@ -8,18 +8,25 @@ export const MockOrder001 = {
     tableNumber: 'A2',
     diners: 8,
     status: 1,
-    openTime: '2026-03-12T14:30:00Z'
+    openTime: '2026-03-30T14:30:00Z'
   },
   items: [
     { name: '黃金開口笑', unitPrice: 250, quantity: 1, subtotal: 250, isGift: false },
-    { name: '大西洋極鮮海鮮盤', unitPrice: 280, quantity: 2, subtotal: 560, isGift: false },
-    { name: '測試名稱超激長長長長長長芹測試名稱超激長長長長長長芹菜菜', unitPrice: 80, quantity: 1, subtotal: 0, isGift: true },
-    { name: '可樂', unitPrice: 60, quantity: 2, subtotal: 120, isGift: false },
+    { name: '大西洋極鮮海鮮盤', unitPrice: 280, quantity: 1, subtotal: 280, isGift: false },
+    {
+      name: '測試名稱超激長長長長長長芹測試名稱超激長長長長長長芹菜菜',
+      unitPrice: 80,
+      quantity: 1,
+      subtotal: 0,
+      isGift: true,
+      discountLabel: '招待'
+    },
+    { name: '可樂', unitPrice: 60, quantity: 1, subtotal: 60, isGift: false },
     { name: '茶碗蒸', unitPrice: 120, quantity: 1, subtotal: 120, isGift: false }
   ],
   summary: {
-    totalItems: 7,
-    subtotal: 1050,
-    totalAmount: 1050
+    totalItems: 5,
+    subtotal: 710,
+    totalAmount: 710
   }
 }

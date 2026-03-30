@@ -38,9 +38,34 @@ const orderItems = computed(() => {
     price: item.unitPrice,
     quantity: item.quantity,
     subtotal: item.subtotal,
-    isGift: item.isGift ?? false
+    isGift: item.isGift ?? false,
+    // 由調整面板設定的折扣/招待標籤（例如：招待 / 禮物）
+    discountLabel: item.discountLabel ?? '',
+    discountType: item.discountType ?? null,
+    discountValue: item.discountValue ?? null
   }))
 })
+
+// 目前選取中的餐點 index（由 store 控制，可供其他元件使用）
+const selectedItemIndex = computed(() => orderStore.selectedOrderItemIndex)
+
+// 取得折扣顯示文字（例如 percentage：90% → 九折、85% → 85折）
+function getDiscountDisplay(item) {
+  if (item.discountType === 'percentage' && item.discountValue != null) {
+    const v = Number(item.discountValue)
+    if (!Number.isFinite(v)) return item.discountLabel
+
+    if (v === 90) return '九折'
+    if (v === 80) return '八折'
+    if (v === 70) return '七折'
+    if (v === 60) return '六折'
+    if (v === 50) return '五折'
+
+    return `${v}折`
+  }
+
+  return item.discountLabel
+}
 
 // 餐點列表捲動
 const scrollEl = ref(null)
@@ -116,8 +141,8 @@ watch(
         <div class="text-center font-noto pl-1 text-lg tracking-[0.2em] leading-tight text-text-on-color">{{
           order.tableNumber }}桌</div>
       </div>
-      <div class="flex justify-center items-center gap-4 flex-1 self-stretch" :class="statusBgClass">
-        <div class="flex items-center gap-1">
+      <div class="flex justify-between px-3 items-center flex-1 self-stretch" :class="statusBgClass">
+        <div class="flex items-center gap-0.5">
           <div class="flex w-icon-md h-icon-md justify-center items-center">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -125,13 +150,11 @@ watch(
                 fill="white" />
             </svg>
           </div>
-          <div class="text-text-on-color font-inter text-lg font-medium leading-tight">{{ order.diners }}</div>
+          <div class="text-text-on-color font-inter text-md font-medium leading-tight">{{ order.diners }}</div>
         </div>
-        <div class="flex items-center gap-3">
-          <div class="text-text-on-color font-noto text-lg font-normal leading-tight">{{ statusLabel }}</div>
-          <div class="w-18 text-text-on-color text-center font-inter text-lg font-medium leading-tight">{{
-            order.diningTime }}</div>
-        </div>
+        <div class="text-text-on-color font-noto text-md font-normal leading-tight">{{ statusLabel }}</div>
+        <div class="text-text-on-color font-inter text-md font-medium leading-tight">{{
+          order.diningTime }}</div>
       </div>
     </div>
 
@@ -146,49 +169,49 @@ watch(
         - 尚未點餐 -
       </div>
       <div v-else class="flex flex-col">
-        <div v-for="(item, index) in orderItems" :key="item.cartItemId" @click="selectedItemId = item.cartItemId"
+        <div v-for="(item, index) in orderItems" :key="item.cartItemId" @click="orderStore.setSelectedOrderItem(index)"
           :class="[
-            'relative flex items-start gap-2 px-3 py-3 border-b border-border-primary cursor-pointer transition-colors',
-            selectedItemId === item.cartItemId ? 'bg-blue-50/80' : 'bg-transparent'
+            'relative flex items-start gap-2 px-2.5 py-3 cursor-pointer transition-colors',
+            selectedItemIndex === index ? 'bg-layer-highlight-yellow' : 'bg-transparent'
           ]">
-          <span class="shrink-0 w-6 pt-0.5 text-center font-inter text-lg font-medium text-text-placeholder">
+          <span class="shrink-0 w-4 text-center font-inter text-sm pt-1 font-medium text-text-placeholder">
             {{ index + 1 }}
           </span>
 
           <div class="flex-1 min-w-0 flex flex-col gap-1">
-
             <div class="flex items-start justify-between gap-2">
-              <span class="font-noto text-lg font-normal text-text-primary line-clamp-2 break-all leading-tight">
+              <span class="font-noto text-lg text-text-primary line-clamp-2 break-all pt-0.5 leading-tight">
                 {{ item.name }}
               </span>
-
-              <div class="flex items-center gap-1 shrink-0 pt-0.5">
-                <span :class="[
-                  'font-inter text-lg tabular-nums',
-                  item.isGift || item.discountLabel ? 'text-text-helper line-through font-normal' : 'text-text-primary font-medium'
-                ]">
-                  {{ item.price.toLocaleString() }}
+              <div class="flex items-center gap-1 shrink-0">
+                <span class="font-inter text-lg tabular-nums inline-flex items-center gap-0.5"
+                  :class="item.isGift || item.discountLabel ? 'text-text-helper line-through' : ''">
+                  <span
+                    :class="item.isGift || item.discountLabel ? 'text-text-helper font-normal' : 'text-text-amount-positive font-medium'">
+                    {{ item.price.toLocaleString() }}
+                  </span>
+                  <DollarSign :size="16" :stroke-width="2.5" class="shrink-0"
+                    :class="item.isGift || item.discountLabel ? 'text-text-placeholder' : 'text-yellow-600'" />
                 </span>
-                <DollarSign :size="16" :stroke-width="2.5" class="text-ash-600 shrink-0" />
               </div>
             </div>
 
             <div v-if="item.isGift || item.discountLabel" class="flex items-center justify-between gap-2">
-              <span class="font-noto text-base font-medium text-status-danger">
-                └ {{ item.isGift ? '招待' : item.discountLabel }}
+              <span class="font-noto text-base font-medium text-text-error">
+                └ {{ getDiscountDisplay(item) }}
               </span>
 
               <div class="flex items-center gap-1 shrink-0">
-                <span class="font-inter text-lg font-bold text-status-danger tabular-nums">
+                <span class="font-inter text-lg font-bold text-text-amount-negative tabular-nums">
                   {{ item.isGift ? '0' : item.subtotal.toLocaleString() }}
                 </span>
-                <DollarSign :size="16" :stroke-width="2.5" class="text-status-danger shrink-0" />
+                <DollarSign :size="16" :stroke-width="2.5" class="text-yellow-600 shrink-0" />
               </div>
             </div>
-
+            <div class="absolute bottom-0 left-3 right-3 h-px bg-border-primary"></div>
           </div>
 
-          <div v-if="selectedItemId === item.cartItemId" class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+          <div v-if="selectedItemIndex === index" class="absolute left-0 top-0 bottom-0 w-1 bg-indianred-400"></div>
         </div>
       </div>
     </div>
