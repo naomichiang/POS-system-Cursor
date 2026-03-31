@@ -52,6 +52,10 @@ const optionSelections = ref({})
 
 // 數量控制
 const quantity = ref(1)
+const isOrderPanelExpanded = ref(false) // 訂單面板是否展開
+const handleOrderPanelExpandedChange = (expanded) => { 
+  isOrderPanelExpanded.value = expanded 
+}
 
 // OptGroup 滾動容器 ref，供 QtyBar 上下捲動按鈕使用
 const optGroupScrollRef = ref(null)
@@ -290,7 +294,9 @@ watch(selectedItemId, () => {
             </div>
 
             <!-- 底部數量 / 加入 -->
-            <QtyBar :item-name="currentItem?.name" :unit-price="finalUnitPrice" :scroll-container="optGroupScrollRef"
+            <QtyBar :item-name="currentItem?.name" :unit-price="finalUnitPrice"
+              :show-quantity-picker="!isOrderPanelExpanded"
+              :scroll-container="optGroupScrollRef"
               v-model:quantity="quantity" @increase="increaseQty" @decrease="decreaseQty" @add="addItemToCart" />
           </div>
         </template>
@@ -303,6 +309,7 @@ watch(selectedItemId, () => {
         :total-count="combinedItems.reduce((s, i) => s + Number(i.quantity || 0), 0)"
         :total-amount="orderStore.totalAmount.toLocaleString()"
         :can-submit="orderStore.cart.items.length > 0"
+        @expanded-change="handleOrderPanelExpandedChange"
         @delete-all="orderStore.clearCart"
         @submit="handleFinalSubmit" />
     </div>

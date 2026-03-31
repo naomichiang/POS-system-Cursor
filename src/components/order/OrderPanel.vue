@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Utensils, DollarSign, History } from 'lucide-vue-next';
 import { useOrderStore } from '@/stores/useOrderStore'
+import { useScrollControls } from '@/composables/useScrollControls'
 
 const orderStore = useOrderStore()
 
@@ -26,70 +27,22 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['delete-all', 'submit', 'save-as-draft'])
+const emit = defineEmits(['delete-all', 'submit', 'save-as-draft', 'expanded-change'])
 
 const isExpanded = ref(false)
 
-// 上下捲動：參考 CatTab 的邊界偵測與 disable 邏輯
+// 上下捲動：共用邏輯
 const scrollEl = ref(null)
-const scrollStep = 200
-const showArrows = ref(false)
-const isAtTop = ref(true)
-const isAtBottom = ref(true)
-
-function updateScrollState() {
-  if (!scrollEl.value) return
-  const { scrollHeight, clientHeight, scrollTop } = scrollEl.value
-  const threshold = 5
-
-  showArrows.value = scrollHeight > clientHeight
-  isAtTop.value = scrollTop <= threshold
-  isAtBottom.value = scrollTop + clientHeight >= scrollHeight - threshold
-}
-
-const scrollPrev = () => {
-  const el = scrollEl.value
-  if (!el || isAtTop.value) return
-
-  if (el.scrollTop < scrollStep) {
-    el.scrollTo({ top: 0, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ top: -scrollStep, behavior: 'smooth' })
-  }
-}
-
-const scrollNext = () => {
-  const el = scrollEl.value
-  if (!el || isAtBottom.value) return
-
-  const maxScroll = el.scrollHeight - el.clientHeight
-  if (maxScroll - el.scrollTop < scrollStep) {
-    el.scrollTo({ top: maxScroll, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ top: scrollStep, behavior: 'smooth' })
-  }
-}
-
-let scrollElInst = null
-let resizeObserver = null
-
-onMounted(() => {
-  nextTick(() => {
-    updateScrollState()
-    scrollElInst = scrollEl.value
-    if (scrollElInst) {
-      scrollElInst.addEventListener('scroll', updateScrollState)
-      if (typeof ResizeObserver !== 'undefined') {
-        resizeObserver = new ResizeObserver(updateScrollState)
-        resizeObserver.observe(scrollElInst)
-      }
-    }
-  })
-})
-
-onUnmounted(() => {
-  if (scrollElInst) scrollElInst.removeEventListener('scroll', updateScrollState)
-  if (resizeObserver && scrollElInst) resizeObserver.disconnect()
+const {
+  showArrows,
+  isAtStart: isAtTop,
+  isAtEnd: isAtBottom,
+  scrollPrev,
+  scrollNext,
+  updateScrollState,
+} = useScrollControls(scrollEl, {
+  axis: 'vertical',
+  step: 200,
 })
 
 watch(
@@ -138,6 +91,7 @@ const formatOptions = (item) => {
 
 const toggle = () => {
   isExpanded.value = !isExpanded.value
+  emit('expanded-change', isExpanded.value)
 }
 
 const handleDeleteAll = () => {

@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
+import { useScrollControls } from '@/composables/useScrollControls'
 
 const props = defineProps({
   categories: {
@@ -15,72 +16,22 @@ const props = defineProps({
 const emit = defineEmits(['change'])
 
 const scrollEl = ref(null)
-const scrollStep = 200
-const showArrows = ref(false)
-const isAtLeft = ref(true)
-const isAtRight = ref(true)
-
-function updateScrollState() {
-  if (!scrollEl.value) return
-  const { scrollWidth, clientWidth, scrollLeft } = scrollEl.value
-  const threshold = 5
-
-  showArrows.value = scrollWidth > clientWidth
-  isAtLeft.value = scrollLeft <= threshold
-  isAtRight.value = scrollLeft + clientWidth >= scrollWidth - threshold
-}
+const {
+  showArrows,
+  isAtStart: isAtLeft,
+  isAtEnd: isAtRight,
+  scrollPrev,
+  scrollNext,
+  updateScrollState,
+} = useScrollControls(scrollEl, {
+  axis: 'horizontal',
+  step: 200,
+})
 
 const handleClick = (key) => {
   if (key === props.activeKey) return
   emit('change', key)
 }
-
-const scrollPrev = () => {
-  const el = scrollEl.value
-  if (!el || isAtLeft.value) return
-
-  // 如果目前的捲動位置已經小於一個步長，直接回最左
-  if (el.scrollLeft < scrollStep) {
-    el.scrollTo({ left: 0, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ left: -scrollStep, behavior: 'smooth' })
-  }
-}
-
-const scrollNext = () => {
-  const el = scrollEl.value
-  if (!el || isAtRight.value) return
-
-  const maxScroll = el.scrollWidth - el.clientWidth
-  // 如果剩餘距離小於一個步長，直接滾到最右
-  if (maxScroll - el.scrollLeft < scrollStep) {
-    el.scrollTo({ left: maxScroll, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ left: scrollStep, behavior: 'smooth' })
-  }
-}
-
-let scrollElInst = null
-let resizeObserver = null
-
-onMounted(() => {
-  nextTick(() => {
-    updateScrollState()
-    scrollElInst = scrollEl.value
-    if (scrollElInst) {
-      scrollElInst.addEventListener('scroll', updateScrollState)
-      if (typeof ResizeObserver !== 'undefined') {
-        resizeObserver = new ResizeObserver(updateScrollState)
-        resizeObserver.observe(scrollElInst)
-      }
-    }
-  })
-})
-
-onUnmounted(() => {
-  if (scrollElInst) scrollElInst.removeEventListener('scroll', updateScrollState)
-  if (resizeObserver && scrollElInst) resizeObserver.disconnect()
-})
 
 watch(
   () => props.categories,

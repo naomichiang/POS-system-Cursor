@@ -1,9 +1,10 @@
 <script setup>
 defineOptions({ name: 'BillAdjustPanel' })
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
-import { Utensils, ChevronUp, ChevronDown, DollarSign } from 'lucide-vue-next'
+import { ref, computed, watch, nextTick } from 'vue'
+import { Utensils, DollarSign } from 'lucide-vue-next'
 import { TABLE_STATUS } from '@/config/tableStatus'
 import { useOrderStore } from '@/stores/useOrderStore'
+import { useScrollControls } from '@/composables/useScrollControls'
 
 const orderStore = useOrderStore()
 
@@ -67,63 +68,18 @@ function getDiscountDisplay(item) {
   return item.discountLabel
 }
 
-// 餐點列表捲動
+// 餐點列表捲動（共用邏輯）
 const scrollEl = ref(null)
-const scrollStep = 200
-const showArrows = ref(false)
-const isAtTop = ref(true)
-const isAtBottom = ref(true)
-
-function updateScrollState() {
-  if (!scrollEl.value) return
-  const { scrollHeight, clientHeight, scrollTop } = scrollEl.value
-  const threshold = 5
-  showArrows.value = scrollHeight > clientHeight
-  isAtTop.value = scrollTop <= threshold
-  isAtBottom.value = scrollTop + clientHeight >= scrollHeight - threshold
-}
-
-const scrollPrev = () => {
-  const el = scrollEl.value
-  if (!el || isAtTop.value) return
-  if (el.scrollTop < scrollStep) {
-    el.scrollTo({ top: 0, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ top: -scrollStep, behavior: 'smooth' })
-  }
-}
-
-const scrollNext = () => {
-  const el = scrollEl.value
-  if (!el || isAtBottom.value) return
-  const maxScroll = el.scrollHeight - el.clientHeight
-  if (maxScroll - el.scrollTop < scrollStep) {
-    el.scrollTo({ top: maxScroll, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ top: scrollStep, behavior: 'smooth' })
-  }
-}
-
-let scrollElInst = null
-let resizeObserver = null
-
-onMounted(() => {
-  nextTick(() => {
-    updateScrollState()
-    scrollElInst = scrollEl.value
-    if (scrollElInst) {
-      scrollElInst.addEventListener('scroll', updateScrollState)
-      if (typeof ResizeObserver !== 'undefined') {
-        resizeObserver = new ResizeObserver(updateScrollState)
-        resizeObserver.observe(scrollElInst)
-      }
-    }
-  })
-})
-
-onUnmounted(() => {
-  if (scrollElInst) scrollElInst.removeEventListener('scroll', updateScrollState)
-  if (resizeObserver && scrollElInst) resizeObserver.disconnect()
+const {
+  showArrows,
+  isAtStart: isAtTop,
+  isAtEnd: isAtBottom,
+  scrollPrev,
+  scrollNext,
+  updateScrollState,
+} = useScrollControls(scrollEl, {
+  axis: 'vertical',
+  step: 200,
 })
 
 watch(
@@ -219,20 +175,28 @@ watch(
     <!-- 3. 按鈕列（上下頁） -->
     <div class="flex shrink-0 h-14 w-full items-stretch border-t border-border-primary bg-layer-secondary">
       <button type="button" aria-label="往上捲動" :disabled="!showArrows || isAtTop" :class="[
-        'flex flex-1 items-center justify-center border-r border-border-primary transition-colors',
+        'flex flex-1 items-center justify-center border-r border-border-primary transition-colors text-ash-600',
         !showArrows || isAtTop
           ? 'opacity-30 cursor-not-allowed'
           : 'active:bg-layer-secondary-hover'
       ]" @click="scrollPrev">
-        <ChevronUp class="w-icon-lg h-icon-lg text-ash-600" />
+        <svg class="w-icon-lg h-icon-lg shrink-0" viewBox="0 0 23 13" fill="none">
+          <path
+            d="M1.33333 12.5333C0.933333 12.5333 0.611556 12.4 0.368 12.1333C0.124444 11.8667 0.00177778 11.5556 0 11.2C0 11.1111 0.133334 10.8 0.4 10.2667L10.0667 0.599998C10.2889 0.377776 10.5111 0.222223 10.7333 0.133334C10.9556 0.0444449 11.2 0 11.4667 0C11.7333 0 11.9778 0.0444449 12.2 0.133334C12.4222 0.222223 12.6444 0.377776 12.8667 0.599998L22.5333 10.2667C22.6667 10.4 22.7671 10.5449 22.8347 10.7013C22.9022 10.8578 22.9351 11.024 22.9333 11.2C22.9333 11.5556 22.8116 11.8667 22.568 12.1333C22.3244 12.4 22.0018 12.5333 21.6 12.5333H1.33333Z"
+            fill="currentColor" />
+        </svg>
       </button>
       <button type="button" aria-label="往下捲動" :disabled="!showArrows || isAtBottom" :class="[
-        'flex flex-1 items-center justify-center transition-colors',
+        'flex flex-1 items-center justify-center transition-colors text-ash-600',
         !showArrows || isAtBottom
           ? 'opacity-30 cursor-not-allowed'
           : 'active:bg-layer-secondary-hover'
       ]" @click="scrollNext">
-        <ChevronDown class="w-icon-lg h-icon-lg text-ash-600" />
+        <svg class="w-icon-lg h-icon-lg shrink-0 rotate-180" viewBox="0 0 23 13" fill="none">
+          <path
+            d="M1.33333 12.5333C0.933333 12.5333 0.611556 12.4 0.368 12.1333C0.124444 11.8667 0.00177778 11.5556 0 11.2C0 11.1111 0.133334 10.8 0.4 10.2667L10.0667 0.599998C10.2889 0.377776 10.5111 0.222223 10.7333 0.133334C10.9556 0.0444449 11.2 0 11.4667 0C11.7333 0 11.9778 0.0444449 12.2 0.133334C12.4222 0.222223 12.6444 0.377776 12.8667 0.599998L22.5333 10.2667C22.6667 10.4 22.7671 10.5449 22.8347 10.7013C22.9022 10.8578 22.9351 11.024 22.9333 11.2C22.9333 11.5556 22.8116 11.8667 22.568 12.1333C22.3244 12.4 22.0018 12.5333 21.6 12.5333H1.33333Z"
+            fill="currentColor" />
+        </svg>
       </button>
     </div>
 

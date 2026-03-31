@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onUnmounted, nextTick, watch, computed } from 'vue'
+import { computed } from 'vue'
 import { Minus, Plus } from 'lucide-vue-next'
+import { useScrollControls } from '@/composables/useScrollControls'
 
 const props = defineProps({
   itemName: {
@@ -17,6 +18,10 @@ const props = defineProps({
   },
   min: { type: Number, default: 1 },
   max: { type: Number, default: 99 },
+  showQuantityPicker: {
+    type: Boolean,
+    default: true
+  },
   /** OptGroup 滾動容器 ref，溢出時顯示上下切換按鈕 */
   scrollContainer: {
     type: Object,
@@ -31,79 +36,16 @@ const scrollEl = computed(() => {
   return c?.value ?? c
 })
 
-const scrollStep = 150
-const isAtTop = ref(true)
-const isAtBottom = ref(true)
-
-function updateScrollState() {
-  const el = scrollEl.value
-  if (!el) return
-  const { scrollHeight, clientHeight, scrollTop } = el
-  const threshold = 5
-  isAtTop.value = scrollTop <= threshold
-  isAtBottom.value = scrollTop + clientHeight >= scrollHeight - threshold
-}
-
-const scrollPrev = () => {
-  const el = scrollEl.value
-  if (!el || isAtTop.value) return
-
-  // 如果目前的捲動位置已經小於一個步長，直接回頂部
-  if (el.scrollTop < scrollStep) {
-    el.scrollTo({ top: 0, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ top: -scrollStep, behavior: 'smooth' })
-  }
-}
-
-const scrollNext = () => {
-  const el = scrollEl.value
-  if (!el || isAtBottom.value) return
-
-  // 同理，如果快到底了，直接捲到底
-  const remaining = el.scrollHeight - (el.scrollTop + el.clientHeight)
-  if (remaining < scrollStep) {
-    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
-  } else {
-    el.scrollBy({ top: scrollStep, behavior: 'smooth' })
-  }
-}
-
-let scrollElInst = null
-let resizeObserver = null
-
-function setupScrollListeners(el) {
-  if (!el) return
-  scrollElInst = el
-  el.addEventListener('scroll', updateScrollState)
-  if (typeof ResizeObserver !== 'undefined') {
-    resizeObserver = new ResizeObserver(updateScrollState)
-    resizeObserver.observe(el)
-  }
-  nextTick(updateScrollState)
-}
-
-function cleanupScrollListeners() {
-  if (scrollElInst) {
-    scrollElInst.removeEventListener('scroll', updateScrollState)
-    scrollElInst = null
-  }
-  if (resizeObserver) {
-    resizeObserver.disconnect()
-    resizeObserver = null
-  }
-}
-
-watch(
-  () => scrollEl.value,
-  (el) => {
-    cleanupScrollListeners()
-    if (el) setupScrollListeners(el)
-  },
-  { immediate: true }
-)
-
-onUnmounted(cleanupScrollListeners)
+const {
+  showArrows,
+  isAtStart: isAtTop,
+  isAtEnd: isAtBottom,
+  scrollPrev,
+  scrollNext,
+} = useScrollControls(scrollEl, {
+  axis: 'vertical',
+  step: 150
+})
 
 const emit = defineEmits(['update:quantity', 'increase', 'decrease', 'add'])
 
@@ -123,7 +65,7 @@ const handleAdd = () => {
 <template>
   <div class="flex h-24 w-full items-center gap-2 p-3 border-t border-border-primary bg-layer-tertiary">
     <!-- 上下切換按鈕 -->
-    <div class="flex flex-1 min-w-0 h-full min-h-0 shrink-0">
+    <div v-if="showArrows" class="flex flex-1 min-w-0 h-full min-h-0 shrink-0">
       <div class="flex h-full rounded-xl bg-layer-secondary">
         <button type="button" aria-label="上一組" :disabled="isAtTop" :class="[
           'flex w-18 h-full items-center justify-center transition-colors',
@@ -149,39 +91,39 @@ const handleAdd = () => {
       </div>
     </div>
 
-    <!-- 數量選擇器 -->
-    <div class="h-full flex bg-layer-light rounded-2xl items-stretch overflow-hidden">
-      <!-- 減號按鈕 -->
-      <button type="button" @click="handleDecrease" :disabled="quantity <= min"
-        class="w-16 h-full flex items-center justify-center transition-all bg-button-light active:bg-button-light-hover">
-        <Minus :class="['w-icon-lg h-icon-lg',
-          quantity <= min ? 'text-text-placeholder' : 'text-ash-700'
-        ]" />
-      </button>
-
-      <!-- 數字顯示 -->
-      <div class="w-10 self-stretch inline-flex flex-col justify-center items-center">
-        <div class="text-center text-text-amount-positive text-2xl font-semibold font-inter">
-          {{ quantity }}
+    <div class="ml-auto flex h-full items-center gap-2">
+      <!-- 數量選擇器，OrderPanel 展開時不顯示 -->
+      <div v-if="showQuantityPicker" class="h-full flex bg-layer-light rounded-2xl items-stretch overflow-hidden">
+        <!-- 減號按鈕 -->
+        <button type="button" @click="handleDecrease" :disabled="quantity <= min"
+          class="w-16 h-full flex items-center justify-center transition-all bg-button-light active:bg-button-light-hover">
+          <Minus :class="['w-icon-lg h-icon-lg',
+            quantity <= min ? 'text-text-placeholder' : 'text-ash-700'
+          ]" />
+        </button>
+        <!-- 數字顯示 -->
+        <div class="w-10 self-stretch inline-flex flex-col justify-center items-center">
+          <div class="text-center text-text-amount-positive text-2xl font-semibold font-inter">
+            {{ quantity }}
+          </div>
         </div>
+        <!-- 加號按鈕 -->
+        <button type="button" @click="handleIncrease" :disabled="quantity >= max"
+          class="w-16 h-full flex items-center justify-center transition-all bg-button-light active:bg-button-light-hover">
+          <Plus :class="[
+            'w-icon-lg h-icon-lg',
+            quantity >= max ? 'text-text-disabled' : 'text-ash-700'
+          ]" />
+        </button>
       </div>
 
-      <!-- 加號按鈕 -->
-      <button type="button" @click="handleIncrease" :disabled="quantity >= max"
-        class="w-16 h-full flex items-center justify-center transition-all bg-button-light active:bg-button-light-hover">
-        <Plus :class="[
-          'w-icon-lg h-icon-lg',
-          quantity >= max ? 'text-text-disabled' : 'text-ash-700'
-        ]" />
+      <button type="button"
+        class="h-full w-btn-lg px-6 rounded-2xl bg-button-danger hover:bg-button-danger-hover active:bg-button-danger-hover active:scale-95 transition-all"
+        @click="handleAdd">
+        <div class="justify-start text-center font-noto text-2xl font-medium leading-9 tracking-wide text-text-on-color">
+          加入
+        </div>
       </button>
     </div>
-
-    <button type="button"
-      class="h-full w-btn-lg px-6 rounded-2xl bg-button-danger hover:bg-button-danger-hover active:bg-button-danger-hover active:scale-95 transition-all"
-      @click="handleAdd">
-      <div class="justify-start text-center font-noto text-2xl font-medium leading-9 tracking-wide text-text-on-color">
-        加入
-      </div>
-    </button>
   </div>
 </template>
