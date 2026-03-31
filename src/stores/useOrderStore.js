@@ -312,9 +312,15 @@ export const useOrderStore = defineStore('order', {
     async fetchOrderData(tableId) {
       this.isLoading = true
       this.currentOrder = null
+      this.selectedOrderItemIndex = null
       this.currentTableId = tableId ?? null
       await new Promise(resolve => setTimeout(resolve, 500))
-      this.currentOrder = { ...MockOrder001 }
+      // 深拷貝品項與 summary，避免調整帳單時改到共用 mock 參照
+      this.currentOrder = {
+        ...MockOrder001,
+        items: MockOrder001.items.map(item => ({ ...item })),
+        summary: { ...(MockOrder001.summary || {}) },
+      }
       this.isLoading = false
     },
 

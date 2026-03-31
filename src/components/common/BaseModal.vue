@@ -88,7 +88,7 @@ const handleDanger = () => {
   <!-- 燈箱：覆蓋全畫面，點外面無作用；內容垂直置中 -->
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center bg-modal-bg/60">
     <div :class="[
-      'relative rounded-3xl bg-white shadow-2xl px-4 pt-10 pb-4 flex flex-col items-stretch ',
+      'relative rounded-3xl bg-white shadow-2xl px-4 pt-8 pb-4 flex flex-col items-stretch ',
       widthClass,
       heightClass,
     ]">
@@ -112,7 +112,7 @@ const handleDanger = () => {
 
         <!-- 右上角關閉按鈕，不影響標題置中 -->
         <button v-if="showClose" type="button"
-          class="absolute -right-1 -top-7 flex w-14 h-14 items-center justify-center rounded-xl transition-colors active:bg-ash-100"
+          class="absolute -right-2 -top-6 flex w-14 h-14 items-center justify-center rounded-2xl transition-colors active:bg-ash-100"
           @click="handleClose">
           <X class="w-icon-lg h-icon-lg text-text-disabled" />
         </button>
