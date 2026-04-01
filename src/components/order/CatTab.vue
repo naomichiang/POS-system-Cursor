@@ -16,6 +16,7 @@ const props = defineProps({
 const emit = defineEmits(['change'])
 
 const scrollEl = ref(null)
+// 水平捲動：共用邏輯
 const {
   showArrows,
   isAtStart: isAtLeft,
@@ -33,9 +34,9 @@ const handleClick = (key) => {
   emit('change', key)
 }
 
-watch(
+watch( 
   () => props.categories,
-  () => nextTick(updateScrollState),
+  () => nextTick(updateScrollState), 
   { deep: true }
 )
 </script>

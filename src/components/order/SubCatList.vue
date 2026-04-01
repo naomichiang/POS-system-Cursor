@@ -13,9 +13,11 @@ const handleClick = (item) => {
 }
 </script>
 
+<!-- 商品清單 -->
 <template>
   <div class="w-full h-full bg-layer-primary rounded-2xl overflow-hidden flex flex-col p-4">
     <div class="flex-1 flex flex-wrap items-start content-start gap-2 w-full h-full overflow-y-auto scrollbar-hide">
+      <!-- 商品按鈕 -->
       <button
         v-for="item in items"
         :key="item.id"

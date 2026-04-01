@@ -34,6 +34,8 @@ const orderItems = computed(() => {
   const order = orderStore.currentOrder
   if (!order?.items?.length) return []
   return order.items.map((item, idx) => ({
+    type: 'order-item',
+    sourceIndex: idx,
     cartItemId: `item-${idx}-${item.name}`,
     name: item.name,
     price: item.unitPrice,
@@ -45,6 +47,22 @@ const orderItems = computed(() => {
     discountType: item.discountType ?? null,
     discountValue: item.discountValue ?? null
   }))
+})
+// 全局折扣項目
+const globalDiscountItem = computed(() => {
+  const globalDiscount = orderStore.globalDiscount
+  if (!globalDiscount) return null
+
+  return {
+    type: 'global-discount',
+    cartItemId: 'global-discount-item',
+    name: `${globalDiscount.title}-${globalDiscount.label}`, // 整單折扣項目名稱
+    amount: Number(globalDiscount.amount) || 0, // 整單折扣項目金額
+  }
+})
+// 顯示餐點列表（包含整單折扣項目）
+const displayItems = computed(() => {
+  return globalDiscountItem.value ? [globalDiscountItem.value, ...orderItems.value] : orderItems.value
 })
 
 // 目前選取中的餐點 index（由 store 控制，可供其他元件使用）
@@ -67,6 +85,12 @@ function getDiscountDisplay(item) {
 
   return item.discountLabel
 }
+// 整理清單中每個 item 的類型，方便畫UI: 整單折扣/單品折扣/正常商品
+function getItemType(item) {
+  if (item.type === 'global-discount') return 'globalDiscount'
+  if (item.isGift || item.discountLabel) return 'discounted'
+  return 'normal'
+}
 
 // 餐點列表捲動（共用邏輯）
 const scrollEl = ref(null)
@@ -83,10 +107,15 @@ const {
 })
 
 watch(
-  () => orderItems.value,
+  () => displayItems.value,
   () => nextTick(updateScrollState),
   { deep: true }
 )
+
+function handleSelectItem(item) {
+  if (item.type !== 'order-item') return
+  orderStore.setSelectedOrderItem(item.sourceIndex)
+}
 </script>
 
 <template>
@@ -120,56 +149,96 @@ watch(
         class="flex h-full min-h-24 items-center justify-center text-text-placeholder font-noto text-lg">
         載入中...
       </div>
-      <div v-else-if="orderItems.length === 0"
+      <div v-else-if="displayItems.length === 0"
         class="flex h-full min-h-24 items-center justify-center text-text-placeholder font-noto text-lg">
         - 尚未點餐 -
       </div>
-      <div v-else class="flex flex-col">
-        <div v-for="(item, index) in orderItems" :key="item.cartItemId" @click="orderStore.setSelectedOrderItem(index)"
-          :class="[
-            'relative flex items-start gap-2 px-2.5 py-3 cursor-pointer transition-colors',
-            selectedItemIndex === index ? 'bg-layer-highlight-yellow' : 'bg-transparent'
-          ]">
+      <transition-group v-else name="bill-adjust-item" tag="div" class="flex flex-col">
+        <!-- 餐點列表 -->
+        <div v-for="(item, index) in displayItems" :key="item.cartItemId" @click="handleSelectItem(item)" :class="[
+          'relative flex items-start gap-2 px-2.5 py-3 cursor-pointer transition-colors',
+          getItemType(item) === 'globalDiscount'
+            ? 'bg-red-50'
+            : selectedItemIndex === item.sourceIndex
+              ? 'bg-layer-highlight-yellow'
+              : 'bg-transparent'
+        ]">
+          <!-- 序號：整單折扣為-，單品為序號 -->
           <span class="shrink-0 w-4 text-center font-inter text-sm pt-1 font-medium text-text-placeholder">
-            {{ index + 1 }}
+            {{ getItemType(item) === 'globalDiscount' ? '-' : index + 1 }}
           </span>
-
+          <!-- 餐點資訊 -->
           <div class="flex-1 min-w-0 flex flex-col gap-1">
             <div class="flex items-start justify-between gap-2">
-              <span class="font-noto text-lg text-text-primary line-clamp-2 break-all pt-0.5 leading-tight">
+              <!-- 餐點名稱：整單折扣為紅色，單品為黑色 -->
+              <span class="font-noto text-lg break-all pt-0.5 line-clamp-2 leading-tight" :class="getItemType(item) === 'globalDiscount'
+                ? 'text-text-error font-medium '
+                : 'text-text-primary'">
                 {{ item.name }}
               </span>
-              <div class="flex items-center gap-1 shrink-0">
-                <span class="font-inter text-lg tabular-nums inline-flex items-center gap-0.5"
-                  :class="item.isGift || item.discountLabel ? 'text-text-helper line-through' : ''">
-                  <span
-                    :class="item.isGift || item.discountLabel ? 'text-text-helper font-normal' : 'text-text-amount-positive font-medium'">
-                    {{ item.price.toLocaleString() }}
+
+              <!-- 餐點價格：三種類型不同 -->
+              <div class="flex items-center gap-0.5 shrink-0">
+                <!-- 整單折扣時 -->
+                <template v-if="getItemType(item) === 'globalDiscount'">
+                  <span class="font-inter text-lg font-bold text-text-amount-negative tabular-nums">
+                    {{ item.amount.toLocaleString() }}
                   </span>
-                  <DollarSign :size="16" :stroke-width="2.5" class="shrink-0"
-                    :class="item.isGift || item.discountLabel ? 'text-text-placeholder' : 'text-yellow-600'" />
-                </span>
+                  <DollarSign :size="16" :stroke-width="2.5" class="text-text-error shrink-0" />
+                </template>
+
+                <!-- 單品折價時的原價出現刪除線 -->
+                <template v-else-if="getItemType(item) === 'discounted'">
+                  <span
+                    class="font-inter text-lg tabular-nums inline-flex items-center gap-0.5 text-text-helper line-through">
+                    <span class="text-text-helper font-normal">
+                      {{ item.price.toLocaleString() }}
+                    </span>
+                    <DollarSign :size="16" :stroke-width="2.5" class="shrink-0 text-text-placeholder" />
+                  </span>
+                </template>
+
+                <!-- 正常商品時的原價 -->
+                <template v-else>
+                  <span class="font-inter text-lg tabular-nums inline-flex items-center gap-0.5">
+                    <span class="text-text-amount-positive font-medium">
+                      {{ item.price.toLocaleString() }}
+                    </span>
+                    <DollarSign :size="16" :stroke-width="2.5" class="shrink-0 text-yellow-600" />
+                  </span>
+                </template>
+
               </div>
             </div>
-
-            <div v-if="item.isGift || item.discountLabel" class="flex items-center justify-between gap-2">
+            <!-- 整單折扣恢復按鈕：第二行靠右 -->
+            <div v-if="getItemType(item) === 'globalDiscount'" class="flex justify-end">
+              <button type="button"
+                class="rounded-md border border-text-error px-2 py-0.5 -mt-4 font-noto text-sm text-text-error transition-colors hover:bg-red-100 active:bg-red-200"
+                @click.stop="orderStore.clearGlobalDiscount()">刪除折扣
+              </button>
+            </div>
+            <!-- 單品折扣時，多出一行顯示折扣資訊 -->
+            <div v-if="getItemType(item) === 'discounted'" class="flex items-center justify-between gap-2">
               <span class="font-noto text-base font-medium text-text-error">
                 └ {{ getDiscountDisplay(item) }}
               </span>
-
               <div class="flex items-center gap-1 shrink-0">
+                <!-- 餐點單品折扣後金額 -->
                 <span class="font-inter text-lg font-bold text-text-amount-negative tabular-nums">
                   {{ item.isGift ? '0' : item.subtotal.toLocaleString() }}
                 </span>
                 <DollarSign :size="16" :stroke-width="2.5" class="text-yellow-600 shrink-0" />
               </div>
             </div>
+            <!-- 底部分隔線 -->
             <div class="absolute bottom-0 left-3 right-3 h-px bg-border-primary"></div>
           </div>
 
-          <div v-if="selectedItemIndex === index" class="absolute left-0 top-0 bottom-0 w-1 bg-indianred-400"></div>
+          <!-- 整單折扣項目即便被選取時，底色也為紅色 -->
+          <div v-if="getItemType(item) !== 'globalDiscount' && selectedItemIndex === item.sourceIndex"
+            class="absolute left-0 top-0 bottom-0 w-1 bg-indianred-400"></div>
         </div>
-      </div>
+      </transition-group>
     </div>
 
     <!-- 3. 按鈕列（上下頁） -->
@@ -214,3 +283,31 @@ watch(
     </div>
   </div>
 </template>
+
+<style scoped>
+.bill-adjust-item-move {
+  transition: transform 160ms ease;
+}
+
+.bill-adjust-item-enter-active {
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.bill-adjust-item-leave-active {
+  transition: opacity 90ms ease-out;
+}
+
+.bill-adjust-item-enter-from {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+.bill-adjust-item-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.bill-adjust-item-leave-to {
+  opacity: 0;
+}
+</style>

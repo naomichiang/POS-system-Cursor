@@ -67,6 +67,9 @@ function handleConfirmApply() {
     return
   }
 
+  // 整單折扣獨立於單一餐點，套用前先清除目前餐點選取狀態
+  orderStore.setSelectedOrderItem(null)
+
   emit('apply-discount', {
     title: pendingSection.value.title,
     label: pendingButton.value.label,
@@ -111,7 +114,7 @@ function handleConfirmCancel() {
       content="" danger-button-text="確認套用" secondary-button-text="返回" :height-class="isDetailOpen
         ? 'h-[504px] max-h-[90vh] transition-all duration-100 ease-out'
         : 'h-[386px] max-h-[90vh] transition-all duration-100 ease-out'" width-class="w-[480px] max-w-[90vw]"
-      @close="closeConfirmModal" @primary="handleConfirmApply" @secondary="handleConfirmCancel">
+      @close="closeConfirmModal" @danger="handleConfirmApply" @secondary="handleConfirmCancel">
       <div class="w-full space-y-2">
         <!-- 三行金額資訊 -->
         <div class="w-full rounded-xl bg-ash-100 px-4 py-3">
