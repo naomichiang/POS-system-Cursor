@@ -14,6 +14,8 @@ export const useOrderStore = defineStore('order', {
     currentTableId: null,
     /** 是否正在載入訂單 */
     isLoading: false,
+    /** 整單折扣資訊（由結帳調整頁套用） */
+    globalDiscount: null,
 
     // 訂單資訊
     orderInfo: {
@@ -99,7 +101,7 @@ export const useOrderStore = defineStore('order', {
         statusLabel: getStatusLabel(status),
         diningTime: formatDiningTime(tableInfo.openTime),
         totalItems: order.summary?.totalItems ?? 0,
-        totalAmount: order.summary?.totalAmount ?? 0
+        totalAmount: Number(order.summary?.totalAmount ?? 0) + Number(state.globalDiscount?.amount ?? 0)
       }
     }
   },
@@ -271,6 +273,42 @@ export const useOrderStore = defineStore('order', {
     },
 
     /**
+     * 套用整單折扣（以目前餐點總額為基準）
+     * @param {{ title: string, label: string, rate: number }} payload
+     */
+    applyGlobalDiscount(payload) {
+      const order = this.currentOrder
+      if (!order || !Array.isArray(order.items)) return
+
+      const rate = Number(payload?.rate)
+      if (!Number.isFinite(rate)) return
+
+      // 整單折扣一律以「所有餐點小計總和」為基準，不受餐點選取狀態影響
+      const baseTotal = order.items.reduce((sum, item) => {
+        return sum + (Number(item.subtotal) || 0)
+      }, 0)
+      const discountedTotal = Math.round(baseTotal * rate)
+      const amount = discountedTotal - baseTotal
+
+      this.globalDiscount = {
+        title: payload?.title || '整單折扣',
+        label: payload?.label || '',
+        rate,
+        amount
+      }
+
+      // 套用整單折扣後，取消任何單一餐點選取狀態
+      this.selectedOrderItemIndex = null
+    },
+
+    /**
+     * 移除整單折扣（恢復原始總額）
+     */
+    clearGlobalDiscount() {
+      this.globalDiscount = null
+    },
+
+    /**
      * 依據 currentOrder.items 重新計算 summary（總品項數量與總金額）
      */
     _recalculateCurrentOrderSummary() {
@@ -312,9 +350,16 @@ export const useOrderStore = defineStore('order', {
     async fetchOrderData(tableId) {
       this.isLoading = true
       this.currentOrder = null
+      this.selectedOrderItemIndex = null
       this.currentTableId = tableId ?? null
+      this.globalDiscount = null
       await new Promise(resolve => setTimeout(resolve, 500))
-      this.currentOrder = { ...MockOrder001 }
+      // 深拷貝品項與 summary，避免調整帳單時改到共用 mock 參照
+      this.currentOrder = {
+        ...MockOrder001,
+        items: MockOrder001.items.map(item => ({ ...item })),
+        summary: { ...(MockOrder001.summary || {}) },
+      }
       this.isLoading = false
     },
 
@@ -348,6 +393,7 @@ export const useOrderStore = defineStore('order', {
       this.selectedOrderItemIndex = null
       this.currentTableId = null
       this.isLoading = false
+      this.globalDiscount = null
     }
   }
 })

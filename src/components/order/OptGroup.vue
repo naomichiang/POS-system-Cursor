@@ -1,5 +1,8 @@
 <script setup>
-// 點餐頁細項設定容器：只是把 config 轉接給共用的 ExtraField
+/**
+ * 點餐頁（OrderPage）配置模式：左側商品清單 + 右側細項設定（ExtraField / OptGroup）+ 底部 QtyBar
+ */
+// 點餐頁細項設定容器：只是把 menuMock 的資料轉接給共用的 ExtraField
 import ExtraField from '../common/ExtraField.vue'
 
 defineProps({

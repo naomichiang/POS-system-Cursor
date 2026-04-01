@@ -15,6 +15,10 @@ const tableId = route.params.tableId
 onMounted(() => {
   orderStore.fetchOrderData(tableId)
 })
+
+function handleApplyGlobalDiscount(payload) {
+  orderStore.applyGlobalDiscount(payload)
+}
 </script>
 
 <template>
@@ -27,7 +31,7 @@ onMounted(() => {
       <!-- 上半部區域 -->
       <div class="flex-1 flex min-h-0">
         <ItemAdjust class="w-1/3 shrink-0" />
-        <GlobalAdjust class="flex-1 min-w-0" />
+        <GlobalAdjust class="flex-1 min-w-0" @apply-discount="handleApplyGlobalDiscount" />
       </div>
       <!-- 下半部區域 -->
       <BillActionFooter second-button-text="暫存" primary-button-text="結帳">
