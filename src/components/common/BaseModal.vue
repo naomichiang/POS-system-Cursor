@@ -22,7 +22,7 @@ defineProps({
   // Header Icon 顏色 class（預設為次要文字色）
   headerIconColorClass: {
     type: String,
-    default: 'text-text-secondary',
+    default: 'text-modal-accent-icon',
   },
   // 主標題文字
   title: {
@@ -58,10 +58,15 @@ defineProps({
     type: String,
     default: 'w-[440px] max-w-[90vw]',
   },
-  // 內容高度樣式，預設 300px
+  // 內容高度樣式，預設 272px
   heightClass: {
     type: String,
-    default: 'h-[300px] max-h-[90vh]',
+    default: 'h-[272px] max-h-[90vh]',
+  },
+  // Body 內文字／區塊對齊（需靠左時設為 text-left）
+  bodyContentClass: {
+    type: String,
+    default: 'text-center',
   },
 })
 
@@ -88,23 +93,23 @@ const handleDanger = () => {
   <!-- 燈箱：覆蓋全畫面，點外面無作用；內容垂直置中 -->
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center bg-modal-bg/60">
     <div :class="[
-      'relative rounded-3xl bg-white shadow-2xl px-4 pt-8 pb-4 flex flex-col items-stretch ',
+      'relative rounded-3xl bg-modal-surface shadow-[var(--color-modal-shadow)] px-4 pt-8 pb-4 flex min-h-0 flex-col items-stretch gap-3',
       widthClass,
       heightClass,
     ]">
-      <!-- Header：Icon + 標題 + 副標題（整體水平置中） -->
-      <div class="relative">
+      <!-- Header：Icon + 標題 + 副標題（整體水平置中）；不與 body 搶縮排高度 -->
+      <div class="relative shrink-0">
         <!-- 置中的 Icon + 標題 + 副標 -->
         <div class="flex flex-col items-center justify-center gap-3 mb-1">
-          <div v-if="headerIcon" class="flex w-16 h-16 items-center justify-center rounded-full bg-white">
+          <div v-if="headerIcon" class="flex w-16 h-16 items-center justify-center rounded-full bg-modal-surface">
             <component :is="headerIcon" :class="['w-14 h-14', headerIconColorClass]" />
           </div>
           <div class="flex flex-col gap-1 items-center text-center">
             <h2 v-if="title"
-              class="mb-1 text-text-secondary font-noto text-2xl font-semibold leading-tight tracking-[0.05em] text-center">
+              class="mb-1 text-modal-title font-noto text-2xl font-semibold leading-tight tracking-[0.05em] text-center">
               {{ title }}
             </h2>
-            <p v-if="subTitle" class="text-text-helper font-noto text-md leading-snug text-center">
+            <p v-if="subTitle" class="text-modal-muted font-noto text-md leading-snug text-center">
               {{ subTitle }}
             </p>
           </div>
@@ -112,25 +117,27 @@ const handleDanger = () => {
 
         <!-- 右上角關閉按鈕，不影響標題置中 -->
         <button v-if="showClose" type="button"
-          class="absolute -right-2 -top-6 flex w-14 h-14 items-center justify-center rounded-2xl transition-colors active:bg-ash-100"
+          class="absolute -right-2 -top-6 flex w-14 h-14 items-center justify-center rounded-2xl transition-colors active:bg-modal-section-surface"
           @click="handleClose">
-          <X class="w-icon-lg h-icon-lg text-text-disabled" />
+          <X class="w-icon-lg h-icon-lg text-modal-muted" />
         </button>
       </div>
 
-      <!-- Body：文字或自訂 slot，與整體一起垂直置中 -->
-      <div class="flex items-center justify-center my-2">
-        <div class="w-full flex justify-center text-center">
-          <slot>
-            <p v-if="content" class="text-text-primary font-noto text-md leading-relaxed text-center">
-              {{ content }}
-            </p>
-          </slot>
+      <!-- Body：撐滿 header 與 footer 之間；短文在此區垂直置中，過長可捲動 -->
+      <div class="flex min-h-0 flex-1 flex-col">
+        <div class="flex min-h-0 w-full flex-1 items-center justify-center overflow-y-auto">
+          <div class="w-full flex justify-center" :class="bodyContentClass">
+            <slot>
+              <p v-if="content" class="text-modal-body font-noto text-md leading-relaxed text-center">
+                {{ content }}
+              </p>
+            </slot>
+          </div>
         </div>
       </div>
 
-      <!-- Footer：按鈕列（可為 1 顆 / 2 顆），也可用 slot 覆蓋，水平置中 -->
-      <div class="mt-4 flex justify-center gap-3">
+      <!-- Footer：貼齊卡片下緣區；外層 pb-8 與 pt-8 對稱，避免按鈕貼底 -->
+      <div class="flex shrink-0 justify-center mt-1 gap-3">
         <slot name="footer">
           <button v-if="secondaryButtonText" type="button"
             class="w-full min-w-btn-md px-8 h-btn-h-md rounded-2xl bg-button-secondary active:bg-button-secondary-hover text-text-on-color font-noto text-2xl tracking-[0.05em] font-medium"

@@ -269,7 +269,7 @@ onUnmounted(() => {
 
     <!-- 共用燈箱 BaseModal：白底圓角 + 燈箱；點彈窗外無作用 -->
     <BaseModal :open="showModal" :title="modalTitle" :content="''" :show-close="false"
-      :header-icon="modalType === 'success' ? BadgeCheck : null"
+      height-class="h-auto max-h-[90vh]" :header-icon="modalType === 'success' ? BadgeCheck : null"
       :header-icon-color-class="modalType === 'success' ? 'text-text-success' : 'text-text-secondary'"
       :primary-button-text="modalType === 'change' ? '返回' : ''"
       :secondary-button-text="modalType === 'success' ? '關閉' : ''"
@@ -278,7 +278,8 @@ onUnmounted(() => {
       @danger="modalType === 'change' ? handleCompleteChange() : closeModal()">
       <!-- 僅在「提醒找零」時，客製內文樣式 -->
       <template v-if="modalType === 'change'">
-        <p class="text-text-primary font-noto text-md font-medium leading-relaxed text-center">
+        <p
+          class="items-center mt-4 mb-4 justify-center text-text-primary font-noto text-md font-medium leading-relaxed text-center">
           現金找零
           <span class="ml-1 font-inter font-semibold text-3xl text-text-amount-negative">
             $ {{ changeAmount.toLocaleString() }}
