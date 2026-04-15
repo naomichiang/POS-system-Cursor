@@ -1,5 +1,6 @@
 <script setup>
 defineOptions({ name: 'ItemAdjust' })
+import { computed } from 'vue'
 import { CircleDollarSign } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/useOrderStore'
 
@@ -22,10 +23,27 @@ const gridItems = [
   { label: '80 %', type: 'percentage', value: 80, variant: 'secondary', colSpan: 1, cellClass: 'border-b border-r border-white' },
   { label: '75 %', type: 'percentage', value: 75, variant: 'secondary', colSpan: 1, cellClass: 'border-b border-white' },
   { label: '70 %', type: 'percentage', value: 70, variant: 'secondary', colSpan: 1, cellClass: 'border-r border-white' },
-  { label: '其他', type: 'action', action: 'other', variant: 'secondary', colSpan: 1, cellClass: '' },
+  { label: '取消折扣', type: 'restorePrice', variant: 'danger', colSpan: 1, cellClass: '', compactLabel: true },
 ]
 
 const orderStore = useOrderStore()
+
+const selectedOrderItem = computed(() => {
+  const order = orderStore.currentOrder
+  const idx = orderStore.selectedOrderItemIndex
+  if (!order?.items || idx == null || idx < 0 || idx >= order.items.length) return null
+  return order.items[idx]
+})
+
+/** 選取品項是否已有單品折扣（招待／禮物／百分比等） */
+const canRestoreOriginalPrice = computed(() => {
+  const item = selectedOrderItem.value
+  if (!item) return false
+  if (item.isGift) return true
+  if (item.discountType != null && item.discountType !== '') return true
+  if (item.discountLabel != null && String(item.discountLabel).trim() !== '') return true
+  return false
+})
 
 const variantClasses = {
   secondary: 'bg-ash-600 active:bg-ash-700',
@@ -34,20 +52,25 @@ const variantClasses = {
   empty: 'bg-app-bg',
 }
 
-const baseCellClass = 'flex min-h-0 items-center justify-center font-noto text-xl font-medium leading-[1.2] text-text-on-color transition-colors'
+const baseCellClass =
+  'flex min-h-0 items-center justify-center font-noto font-medium text-text-on-color transition-colors'
 
 function handleClick(item) {
   if (item.type === 'placeholder') return
+  if (item.type === 'restorePrice') {
+    if (!canRestoreOriginalPrice.value) return
+    orderStore.clearDiscountFromSelectedItem()
+    return
+  }
   if (item.type === 'action') {
-    if (item.action === 'complimentary' || item.action === 'gift') {
-      // 針對目前在帳單列表中選取的餐點，套用「招待 / 禮物」
+    if (item.action === 'complimentary' || item.action === 'gift' || item.action === 'delete') {
+      // 招待 / 禮物 / 刪除
       orderStore.applyDiscountToSelectedItem({
         type: item.action,
         label: item.label
       })
       return
     }
-    console.log('ItemAdjust action:', item.action)
   } else if (item.type === 'percentage') {
     // 百分比折扣（例如 90% → 九折）
     orderStore.applyDiscountToSelectedItem({
@@ -62,7 +85,8 @@ function handleClick(item) {
 
 function getCellClasses(item) {
   const variant = variantClasses[item.variant] || ''
-  return [baseCellClass, item.cellClass, variant].filter(Boolean).join(' ')
+  const textSize = item.compactLabel ? 'text-lg leading-tight' : 'text-xl leading-[1.2]'
+  return [baseCellClass, textSize, item.cellClass, variant].filter(Boolean).join(' ')
 }
 </script>
 
@@ -70,11 +94,15 @@ function getCellClasses(item) {
   <div class="flex flex-col h-full min-h-0 overflow-hidden rounded-tl-2xl bg-app-bg">
     <div class="flex-1 min-h-0 grid grid-cols-2 grid-rows-[repeat(8,1fr)]">
       <template v-for="(item, index) in gridItems" :key="index">
-        <button v-if="item.type !== 'placeholder'" type="button" :class="[
-          getCellClasses(item),
-          item.colSpan === 2 ? 'col-span-2' : '',
-          item.icon ? 'gap-2' : '',
-        ]" @click="handleClick(item)">
+        <button v-if="item.type !== 'placeholder'" type="button"
+          :disabled="item.type === 'restorePrice' && !canRestoreOriginalPrice" :class="[
+            getCellClasses(item),
+            item.colSpan === 2 ? 'col-span-2' : '',
+            item.icon ? 'gap-2' : '',
+            item.type === 'restorePrice' && !canRestoreOriginalPrice
+              ? 'opacity-45 cursor-not-allowed'
+              : '',
+          ]" @click="handleClick(item)">
           <component v-if="item.icon" :is="iconMap[item.icon]" class="w-icon-md h-icon-md shrink-0" :stroke-width="2" />
           {{ item.label }}
         </button>

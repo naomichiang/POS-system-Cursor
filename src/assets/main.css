@@ -38,6 +38,7 @@
      ============================================================ */
 
     /* Ash 系列 */
+    --color-ash-50: #F4F8FA;
     --color-ash-100: #EEF5F6;
     --color-ash-200: #DFE9ED;
     --color-ash-300: #C6D4DF;
@@ -47,6 +48,8 @@
     --color-ash-700: #516F9C;
     --color-ash-800: #2E446D;
     --color-ash-900: #202F4F;
+
+     --color-white: #ffffff;
 
      /* Gray Scale */
      --color-gray-100: #F3F7FE;
@@ -178,6 +181,19 @@
      --color-button-light-hover: var(--color-ash-200);
      --color-button-selected: var(--color-yellow-800);
      --color-button-selected-hover: var(--color-yellow-900);
+
+     /* ============================================================
+        對話框／燈箱語意（對齊 BaseModal、整單折扣確認等）
+        ============================================================ */
+     --color-modal-surface: var(--color-layer-primary);
+     --color-modal-shadow: 0 25px 50px -12px rgb(32 47 79 / 0.25);
+     --color-modal-section-surface: var(--color-ash-100);
+     --color-modal-detail-surface: var(--color-ash-50);
+     --color-modal-title: var(--color-text-secondary);
+     --color-modal-body: var(--color-text-primary);
+     --color-modal-muted: var(--color-text-helper);
+     --color-modal-accent-icon: var(--color-button-primary);
+
      /* Borders */
      --color-border-primary: var(--color-gray-300);
      --color-border-primary-focus: var(--color-ash-700);
@@ -245,13 +261,12 @@
 
      /* ============================================================
         4. 圓角 (Radius)
-       --radius-xs: 4px;
-      --radius-sm: 8px;
-      --radius-md: 16px;
-      --radius-lg: 20px;
-      --radius-xl: 24px;
-
         ============================================================ */
+     --radius-xs: 4px;
+     --radius-sm: 8px;
+     --radius-md: 16px;
+     --radius-lg: 20px;
+     --radius-xl: 24px;
 
 
 

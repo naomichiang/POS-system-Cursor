@@ -230,7 +230,7 @@ const getStatusText = (table) => {
       height-class="h-auto max-h-[90vh]" @close="showReserveModal = false" @secondary="showReserveModal = false"
       @primary="confirmReserveOpen">
       <div class="flex w-full flex-col justify-start">
-        <div v-if="currentReserveDetail.length > 0" class="text-left bg-layer-light p-4 rounded-2xl w-full -mb-2">
+        <div v-if="currentReserveDetail.length > 0" class="text-left bg-layer-light p-4 rounded-md w-full ">
           <div class="grid grid-cols-[140px_1fr] gap-y-1">
             <p class="text-text-helper">預約人：</p>
             <p class="text-text-primary font-medium text-lg">{{ currentReserveDetail[0].customerName }}</p>

@@ -109,18 +109,18 @@ function handleConfirmCancel() {
       </div>
     </div>
 
-    <!-- 確認是否套用折扣燈箱 -->
+    <!-- 確認是否套用折扣燈箱（詳細收合 h386／展開 h504） -->
     <BaseModal :open="isConfirmOpen" :show-close="false" :header-icon="null" title="確認是否套用折扣?" :sub-title="''"
-      content="" danger-button-text="確認套用" secondary-button-text="返回" :height-class="isDetailOpen
+      content="" danger-button-text="確認套用" secondary-button-text="返回" body-content-class="text-left" :height-class="isDetailOpen
         ? 'h-[504px] max-h-[90vh] transition-all duration-100 ease-out'
         : 'h-[386px] max-h-[90vh] transition-all duration-100 ease-out'" width-class="w-[480px] max-w-[90vw]"
       @close="closeConfirmModal" @danger="handleConfirmApply" @secondary="handleConfirmCancel">
       <div class="w-full space-y-2">
         <!-- 三行金額資訊 -->
-        <div class="w-full rounded-xl bg-ash-100 px-4 py-3">
+        <div class="w-full rounded-md bg-modal-section-surface px-4 py-3">
           <div class="flex flex-col gap-1 font-noto text-md">
             <div class="flex items-center justify-between">
-              <span class="text-text-secondary">折扣前</span>
+              <span class="text-modal-title">折扣前</span>
               <span class="tabular-nums text-right font-medium text-text-amount-positive">
                 {{ currentBillTotal }} $
               </span>
@@ -134,7 +134,7 @@ function handleConfirmCancel() {
               </span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-text-secondary">折扣後</span>
+              <span class="text-modal-title">折扣後</span>
               <span class="tabular-nums text-right font-medium text-text-amount-positive">
                 {{ discountedTotal }} $
               </span>
@@ -143,12 +143,12 @@ function handleConfirmCancel() {
         </div>
 
         <!-- 詳細內容 toggle -->
-        <div class="w-full rounded-xl bg-ash-100 px-4 py-3">
-          <button type="button" class="flex w-full items-center justify-between font-noto text-md text-text-secondary"
+        <div class="w-full rounded-md bg-modal-section-surface px-4 py-3">
+          <button type="button" class="flex w-full items-center justify-between font-noto text-md text-modal-title"
             @click="isDetailOpen = !isDetailOpen">
             <span>{{ isDetailOpen ? '收合詳細' : '查看詳細' }}</span>
             <span class="inline-flex h-6 w-6 items-center justify-center">
-              <svg class="h-6 w-6 transition-transform text-button-primary"
+              <svg class="h-6 w-6 transition-transform text-modal-accent-icon"
                 :class="isDetailOpen ? 'rotate-180' : 'rotate-0'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9" />
@@ -156,8 +156,8 @@ function handleConfirmCancel() {
             </span>
           </button>
           <transition name="fade">
-            <div v-if="isDetailOpen" class="mt-2 w-full rounded-xl bg-ash-50 py-2 max-h-24 overflow-y-auto text-left">
-              <p class="text-text-helper font-noto text-md leading-relaxed whitespace-pre-line">
+            <div v-if="isDetailOpen" class="mt-2 w-full rounded-md py-2 max-h-24 overflow-y-auto text-left">
+              <p class="text-modal-muted font-noto text-md leading-relaxed whitespace-pre-line">
                 {{ pendingSection?.description || '此折扣專案目前無詳細說明。' }}
               </p>
             </div>

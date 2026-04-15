@@ -233,7 +233,7 @@ export const useOrderStore = defineStore('order', {
 
     /**
      * 對目前選取中的餐點套用折扣並重算小計與總額
-     * @param {{ type: 'gift' | 'complimentary' | 'percentage', label: string, value?: number }} payload
+     * @param {{ type: 'gift' | 'complimentary' | 'delete' | 'percentage', label: string, value?: number }} payload
      */
     applyDiscountToSelectedItem(payload) {
       const order = this.currentOrder
@@ -252,7 +252,8 @@ export const useOrderStore = defineStore('order', {
 
       let newSubtotal = baseSubtotal
 
-      if (type === 'gift' || type === 'complimentary') { // 招待 / 禮物 → 全額免費
+      if (type === 'gift' || type === 'complimentary' || type === 'delete') {
+        // 招待 / 禮物 / 刪除（單品作廢）→ 新價 0、帳單列顯示劃線與紅字標籤
         newSubtotal = 0
         target.isGift = true
       } else if (type === 'percentage') { // 百分比折扣
@@ -268,6 +269,30 @@ export const useOrderStore = defineStore('order', {
       target.discountType = type
       target.discountLabel = label
       target.subtotal = newSubtotal
+
+      this._recalculateCurrentOrderSummary()
+    },
+
+    /**
+     * 清除目前選取餐點的單品折扣，小計恢復為原價（單價 × 數量）
+     */
+    clearDiscountFromSelectedItem() {
+      const order = this.currentOrder
+      const idx = this.selectedOrderItemIndex
+      if (!order || !Array.isArray(order.items) || idx == null || idx < 0 || idx >= order.items.length) {
+        return
+      }
+
+      const target = order.items[idx]
+      const unitPrice = Number(target.unitPrice ?? target.price)
+      const quantity = Number(target.quantity) || 0
+      const baseSubtotal = unitPrice * quantity
+
+      target.isGift = false
+      target.discountType = null
+      target.discountLabel = null
+      target.discountValue = null
+      target.subtotal = baseSubtotal
 
       this._recalculateCurrentOrderSummary()
     },
