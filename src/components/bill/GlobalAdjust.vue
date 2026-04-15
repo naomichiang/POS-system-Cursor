@@ -112,8 +112,8 @@ function handleConfirmCancel() {
     <!-- 確認是否套用折扣燈箱（詳細收合 h386／展開 h504） -->
     <BaseModal :open="isConfirmOpen" :show-close="false" :header-icon="null" title="確認是否套用折扣?" :sub-title="''"
       content="" danger-button-text="確認套用" secondary-button-text="返回" body-content-class="text-left" :height-class="isDetailOpen
-        ? 'h-[492px] max-h-[90vh] transition-all duration-100 ease-out'
-        : 'h-[374px] max-h-[90vh] transition-all duration-100 ease-out'" width-class="w-[480px] max-w-[90vw]"
+        ? 'h-[504px] max-h-[90vh] transition-all duration-100 ease-out'
+        : 'h-[386px] max-h-[90vh] transition-all duration-100 ease-out'" width-class="w-[480px] max-w-[90vw]"
       @close="closeConfirmModal" @danger="handleConfirmApply" @secondary="handleConfirmCancel">
       <div class="w-full space-y-2">
         <!-- 三行金額資訊 -->

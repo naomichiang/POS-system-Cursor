@@ -1,4 +1,12 @@
 <script setup>
+/**
+ * @description 結帳頁面底部操作區
+ * @param {String} secondButtonText 次要按鈕文字
+ * @param {String} primaryButtonText 主要按鈕文字
+ * @param {Boolean} ctaDanger 主要按鈕是否使用危險樣式（紅色）
+ * @param {Function} second-click 次要按鈕點擊事件
+ * @param {Function} primary-click 主要按鈕點擊事件
+ */
 defineOptions({ name: 'BillActionFooter' })
 
 defineProps({

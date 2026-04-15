@@ -92,6 +92,16 @@ function getItemType(item) {
   return 'normal'
 }
 
+/** 帳單列序號：整單折扣不參與編號，餐點列自 1 起連續編號 */
+function getOrderLineNumber(index) {
+  const rows = displayItems.value
+  let countBefore = 0
+  for (let i = 0; i < index; i++) {
+    if (getItemType(rows[i]) !== 'globalDiscount') countBefore++
+  }
+  return countBefore + 1
+}
+
 // 餐點列表捲動（共用邏輯）
 const scrollEl = ref(null)
 const {
@@ -158,17 +168,18 @@ function handleSelectItem(item) {
         <div v-for="(item, index) in displayItems" :key="item.cartItemId" @click="handleSelectItem(item)" :class="[
           'relative flex items-start gap-2 px-2.5 py-3 cursor-pointer transition-colors',
           getItemType(item) === 'globalDiscount'
-            ? 'bg-red-50'
+            ? 'bg-red-50 min-h-[80px]'
             : selectedItemIndex === item.sourceIndex
               ? 'bg-layer-highlight-yellow'
               : 'bg-transparent'
         ]">
           <!-- 序號：整單折扣為-，單品為序號 -->
           <span class="shrink-0 w-4 text-center font-inter text-sm pt-1 font-medium text-text-placeholder">
-            {{ getItemType(item) === 'globalDiscount' ? '-' : index + 1 }}
+            {{ getItemType(item) === 'globalDiscount' ? '-' : getOrderLineNumber(index) }}
           </span>
-          <!-- 餐點資訊 -->
-          <div class="flex-1 min-w-0 flex flex-col gap-1">
+          <!-- 餐點資訊（整單折扣列：底部與分隔線固定 16px 間距） -->
+          <div class="flex-1 min-w-0 flex flex-col gap-1"
+            :class="getItemType(item) === 'globalDiscount' ? 'pb-0.5' : ''">
             <div class="flex items-start justify-between gap-2">
               <!-- 餐點名稱：整單折扣為紅色，單品為黑色 -->
               <span class="font-noto text-lg break-all pt-0.5 line-clamp-2 leading-tight" :class="getItemType(item) === 'globalDiscount'
@@ -210,10 +221,10 @@ function handleSelectItem(item) {
 
               </div>
             </div>
-            <!-- 整單折扣恢復按鈕：第二行靠右 -->
-            <div v-if="getItemType(item) === 'globalDiscount'" class="flex justify-end">
+            <!-- 整單折扣恢復按鈕：第二行靠右，與列底分隔線固定間隔-->
+            <div v-if="getItemType(item) === 'globalDiscount'" class="mt-1 flex justify-end">
               <button type="button"
-                class="rounded-md border border-text-error px-2 py-0.5 -mt-4 font-noto text-sm text-text-error transition-colors hover:bg-red-100 active:bg-red-200"
+                class="rounded-md border border-text-error px-2 py-0.5 font-noto text-sm text-text-error transition-colors hover:bg-red-100 active:bg-red-200"
                 @click.stop="orderStore.clearGlobalDiscount()">刪除折扣
               </button>
             </div>
