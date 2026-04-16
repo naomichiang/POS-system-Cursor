@@ -1,6 +1,6 @@
 # POS 系統 — 結帳頁面
 
-← [返回索引](POS-index.md)
+← [返回索引](../README.md)
 
 結帳流程分兩頁：
 1. **BillAdjustPage**（`/bill-adjust/:tableId`）：帳單審閱、折扣調整、招待、刪除
