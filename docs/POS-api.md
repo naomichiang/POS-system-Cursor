@@ -1,6 +1,6 @@
 # POS 系統 — API 規格
 
-← [返回索引](../README.md)
+← [返回索引](POS-index.md)
 
 ---
 

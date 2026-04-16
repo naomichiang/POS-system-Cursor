@@ -1,6 +1,6 @@
 # POS 系統 — Store、Composables、Utils
 
-← [返回索引](../README.md)
+← [返回索引](POS-index.md)
 
 ---
 
