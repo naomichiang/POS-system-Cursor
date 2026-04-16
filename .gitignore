@@ -38,3 +38,5 @@ __screenshots__/
 # Local AI / editor config（不上傳）
 .cursor/
 .claude/
+.obsidian/
+docs/.obsidian/
