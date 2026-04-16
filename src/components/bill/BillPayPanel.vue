@@ -163,8 +163,8 @@ const statusLabel = computed(() => order.value?.statusLabel || '查詢中')
       <div
         class="flex p-2 flex-col items-start gap-2 flex-1 min-h-0 self-stretch bg-layer-tertiary overflow-auto scrollbar-hide">
         <div v-for="(payment, index) in payments" :key="index"
-          class="flex min-h-16 items-center gap-3 self-stretch rounded-md bg-layer-primary shadow-sm ">
-          <div class="flex w-10 justify-center items-center self-stretch rounded-l-md"
+          class="flex min-h-16 items-center gap-3 self-stretch rounded-lg bg-layer-primary shadow-sm ">
+          <div class="flex w-10 justify-center items-center self-stretch rounded-l-lg"
             :class="getPaymentConfig(payment.type).color">
             <component v-if="getPaymentConfig(payment.type).icon" :is="getPaymentConfig(payment.type).icon"
               class="w-icon-lg h-icon-lg text-text-on-color" />
@@ -182,7 +182,7 @@ const statusLabel = computed(() => order.value?.statusLabel || '查詢中')
           </div>
           <div class="flex items-center self-stretch">
             <button @click="removePayment(index)"
-              class="flex w-16 h-full justify-center items-center bg-button-highlight-red hover:bg-button-highlight-red-hover active:bg-button-highlight-red-hover transition-colors group rounded-r-md">
+              class="flex w-16 h-full justify-center items-center bg-button-highlight-red hover:bg-button-highlight-red-hover active:bg-button-highlight-red-hover transition-colors group rounded-r-lg">
               <X class="w-icon-lg h-icon-lg text-text-disabled" />
             </button>
           </div>

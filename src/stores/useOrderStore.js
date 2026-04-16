@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { TABLE_STATUS, getStatusLabel } from '../config/tableStatus'
 import { formatDiningTime } from '@/utils/formatDiningTime'
 import { DEFAULT_RESTAURANT_CONFIG } from '@/config/restaurantConfig'
-import { MockOrder001 } from '@/mock/orderMock'
+import { getCheckoutDraft } from '@/api/orders'
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
@@ -16,6 +16,10 @@ export const useOrderStore = defineStore('order', {
     isLoading: false,
     /** 整單折扣資訊（由結帳調整頁套用） */
     globalDiscount: null,
+    /** 帳單調整暫存版本（GET／暫存 API 的 revision，樂觀鎖用） */
+    checkoutDraftRevision: null,
+    /** 結帳頁「已收／付款明細」暫存版本（GET／savePaymentDraft 的 revision） */
+    paymentDraftRevision: null,
 
     // 訂單資訊
     orderInfo: {
@@ -66,10 +70,25 @@ export const useOrderStore = defineStore('order', {
       return this.placedSubtotal + this.subtotal
     },
 
-    // 計算找零金額：receivedAmount - totalAmount
+    /**
+     * 結帳畫面應付總額：與 orderInfoForDisplay.totalAmount 一致。
+     * 已載入桌次訂單時以 summary（含整單折扣調整）為準，避免與購物車合計脫勾導致找零錯誤。
+     */
+    billTotalForCheckout() {
+      const order = this.currentOrder
+      const tableInfo = order?.tableInfo
+      if (order && tableInfo) {
+        return (
+          Number(order.summary?.totalAmount ?? 0) + Number(this.globalDiscount?.amount ?? 0)
+        )
+      }
+      return this.totalAmount
+    },
+
+    // 計算找零金額：receivedAmount - 應付總額（billTotalForCheckout）
     changeAmount() {
-      const totalAmount = this.totalAmount
-      const change = Number(this.payment.receivedAmount) - Number(totalAmount)
+      const due = this.billTotalForCheckout
+      const change = Number(this.payment.receivedAmount) - Number(due)
       return Math.max(0, change) // 確保找零不會是負數
     },
 
@@ -107,6 +126,22 @@ export const useOrderStore = defineStore('order', {
   },
 
   actions: {
+    addPayment(payment) {
+      this.payment.details.push(payment)
+      this.payment.receivedAmount = this.payment.details.reduce(
+        (sum, p) => Number(sum) + Number(p.amount),
+        0
+      )
+    },
+
+    removePayment(index) {
+      this.payment.details.splice(index, 1)
+      this.payment.receivedAmount = this.payment.details.reduce(
+        (sum, p) => Number(sum) + Number(p.amount),
+        0
+      )
+    },
+
     /**
      * 初始化桌次與訂單資訊（開桌時存桌位、人數、customerInfo、customerInfo2）
      * @param {Object} tableData - 桌次資料，包含 tableNumber, diners, orderId, serviceType, customerInfo, customerInfo2
@@ -369,23 +404,72 @@ export const useOrderStore = defineStore('order', {
 
 
     /**
-     * 模擬載入訂單資料（模擬 API 延遲 500ms）
-     * @param {string} [tableId] - 桌號，可於正式串接時傳入 API
+     * 載入該桌帳單調整用訂單（含暫存）；目前由 `getCheckoutDraft` mock，串接後仍走同一入口。
+     * @param {string} [tableId] - 桌號
+     * @param {{ force?: boolean }} [options] - `force: true` 時一律重新載入；預設在同桌且已有 currentOrder 時跳過（避免切換帳單頁時洗掉記憶體調整）
      */
-    async fetchOrderData(tableId) {
+    async fetchOrderData(tableId, { force = false } = {}) {
+      const normalizedId =
+        tableId != null && tableId !== '' ? String(tableId) : null
+      const currentId =
+        this.currentTableId != null && this.currentTableId !== ''
+          ? String(this.currentTableId)
+          : null
+      if (!force && this.currentOrder && currentId === normalizedId) {
+        return
+      }
+
       this.isLoading = true
       this.currentOrder = null
       this.selectedOrderItemIndex = null
-      this.currentTableId = tableId ?? null
+      this.currentTableId = normalizedId
       this.globalDiscount = null
-      await new Promise(resolve => setTimeout(resolve, 500))
-      // 深拷貝品項與 summary，避免調整帳單時改到共用 mock 參照
-      this.currentOrder = {
-        ...MockOrder001,
-        items: MockOrder001.items.map(item => ({ ...item })),
-        summary: { ...(MockOrder001.summary || {}) },
+      this.checkoutDraftRevision = null
+      this.payment = {
+        receivedAmount: 0,
+        details: [],
+        isPaid: false
       }
-      this.isLoading = false
+      this.paymentDraftRevision = null
+      try {
+        const data = await getCheckoutDraft(normalizedId)
+        this.currentOrder = {
+          orderId: data.orderId,
+          tableInfo: data.tableInfo ? { ...data.tableInfo } : {},
+          items: Array.isArray(data.items)
+            ? data.items.map((item) => ({ ...item }))
+            : [],
+          summary: { ...(data.summary || {}) }
+        }
+        this.globalDiscount = data.globalDiscount
+          ? { ...data.globalDiscount }
+          : null
+        this.checkoutDraftRevision =
+          data.revision != null ? data.revision : null
+
+        if (data.payment && typeof data.payment === 'object') {
+          const rawDetails = Array.isArray(data.payment.details)
+            ? data.payment.details
+            : []
+          const details = rawDetails.map((p) => ({ ...p }))
+          const received =
+            data.payment.receivedAmount != null
+              ? Number(data.payment.receivedAmount)
+              : details.reduce(
+                  (sum, p) => sum + Number(p.amount || 0),
+                  0
+                )
+          this.payment = {
+            receivedAmount: received,
+            details,
+            isPaid: false
+          }
+        }
+        this.paymentDraftRevision =
+          data.paymentRevision != null ? data.paymentRevision : null
+      } finally {
+        this.isLoading = false
+      }
     },
 
     /**
@@ -419,6 +503,8 @@ export const useOrderStore = defineStore('order', {
       this.currentTableId = null
       this.isLoading = false
       this.globalDiscount = null
+      this.checkoutDraftRevision = null
+      this.paymentDraftRevision = null
     }
   }
 })

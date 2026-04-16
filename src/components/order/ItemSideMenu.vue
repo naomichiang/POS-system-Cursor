@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * 點餐頁（OrderPage）配置模式：左側商品清單(ItemSideMenu) + 右側細項設定（ExtraField / OptGroup）+ 底部 QtyBar
+ */
+
 import { ref, nextTick, watch } from 'vue'
 import { useScrollControls } from '@/composables/useScrollControls'
 

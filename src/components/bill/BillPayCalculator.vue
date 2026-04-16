@@ -6,7 +6,6 @@ import {
   BadgeCheck,
 } from 'lucide-vue-next'
 import { paymentMethodsConfig } from '@/config/paymentMethods'
-import { TABLE_STATUS } from '@/config/tableStatus'
 import BaseModal from '@/components/common/BaseModal.vue'
 import BillActionFooter from '@/components/bill/BillActionFooter.vue'
 import { useOrderStore } from '@/stores/useOrderStore'
@@ -14,26 +13,24 @@ import { useOrderStore } from '@/stores/useOrderStore'
 // 引入 Store
 const orderStore = useOrderStore()
 
-// Props：來自父層的訂單與付款資訊（保留以維持向後兼容）
-// eslint-disable-next-line no-unused-vars
+// Props：來自父層的付款資訊（保留以維持向後兼容）
 const props = defineProps({
-  order: {
-    type: Object,
-    default: () => ({
-      tableNumber: '2A桌',
-      diners: 5,
-      status: TABLE_STATUS.OCCUPIED, // 1: 已開桌
-      diningTime: '01:13',
-      totalAmount: 5250,
-    }),
-  },
   payments: {
     type: Array,
     default: () => [],
   },
+  /** 暫存付款草稿進行中（父層控制，避免重複送出） */
+  draftSaving: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['add-payment', 'confirm-checkout-success'])
+const emit = defineEmits(['add-payment', 'confirm-checkout-success', 'save-draft'])
+
+const secondButtonLabel = computed(() =>
+  props.draftSaving ? '暫存中…' : '暫存'
+)
 
 // 定義鍵盤佈局
 const numpadRows = [
@@ -47,9 +44,6 @@ const inputValue = ref('0')
 
 const paymentMethods = paymentMethodsConfig
 
-// 從配置中提取所有付款方式 id 作為類型
-const selectedPayment = ref(null)
-
 // 顯示用千分位格式
 const formattedAmount = computed(() => {
   const numeric = inputValue.value.replace(/[^\d]/g, '')
@@ -57,11 +51,11 @@ const formattedAmount = computed(() => {
   return n.toLocaleString('en-US')
 })
 
-// 從 Store 讀取金額資料
-const totalAmount = computed(() => orderStore.totalAmount)
+// 與 BillPayPanel / orderInfoForDisplay 相同之應付總額（已載入訂單時以 summary 為準）
+const billTotalAmount = computed(() => orderStore.billTotalForCheckout)
 
 const unpaidAmount = computed(() => {
-  const diff = orderStore.totalAmount - orderStore.payment.receivedAmount
+  const diff = billTotalAmount.value - orderStore.payment.receivedAmount
   return diff > 0 ? diff : 0
 })
 
@@ -80,10 +74,26 @@ const modalTitle = computed(() => {
   return ''
 })
 
+/** 成功結帳後：關燈箱並通知父層；resetOrder 由 BillPayPage 統一執行 */
+const finishSuccessCheckout = () => {
+  if (autoCloseTimer) {
+    clearTimeout(autoCloseTimer)
+    autoCloseTimer = null
+  }
+  showModal.value = false
+  modalType.value = null
+  emit('confirm-checkout-success')
+}
+
 const closeModal = () => {
   if (autoCloseTimer) {
     clearTimeout(autoCloseTimer)
     autoCloseTimer = null
+  }
+  // 手動關閉「成功結帳」燈箱時應立刻完成導向，不應只關 UI、仍依賴倒數
+  if (modalType.value === 'success') {
+    finishSuccessCheckout()
+    return
   }
   showModal.value = false
   modalType.value = null
@@ -96,7 +106,7 @@ const handleCompleteChange = async () => {
     // await orderStore.finalizeOrder()
 
     console.log('結帳完成，訂單已同步至後端', {
-      totalAmount: totalAmount.value,
+      totalAmount: billTotalAmount.value,
       receivedAmount: orderStore.payment.receivedAmount,
       changeAmount: changeAmount.value,
     })
@@ -105,11 +115,13 @@ const handleCompleteChange = async () => {
     modalType.value = 'success'
     showModal.value = true
 
-    // 3. 延遲後執行重置與跳轉
-    setTimeout(() => {
-      closeModal()
-      orderStore.resetOrder() // <-- 這一行最重要，確保下一單是空的
-      emit('confirm-checkout-success') // 通知父組件跳轉至桌次頁
+    // 3. 延遲後執行重置與跳轉（與手動關閉共用 finishSuccessCheckout，並可被取消）
+    if (autoCloseTimer) {
+      clearTimeout(autoCloseTimer)
+      autoCloseTimer = null
+    }
+    autoCloseTimer = setTimeout(() => {
+      finishSuccessCheckout()
     }, 2000)
 
   } catch (error) {
@@ -140,7 +152,6 @@ const handleBackspace = () => {
 
 // 處理付款方式選擇
 const handlePayment = (paymentId) => {
-  selectedPayment.value = paymentId
   // 發送付款金額到父組件
   const amount = Number(inputValue.value.replace(/[^\d]/g, '') || '0')
   if (amount > 0) {
@@ -150,6 +161,11 @@ const handlePayment = (paymentId) => {
 }
 
 // 完成確認結帳：依未結與找零判斷彈窗
+function handleSaveDraftClick() {
+  if (props.draftSaving) return
+  emit('save-draft')
+}
+
 const handleCompleteConfirmCheckout = () => {
   if (unpaidAmount.value > 0) {
     modalType.value = 'unpaid'
@@ -167,10 +183,9 @@ const handleCompleteConfirmCheckout = () => {
   modalType.value = 'success'
   showModal.value = true
 
-  // 3 秒後自動關閉並觸發成功事件
+  // 3 秒後自動關閉並觸發成功事件（與點「關閉」皆走 finishSuccessCheckout）
   autoCloseTimer = setTimeout(() => {
-    closeModal()
-    emit('confirm-checkout-success')
+    finishSuccessCheckout()
   }, 3000)
 }
 
@@ -255,7 +270,13 @@ onUnmounted(() => {
     </div>
 
     <!-- Bottom Actions Footer-->
-    <BillActionFooter second-button-text="暫存" primary-button-text="完成結帳" @primary-click="handleCompleteConfirmCheckout">
+    <BillActionFooter
+      :second-button-text="secondButtonLabel"
+      primary-button-text="完成結帳"
+      :class="{ 'opacity-60 pointer-events-none': draftSaving }"
+      @second-click="handleSaveDraftClick"
+      @primary-click="handleCompleteConfirmCheckout"
+    >
       <template #leftGroup>
         <button
           class="shrink-0 flex w-btn-md h-full min-w-btn-sm px-4 justify-center items-center gap-2 rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">

@@ -34,9 +34,9 @@ const handleClick = (key) => {
   emit('change', key)
 }
 
-watch( 
+watch(
   () => props.categories,
-  () => nextTick(updateScrollState), 
+  () => nextTick(updateScrollState),
   { deep: true }
 )
 </script>
@@ -46,7 +46,7 @@ watch(
     <!-- Previous -->
     <div v-if="showArrows" class="w-12 h-full shrink-0 inline-flex flex-col justify-start">
       <button type="button" aria-label="上一頁" :disabled="isAtLeft" :class="[
-        'w-10 h-full flex justify-center items-center rounded-lg transition-opacity text-ash-600',
+        'w-10 h-full flex justify-center items-center rounded-xl transition-opacity text-ash-600',
         isAtLeft ? 'opacity-30 cursor-not-allowed' : 'active:bg-yellow-500'
       ]" @click="scrollPrev">
         <svg width="17" height="21" viewBox="0 0 17 21" fill="none">
@@ -76,7 +76,7 @@ watch(
     <!-- Next -->
     <div v-if="showArrows" class="w-12 h-full shrink-0 inline-flex flex-col justify-start">
       <button type="button" aria-label="下一頁" :disabled="isAtRight" :class="[
-        'w-10 h-full flex justify-center items-center rounded-lg transition-opacity text-ash-600',
+        'w-10 h-full flex justify-center items-center rounded-xl transition-opacity text-ash-600',
         isAtRight ? 'opacity-30 cursor-not-allowed' : 'active:bg-yellow-500'
       ]" @click="scrollNext">
         <svg width="17" height="21" viewBox="0 0 17 21" fill="none">
