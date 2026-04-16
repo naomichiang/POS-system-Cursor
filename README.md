@@ -3,6 +3,20 @@
 這是一個基於 **Vue 3** 與 **Tailwind CSS v4** 開發的現代化點餐系統介面
 專為觸控操作優化，具備高清晰度的視覺引導與響應式佈局
 
+## 文件快速導覽
+
+| 檔案 | 涵蓋內容 |
+|------|---------|
+| [POS-layout.md](docs/POS-layout.md) | 佈局規範、通用元件（BaseModal、ExtraField、BillActionFooter、TopBar、AppSidebar） |
+| [POS-config.md](docs/POS-config.md) | 餐廳配置規範（RestaurantConfig）、桌位狀態碼、點餐合併/拆分策略 |
+| [POS-table-selection.md](docs/POS-table-selection.md) | 開桌作業流程（Step 1–4）、預約帶位、多裝置同步 |
+| [POS-order.md](docs/POS-order.md) | 點餐頁（選品模式、配置模式、購物車） |
+| [POS-bill.md](docs/POS-bill.md) | 結帳調整頁（折扣、招待）、結帳支付頁（付款、找零） |
+| [POS-store.md](docs/POS-store.md) | Pinia Store（useOrderStore）、Composables、Utils |
+| [POS-api.md](docs/POS-api.md) | API 需求端點、現有 REST（`createOrder`）、§7 帳單調整與暫存（GET 載入／PUT 暫存草案） |
+
+---
+
 ## 一、專案總覽
 
 | 項目 | 技術 |
