@@ -62,7 +62,15 @@ const globalDiscountItem = computed(() => {
 })
 // 顯示餐點列表（包含整單折扣項目）
 const displayItems = computed(() => {
-  return globalDiscountItem.value ? [globalDiscountItem.value, ...orderItems.value] : orderItems.value
+  const surchargeDisplayItems = orderStore.surchargeItems.map((item) => ({
+    type: 'surcharge',
+    cartItemId: `surcharge-${item.id}`,
+    name: item.name,
+    amount: item.amount,
+    id: item.id,
+  }))
+  const discountItems = globalDiscountItem.value ? [globalDiscountItem.value] : []
+  return [...discountItems, ...surchargeDisplayItems, ...orderItems.value]
 })
 
 // 目前選取中的餐點 index（由 store 控制，可供其他元件使用）
@@ -88,16 +96,17 @@ function getDiscountDisplay(item) {
 // 整理清單中每個 item 的類型，方便畫UI: 整單折扣/單品折扣/正常商品
 function getItemType(item) {
   if (item.type === 'global-discount') return 'globalDiscount'
+  if (item.type === 'surcharge') return 'surcharge'
   if (item.isGift || item.discountLabel) return 'discounted'
   return 'normal'
 }
 
-/** 帳單列序號：整單折扣不參與編號，餐點列自 1 起連續編號 */
+/** 帳單列序號：僅實際餐點（order-item）參與編號，其他類型皆跳過 */
 function getOrderLineNumber(index) {
   const rows = displayItems.value
   let countBefore = 0
   for (let i = 0; i < index; i++) {
-    if (getItemType(rows[i]) !== 'globalDiscount') countBefore++
+    if (rows[i]?.type === 'order-item') countBefore++
   }
   return countBefore + 1
 }
@@ -169,13 +178,16 @@ function handleSelectItem(item) {
           'relative flex items-start gap-2 px-2.5 py-3 cursor-pointer transition-colors',
           getItemType(item) === 'globalDiscount'
             ? 'bg-red-50 min-h-[80px]'
-            : selectedItemIndex === item.sourceIndex
-              ? 'bg-layer-highlight-yellow'
-              : 'bg-transparent'
+            : getItemType(item) === 'surcharge'
+              ? 'min-h-[80px]'
+              : selectedItemIndex === item.sourceIndex
+                ? 'bg-layer-highlight-yellow'
+                : 'bg-transparent'
         ]">
           <!-- 序號：整單折扣為-，單品為序號 -->
           <span class="shrink-0 w-4 text-center font-inter text-sm pt-1 font-medium text-text-placeholder">
-            {{ getItemType(item) === 'globalDiscount' ? '-' : getOrderLineNumber(index) }}
+            {{ getItemType(item) === 'globalDiscount' || getItemType(item) === 'surcharge' ? '-' :
+              getOrderLineNumber(index) }}
           </span>
           <!-- 餐點資訊（整單折扣列：底部與分隔線固定 16px 間距） -->
           <div class="flex-1 min-w-0 flex flex-col gap-1"
@@ -196,6 +208,16 @@ function handleSelectItem(item) {
                     {{ item.amount.toLocaleString() }}
                   </span>
                   <DollarSign :size="16" :stroke-width="2.5" class="text-text-error shrink-0" />
+                </template>
+
+                <!-- 追加金額時 -->
+                <template v-else-if="getItemType(item) === 'surcharge'">
+                  <span class="font-inter text-lg tabular-nums inline-flex items-center gap-0.5">
+                    <span class="text-text-amount-positive font-medium">
+                      {{ Number(item.amount || 0).toLocaleString() }}
+                    </span>
+                  </span>
+                  <DollarSign :size="16" :stroke-width="2.5" class="text-yellow-600 shrink-0" />
                 </template>
 
                 <!-- 單品折價時的原價出現刪除線 -->
@@ -226,6 +248,12 @@ function handleSelectItem(item) {
               <button type="button"
                 class="rounded-md border border-text-error px-2 py-0.5 font-noto text-sm text-text-error transition-colors hover:bg-red-100 active:bg-red-200"
                 @click.stop="orderStore.clearGlobalDiscount()">刪除折扣
+              </button>
+            </div>
+            <div v-if="getItemType(item) === 'surcharge'" class="mt-1 flex justify-end">
+              <button type="button"
+                class="rounded-md border border-text-error px-2 py-0.5 font-noto text-sm text-text-error transition-colors hover:bg-red-100 active:bg-red-200"
+                @click.stop="orderStore.removeSurchargeItem(item.id)">刪除
               </button>
             </div>
             <!-- 單品折扣時，多出一行顯示折扣資訊 -->

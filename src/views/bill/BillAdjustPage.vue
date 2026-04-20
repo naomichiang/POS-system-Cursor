@@ -8,6 +8,7 @@ import BillAdjustPanel from '@/components/bill/BillAdjustPanel.vue'
 import ItemAdjust from '@/components/bill/ItemAdjust.vue'
 import GlobalAdjust from '@/components/bill/GlobalAdjust.vue'
 import BillActionFooter from '@/components/bill/BillActionFooter.vue'
+import AddAmountPanel from '@/components/bill/AddAmountPanel.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,6 +16,7 @@ const orderStore = useOrderStore()
 const tableId = route.params.tableId
 
 const isSavingDraft = ref(false)
+const showAddAmountPanel = ref(false)
 
 const secondButtonLabel = computed(() =>
   isSavingDraft.value ? '暫存中…' : '暫存'
@@ -24,17 +26,25 @@ onMounted(() => {
   orderStore.fetchOrderData(tableId)
 })
 
-function handleApplyGlobalDiscount(payload) {
+function handleApplyGlobalDiscount(payload) { // 點擊「整單折扣」按鈕
   orderStore.applyGlobalDiscount(payload)
 }
 
-function handleGoToBillPay() {
+function handleOpenAddAmountPanel() { // 點擊「追加金額」按鈕
+  showAddAmountPanel.value = true
+}
+
+function handleSubmitAddAmount(payload) { // 點擊「送出」按鈕
+  orderStore.addSurchargeItem(payload)
+}
+
+function handleGoToBillPay() { // 點擊「結帳」按鈕
   router.push({
     name: 'bill-pay',
     params: { tableId }
   })
 }
-async function handleSaveDraft() {
+async function handleSaveDraft() { // 點擊「暫存」按鈕
   if (isSavingDraft.value) return
   isSavingDraft.value = true
   try {
@@ -59,20 +69,16 @@ async function handleSaveDraft() {
     <BillAdjustPanel />
 
     <!-- 右側大操作區 -->
-    <div class="flex-1 flex flex-col min-h-0 bg-white rounded-2xl shadow-sm overflow-hidden">
+    <div class="relative flex-1 flex flex-col min-h-0 bg-white rounded-2xl shadow-sm overflow-hidden">
       <!-- 上半部區域 -->
       <div class="flex-1 flex min-h-0">
-        <ItemAdjust class="w-1/3 shrink-0" />
+        <ItemAdjust class="w-1/3 shrink-0" @open-add-amount-panel="handleOpenAddAmountPanel" />
         <GlobalAdjust class="flex-1 min-w-0" @apply-discount="handleApplyGlobalDiscount" />
       </div>
       <!-- 下半部區域 -->
-      <BillActionFooter
-        :second-button-text="secondButtonLabel"
-        primary-button-text="結帳"
-        :class="{ 'opacity-60 pointer-events-none': isSavingDraft }"
-        @second-click="handleSaveDraft"
-        @primary-click="handleGoToBillPay"
-      >
+      <BillActionFooter :second-button-text="secondButtonLabel" primary-button-text="結帳"
+        :class="{ 'opacity-60 pointer-events-none': isSavingDraft }" @second-click="handleSaveDraft"
+        @primary-click="handleGoToBillPay">
         <template #leftGroup>
           <button type="button"
             class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
@@ -83,6 +89,8 @@ async function handleSaveDraft() {
           </button>
         </template>
       </BillActionFooter>
+
+      <AddAmountPanel v-model="showAddAmountPanel" @submit="handleSubmitAddAmount" />
     </div>
   </main>
 </template>

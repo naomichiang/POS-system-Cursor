@@ -11,7 +11,7 @@
 | [POS-config.md](docs/POS-config.md) | 餐廳配置規範（RestaurantConfig）、桌位狀態碼、點餐合併/拆分策略 |
 | [POS-table-selection.md](docs/POS-table-selection.md) | 開桌作業流程（Step 1–4）、預約帶位、多裝置同步 |
 | [POS-order.md](docs/POS-order.md) | 點餐頁（選品模式、配置模式、購物車） |
-| [POS-bill.md](docs/POS-bill.md) | 結帳調整頁（折扣、招待）、結帳支付頁（付款、找零） |
+| [POS-bill.md](docs/POS-bill.md) | 結帳調整頁（折扣、招待、追加金額）、結帳支付頁（付款、找零） |
 | [POS-store.md](docs/POS-store.md) | Pinia Store（useOrderStore）、Composables、Utils |
 | [POS-api.md](docs/POS-api.md) | API 需求端點、現有 REST（`createOrder`）、§7 帳單調整與暫存（GET 載入／PUT 暫存草案） |
 
@@ -42,6 +42,7 @@ src/
 │   │   ├── BillAdjustPanel.vue  # AdjustPage：右側明細欄
 │   │   ├── GlobalAdjust.vue     # AdjustPage：整單折扣專案網格
 │   │   ├── ItemAdjust.vue       # AdjustPage：單品折扣操作網格
+│   │   ├── AddAmountPanel.vue   # AdjustPage：追加金額 slide-over 面板
 │   │   ├── BillPayPanel.vue     # BillPay：明細欄
 │   │   ├── BillPayCalculator.vue# BillPay：計算器與支付操作
 │   │   └── BillActionFooter.vue # 結帳頁通用底部操作列

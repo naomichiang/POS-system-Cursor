@@ -31,16 +31,30 @@
 
 **品項列表**：
 
-- `v-for` 逐行渲染，左側序號 index + 1
-- 點擊任一列 → `orderStore.setSelectedOrderItem(index)` → 背景色 `bg-layer-highlight-yellow` + 左側色條
+- `v-for` 逐行渲染，點擊任一列 → `orderStore.setSelectedOrderItem(index)` → 背景色 `bg-layer-highlight-yellow` + 左側色條
 - `selectedOrderItemIndex` 由 store 管理，供 ItemAdjust.vue 共用
+
+**列表顯示順序**：
+
+`displayItems` 固定順序為：
+1. 整單折扣（`globalDiscount`，若有）
+2. 追加金額（`surcharge`，依新增先後排列）
+3. 一般商品（`order-item`）
+
+**序號規則**：`globalDiscount`、`surcharge` 顯示 `-`；僅 `order-item` 參與連號（1, 2, 3…）。
 
 **整單折扣列（GlobalDiscount Item）**：
 
-- `displayItems` = `globalDiscountItem`（若有）+ `orderItems`，整單折扣顯示於清單頂部
-- 背景色：`bg-red-50`；序號顯示 `-`；名稱為紅色文字
+- 背景色：`bg-red-50`；名稱為紅色文字
 - 顯示「刪除折扣」按鈕 → `orderStore.clearGlobalDiscount()`
-- 整單折扣列不參與品項選取
+- 不參與品項選取
+
+**追加金額列（Surcharge Item）**：
+
+- 來源：`orderStore.surchargeItems`，轉為 `{ type: 'surcharge', cartItemId: 'surcharge-${id}', name, amount, id }`
+- 第一行：左側品項名稱、右側金額 + `$` icon（樣式與一般商品一致）
+- 第二行：顯示「刪除」按鈕 → `orderStore.removeSurchargeItem(item.id)`
+- 不參與品項選取
 
 **金額顯示規則**：
 
@@ -103,7 +117,7 @@
 | 招待 | `action / complimentary` | 小計設 0，`isGift = true`，標籤「招待」 |
 | 禮物 | `action / gift` | 小計設 0，`isGift = true`，標籤「禮物」 |
 | 刪除 | `action / delete` | 小計設 0，`isGift = true`，標籤「刪除」 |
-| 追加金額 | `addAmount` | 佔 2 欄，功能預留（尚未實作） |
+| 追加金額 | `addAmount` | 佔 2 欄，點擊後 emit `open-add-amount-panel`，由父層 BillAdjustPage 開啟 AddAmountPanel |
 | 90% ～ 70% | `percentage` | 90 / 85 / 80 / 75 / 70 折，呼叫 `applyDiscountToSelectedItem` |
 | 取消折扣 | `restorePrice` | 清除所有折扣，恢復原價 |
 
@@ -112,6 +126,56 @@
 - `canRestoreOriginalPrice`：品項有 `isGift`、`discountType` 或 `discountLabel` 任一有值 → 啟用「取消折扣」
 - 否則按鈕 `opacity-45 + disabled`
 - 所有操作呼叫 [useOrderStore](POS-store.md) 相關 action，結果由 BillAdjustPanel 即時反映
+
+**Emits**：
+
+| 事件 | 觸發時機 |
+|------|---------|
+| `open-add-amount-panel` | 點擊「追加金額」按鈕 |
+
+---
+
+### 4. AddAmountPanel.vue — 追加金額操作面板
+
+從右側滑入的 slide-over 面板，供店員選擇追加項目類型並輸入金額，送出後寫入 store。
+
+**Props**：
+
+| 屬性 | 型別 | 說明 |
+|------|------|------|
+| `modelValue` | Boolean | 控制面板顯示/隱藏（v-model） |
+
+**Emits**：
+
+| 事件 | Payload | 觸發時機 |
+|------|---------|---------|
+| `update:modelValue` | `false` | 關閉面板（關閉按鈕或送出後） |
+| `submit` | `{ name: String, amount: Number }` | 點擊「送出」且金額 > 0 |
+
+**UI 結構（從上到下）**：
+
+1. **標題**：「選擇追加項目並輸入金額」
+2. **追加項目 Button Group**（2 欄 × 3 列，共 6 顆，單選）
+   - 選項：`清潔費 / 服務費 / 停車費 / 外送費 / 包廂費 / 其他`
+   - 預設選中：`清潔費`（第一顆）
+3. **金額輸入區**：顯示區 + 數字鍵盤，互動模式參照 BillPayCalculator；支援 C 清空、backspace 退格
+4. **Footer 按鈕（置底）**：
+   - `關閉`：關閉面板並清空輸入金額
+   - `送出`：僅 `amount > 0` 時可送出，emit `submit` 後自動關閉
+
+**顯示層級與動畫**：
+
+- `fixed` 絕對定位，右側滑入（`translate-x` transition）
+- `z-index` 高於主內容
+- 面板開啟時加入全畫面遮罩（`bg-modal-bg/60`，`fixed inset-0`），遮罩區域不可點擊
+
+**父層串接（BillAdjustPage.vue）**：
+
+```
+ItemAdjust @open-add-amount-panel → showAddAmountPanel = true
+AddAmountPanel v-model="showAddAmountPanel"
+AddAmountPanel @submit → orderStore.addSurchargeItem(payload)
+```
 
 ---
 
