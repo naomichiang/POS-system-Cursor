@@ -23,6 +23,7 @@ Pinia store，管理訂單、購物車、支付與折扣的全域狀態。
 | `cart.items` | 購物車（未下單）品項陣列，每筆含 `cartItemId`、`id`、`name`、`price`、`quantity`、`note`、`modifiers` |
 | `placedItems` | 已下單品項陣列（已送廚房，加點時顯示） |
 | `payment` | 支付資訊：`receivedAmount`、`details`（支付方式陣列）、`isPaid` |
+| `surchargeItems` | 追加金額項目陣列，每筆結構：`{ id: Number, name: String, amount: Number }`；`id` 以 `Date.now()` 產生 |
 
 ### Getters
 
@@ -31,9 +32,9 @@ Pinia store，管理訂單、購物車、支付與折扣的全域狀態。
 | `subtotal` | 購物車（未下單）所有品項小計加總 |
 | `placedSubtotal` | 已下單品項小計加總 |
 | `totalAmount` | `placedSubtotal + subtotal`（購物車模式用） |
-| `billTotalForCheckout` | 結帳應付總額。已載入 `currentOrder` 時以 `summary.totalAmount + globalDiscount.amount` 為準；否則回傳 `totalAmount` |
+| `billTotalForCheckout` | 結帳應付總額。已載入 `currentOrder` 時以 `summary.totalAmount + globalDiscount.amount + surchargeItems 總和` 為準；否則回傳 `totalAmount` |
 | `changeAmount` | `payment.receivedAmount - billTotalForCheckout`，最小為 0 |
-| `orderInfoForDisplay` | 整合 `tableInfo` 與 `summary`，供結帳頁元件讀取（含 `tableNumber`、`diners`、`status`、`statusLabel`、`diningTime`、`totalItems`、`totalAmount`） |
+| `orderInfoForDisplay` | 整合 `tableInfo` 與 `summary`，供結帳頁元件讀取（含 `tableNumber`、`diners`、`status`、`statusLabel`、`diningTime`、`totalItems`、`totalAmount`）；`totalAmount` 含 `surchargeItems` 金額總和 |
 
 ### Actions
 
@@ -68,6 +69,13 @@ Pinia store，管理訂單、購物車、支付與折扣的全域狀態。
 |------|------|
 | `'gift'` / `'complimentary'` / `'delete'` | 小計設為 0，`isGift = true` |
 | `'percentage'` | `Math.round(baseSubtotal × value/100)` |
+
+**追加金額操作**：
+
+| Action | 說明 |
+|--------|------|
+| `addSurchargeItem({ name, amount })` | 新增一筆追加金額項目至 `surchargeItems`，`id` 以 `Date.now()` 產生 |
+| `removeSurchargeItem(id)` | 以 `filter` 移除指定 `id` 的追加金額項目 |
 
 **資料載入與重置**：
 

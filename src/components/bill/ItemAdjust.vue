@@ -3,6 +3,7 @@ defineOptions({ name: 'ItemAdjust' })
 import { computed } from 'vue'
 import { CircleDollarSign } from 'lucide-vue-next'
 import { useOrderStore } from '@/stores/useOrderStore'
+const emit = defineEmits(['open-add-amount-panel'])
 
 const iconMap = {
   CircleDollarSign,
@@ -79,7 +80,7 @@ function handleClick(item) {
       value: item.value
     })
   } else if (item.type === 'addAmount') {
-    console.log('ItemAdjust addAmount')
+    emit('open-add-amount-panel')
   }
 }
 

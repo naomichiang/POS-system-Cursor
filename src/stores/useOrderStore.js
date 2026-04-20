@@ -20,6 +20,8 @@ export const useOrderStore = defineStore('order', {
     checkoutDraftRevision: null,
     /** 結帳頁「已收／付款明細」暫存版本（GET／savePaymentDraft 的 revision） */
     paymentDraftRevision: null,
+    /** 帳單追加金額項目 */
+    surchargeItems: [],
 
     // 訂單資訊
     orderInfo: {
@@ -75,14 +77,18 @@ export const useOrderStore = defineStore('order', {
      * 已載入桌次訂單時以 summary（含整單折扣調整）為準，避免與購物車合計脫勾導致找零錯誤。
      */
     billTotalForCheckout() {
+      const surchargeTotal = this.surchargeItems.reduce(
+        (sum, item) => Number(sum) + Number(item.amount || 0),
+        0
+      )
       const order = this.currentOrder
       const tableInfo = order?.tableInfo
       if (order && tableInfo) {
         return (
-          Number(order.summary?.totalAmount ?? 0) + Number(this.globalDiscount?.amount ?? 0)
+          Number(order.summary?.totalAmount ?? 0) + Number(this.globalDiscount?.amount ?? 0) + surchargeTotal
         )
       }
-      return this.totalAmount
+      return this.totalAmount + surchargeTotal
     },
 
     // 計算找零金額：receivedAmount - 應付總額（billTotalForCheckout）
@@ -120,12 +126,30 @@ export const useOrderStore = defineStore('order', {
         statusLabel: getStatusLabel(status),
         diningTime: formatDiningTime(tableInfo.openTime),
         totalItems: order.summary?.totalItems ?? 0,
-        totalAmount: Number(order.summary?.totalAmount ?? 0) + Number(state.globalDiscount?.amount ?? 0)
+        totalAmount:
+          Number(order.summary?.totalAmount ?? 0) +
+          Number(state.globalDiscount?.amount ?? 0) +
+          state.surchargeItems.reduce(
+            (sum, item) => Number(sum) + Number(item.amount || 0),
+            0
+          )
       }
     }
   },
 
   actions: {
+    addSurchargeItem({ name, amount }) {
+      this.surchargeItems.push({
+        id: Date.now(),
+        name,
+        amount
+      })
+    },
+
+    removeSurchargeItem(id) {
+      this.surchargeItems = this.surchargeItems.filter(item => item.id !== id)
+    },
+
     addPayment(payment) {
       this.payment.details.push(payment)
       this.payment.receivedAmount = this.payment.details.reduce(
