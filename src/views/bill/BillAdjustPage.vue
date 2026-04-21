@@ -9,6 +9,7 @@ import ItemAdjust from '@/components/bill/ItemAdjust.vue'
 import GlobalAdjust from '@/components/bill/GlobalAdjust.vue'
 import BillActionFooter from '@/components/bill/BillActionFooter.vue'
 import AddAmountPanel from '@/components/bill/AddAmountPanel.vue'
+import BaseModal from '@/components/common/BaseModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -17,6 +18,7 @@ const tableId = route.params.tableId
 
 const isSavingDraft = ref(false)
 const showAddAmountPanel = ref(false)
+const showCheckoutModal = ref(false)
 
 const secondButtonLabel = computed(() =>
   isSavingDraft.value ? '暫存中…' : '暫存'
@@ -43,6 +45,19 @@ function handleGoToBillPay() { // 點擊「結帳」按鈕
     name: 'bill-pay',
     params: { tableId }
   })
+}
+
+function handleOpenCheckoutModal() {
+  showCheckoutModal.value = true
+}
+
+function handleCloseCheckoutModal() {
+  showCheckoutModal.value = false
+}
+
+function handleConfirmCheckout() {
+  showCheckoutModal.value = false
+  handleGoToBillPay()
 }
 async function handleSaveDraft() { // 點擊「暫存」按鈕
   if (isSavingDraft.value) return
@@ -78,7 +93,7 @@ async function handleSaveDraft() { // 點擊「暫存」按鈕
       <!-- 下半部區域 -->
       <BillActionFooter :second-button-text="secondButtonLabel" primary-button-text="結帳"
         :class="{ 'opacity-60 pointer-events-none': isSavingDraft }" @second-click="handleSaveDraft"
-        @primary-click="handleGoToBillPay">
+        @primary-click="handleOpenCheckoutModal">
         <template #leftGroup>
           <button type="button"
             class="flex w-btn-md h-full justify-center items-center rounded-2xl bg-button-primary active:bg-button-primary-hover transition-colors">
@@ -93,4 +108,18 @@ async function handleSaveDraft() { // 點擊「暫存」按鈕
       <AddAmountPanel v-model="showAddAmountPanel" @submit="handleSubmitAddAmount" />
     </div>
   </main>
+
+  <Teleport to="body">
+    <BaseModal :open="showCheckoutModal" :show-close="false" title="確認金額" primary-button-text="返回"
+      height-class="h-auto max-h-[90vh]" danger-button-text="繼續結帳" @primary="handleCloseCheckoutModal"
+      @danger="handleConfirmCheckout">
+      <p
+        class="items-center mt-4 mb-4 justify-center text-text-primary font-noto text-md font-medium leading-relaxed text-center">
+        應付金額
+        <span class="ml-1 font-inter font-semibold text-3xl text-text-amount-negative"> $ {{
+          orderStore.billTotalForCheckout
+          }} </span>
+      </p>
+    </BaseModal>
+  </Teleport>
 </template>

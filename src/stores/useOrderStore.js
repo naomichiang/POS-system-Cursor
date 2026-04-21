@@ -20,7 +20,7 @@ export const useOrderStore = defineStore('order', {
     checkoutDraftRevision: null,
     /** 結帳頁「已收／付款明細」暫存版本（GET／savePaymentDraft 的 revision） */
     paymentDraftRevision: null,
-    /** 帳單追加金額項目 */
+    /** 結帳頁「追加金額」項目 */
     surchargeItems: [],
 
     // 訂單資訊
@@ -138,7 +138,7 @@ export const useOrderStore = defineStore('order', {
   },
 
   actions: {
-    addSurchargeItem({ name, amount }) {
+    addSurchargeItem({ name, amount }) { // 新增追加金額項目
       this.surchargeItems.push({
         id: Date.now(),
         name,
@@ -146,11 +146,11 @@ export const useOrderStore = defineStore('order', {
       })
     },
 
-    removeSurchargeItem(id) {
+    removeSurchargeItem(id) { // 移除追加金額項目
       this.surchargeItems = this.surchargeItems.filter(item => item.id !== id)
     },
 
-    addPayment(payment) {
+    addPayment(payment) { // 新增支付方式
       this.payment.details.push(payment)
       this.payment.receivedAmount = this.payment.details.reduce(
         (sum, p) => Number(sum) + Number(p.amount),
@@ -158,7 +158,7 @@ export const useOrderStore = defineStore('order', {
       )
     },
 
-    removePayment(index) {
+    removePayment(index) { // 移除支付方式
       this.payment.details.splice(index, 1)
       this.payment.receivedAmount = this.payment.details.reduce(
         (sum, p) => Number(sum) + Number(p.amount),
